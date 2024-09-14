@@ -1,49 +1,40 @@
 package entities;
 
-import javax.imageio.ImageIO;
+import constants.GameConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.util.Iterator;
 
 public class PlayerTankControl extends JPanel {
-    private JLabel label;
+    //Images variables
+    private ImageIcon cannonImage;
+    private ImageIcon baseImage;
+    private ImageIcon aimImage;
 
-    private BufferedImage cannonImage;
-
-    private Timer movementTimer;
-    private Timer cannonRotateTimer;
-    private Timer bulletUpdateTimer;
+    //Timers
     private Timer bulletCreationTimer;
     private Timer bulletTimerCountdown;
+    private Timer gameLoopTimer;
 
-    private double cannonAngle = 0;
-    private boolean canFire = true;
-
+    //Attributes
     private Tank tank;
     private Bullet defaultBullet;
-
+    private double cannonAngle = 0;
+    private boolean canFire = true;
 
     public PlayerTankControl(Tank tank, BulletType bulletType) {
         this.tank = tank;
         this.defaultBullet = new Bullet(bulletType);
 
-        ImageIcon base = new ImageIcon("./src/image/base.png");
+        //Initialize tank images
+        baseImage = new ImageIcon("./src/assets/image/base.png");
+        cannonImage = new ImageIcon("./src/assets/image/cannon.png");
+        aimImage = new ImageIcon("./src/assets/image/aim.png");
 
-        label = new JLabel(base);
-        label.setBounds(tank.getX(), tank.getY(), base.getIconWidth(), base.getIconHeight());
-
-        try {
-            cannonImage = ImageIO.read(new File("./src/image/cannon.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            cannonImage = new BufferedImage(30, 10, BufferedImage.TYPE_INT_ARGB);
-        }
-
-
+        //Keyboard listener
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -55,6 +46,8 @@ public class PlayerTankControl extends JPanel {
                 tank.keyReleased(e);
             }
         });
+
+        //Mouse listeners
         this.addMouseListener(new MouseAdapter() {
 
             @Override
@@ -72,45 +65,40 @@ public class PlayerTankControl extends JPanel {
             }
 
         });
-        bulletCreationTimer = new Timer(0, e -> createBullet());
+
+        //Timer for creating bullets, starts when firing
+        bulletCreationTimer = new Timer(GameConstants.DELAY, e -> createBullet());
         bulletCreationTimer.setRepeats(true);
 
-        bulletCreationTimer = new Timer(0, e -> createBullet());
-        bulletCreationTimer.setRepeats(true);
+        //Timer for updating entities that need constant updating
+        gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
+            tank.updateTankPosition();
+            updateBullets();
+            updateCannonAngleFromMousePosition();
 
-        bulletUpdateTimer = new Timer(0, e -> updateBullets());
-        bulletUpdateTimer.start();
+            repaint();
+        });
+        gameLoopTimer.start();
 
-        movementTimer = new Timer(10, e -> updateTankAndLabel());
-        movementTimer.start();
-
-        cannonRotateTimer = new Timer(10, e -> updateCannonAngleFromMouseInfo());
-        cannonRotateTimer.start();
-
+        //Set and request focus on the panel
         this.setFocusable(true);
         this.requestFocusInWindow();
+
     }
 
-    private void updateTankAndLabel() {
-        tank.updateTankPosition();
-        ImageIcon ii = (ImageIcon) label.getIcon();
-        label.setBounds(tank.getX(), tank.getY(), ii.getIconWidth(), ii.getIconHeight());
-        repaint();
-    }
-
-    private void updateCannonAngleFromMouseInfo() {
+    //Update cannon according to mouse position
+    private void updateCannonAngleFromMousePosition() {
+        // Get the current mouse position in the panel's coordinate system
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(mousePosition, this);
-        updateCannonAngle(mousePosition.x, mousePosition.y);
+
+        //Update cannon's angle accordingly
+        int cannonCenterX = tank.getX() + baseImage.getIconWidth() / 2;
+        int cannonCenterY = tank.getY() + baseImage.getIconHeight() / 2;
+        cannonAngle = Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX) + (Math.PI / 2);
     }
 
-    private void updateCannonAngle(int mouseX, int mouseY) {
-        int cannonCenterX = label.getX() + label.getWidth() / 2;
-        int cannonCenterY = label.getY() + label.getHeight() / 2;
-        cannonAngle = Math.atan2(mouseY - cannonCenterY, mouseX - cannonCenterX) + (Math.PI / 2);
-        repaint();
-    }
-
+    //Create (fire) a bullet
     private void createBullet() {
         if (canFire) {
             // Get the current mouse position in the panel's coordinate system
@@ -118,12 +106,12 @@ public class PlayerTankControl extends JPanel {
             SwingUtilities.convertPointFromScreen(mousePosition, this);
 
             // Calculate the starting point of the bullet (at the cannon tip)
-            int cannonTipX = (int) (label.getX() + label.getWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getHeight() / 2);
-            int cannonTipY = (int) (label.getY() + label.getHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getHeight() / 2);
+            int cannonTipX = (int) (tank.getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
+            int cannonTipY = (int) (tank.getY() + baseImage.getIconHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
 
             // Calculate the center of the cannon (or tank)
-            int cannonCenterX = label.getX() + label.getWidth() / 2;
-            int cannonCenterY = label.getY() + label.getHeight() / 2;
+            int cannonCenterX = tank.getX() + baseImage.getIconWidth() / 2;
+            int cannonCenterY = tank.getY() + baseImage.getIconHeight() / 2;
 
             // Calculate the angle from the cannon center to the mouse position
             double angle = Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX);
@@ -132,31 +120,31 @@ public class PlayerTankControl extends JPanel {
             Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), angle); // Adjust angle for correct firing direction
             tank.getBullets().add(bullet);
 
+            // Mechanism for handling firing cooldown
             canFire = false;
-
-            // Start the cooldown timer
-            fireCooldownTimer(defaultBullet.getCooldown());
+            bulletTimerCountdown = new Timer(defaultBullet.getCooldown(), e -> {
+                canFire = true;
+                bulletTimerCountdown.stop();
+            });
+            bulletTimerCountdown.start();
         }
     }
 
-    private void fireCooldownTimer(int cooldown) {
-        bulletTimerCountdown = new Timer(cooldown, e -> {
-            canFire = true;
-            bulletTimerCountdown.stop();
-        });
-        bulletTimerCountdown.start();
-    }
-
-
+    //Update the bullet's position, remove the bullet once it goes out of bounds
     private void updateBullets() {
-        for (int i = 0; i < tank.getBullets().size(); i++) {
-            tank.getBullets().get(i).updatePosition();
-            if (tank.getBullets().get(i).getX() < 0 || tank.getBullets().get(i).getX() > getWidth() || tank.getBullets().get(i).getY() < 0 || tank.getBullets().get(i).getY() > getHeight()) {
-                tank.getBullets().remove(i); // Remove bullet if it goes out of bounds
-                i--; // Decrement to compensate for the shift in index
+        // Use an iterator to safely remove bullets while iterating
+        Iterator<Bullet> bulletIterator = tank.getBullets().iterator();
+
+        while (bulletIterator.hasNext()) {
+            Bullet bullet = bulletIterator.next();
+            bullet.updatePosition();
+
+            // Check if the bullet goes out of bounds
+            if (bullet.getX() < 0 || bullet.getX() > getWidth() || bullet.getY() < 0 || bullet.getY() > getHeight()) {
+                bulletIterator.remove(); // Safely remove the bullet
             }
         }
-        repaint();
+
     }
 
     @Override
@@ -164,32 +152,44 @@ public class PlayerTankControl extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
-        int baseX = label.getX();
-        int baseY = label.getY();
-        ImageIcon ii = (ImageIcon) label.getIcon();
         // Rotate the tank base image according to the tankAngle
-        int tankCenterX = label.getX() + label.getWidth() / 2;
-        int tankCenterY = label.getY() + label.getHeight() / 2;
+        int tankCenterX = tank.getX() + baseImage.getIconWidth() / 2;
+        int tankCenterY = tank.getY() + baseImage.getIconHeight() / 2;
         AffineTransform atTank = AffineTransform.getRotateInstance(tank.getTankAngle(), tankCenterX, tankCenterY);
-        atTank.translate(baseX, baseY);
+        atTank.translate(tank.getX(), tank.getY());
 
         // Draw the rotated tank base
-        g2d.drawImage(ii.getImage(), atTank, this);
+        g2d.drawImage(baseImage.getImage(), atTank, this);
 
-        int cannonX = label.getX() + label.getWidth() / 2 - cannonImage.getWidth() / 2;
-        int cannonY = label.getY() + label.getHeight() / 2 - cannonImage.getHeight() / 2;
-        AffineTransform atCannon = AffineTransform.getRotateInstance(cannonAngle, cannonX + cannonImage.getWidth() / 2, cannonY + cannonImage.getHeight() / 2);
+        // Rotate the cannon according to the mouse position
+        int cannonX = tankCenterX - cannonImage.getIconWidth() / 2;
+        int cannonY = tankCenterY - cannonImage.getIconHeight() / 2;
+        AffineTransform atCannon = AffineTransform.getRotateInstance(cannonAngle, cannonX + cannonImage.getIconWidth() / 2, cannonY + cannonImage.getIconHeight() / 2);
         atCannon.translate(cannonX, cannonY);
 
-        g2d.drawImage(cannonImage, atCannon, this);
+        // Draw the rotated cannon
+        g2d.drawImage(cannonImage.getImage(), atCannon, this);
 
+        //Adjust opacity for the aim
+        float alpha = 0.5f;
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
+        // Rotate the aim according to the mouse position
+        AffineTransform atAim = AffineTransform.getRotateInstance(cannonAngle, tankCenterX, tankCenterY);
+        atAim.translate(tankCenterX - aimImage.getIconWidth() / 2, tankCenterY - aimImage.getIconHeight() -cannonImage.getIconHeight()/2);
+
+        // Draw the rotated aim image
+        g2d.drawImage(aimImage.getImage(), atAim, this);
+
+        // Reset transparency to default
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
+        // Draw bullets
         for (Bullet bullet : tank.getBullets()) {
             g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), 5, 5); // Drawing a simple circle for the bullet
         }
-        ;
-        g2d.dispose();
 
+        g2d.dispose();
     }
 
 

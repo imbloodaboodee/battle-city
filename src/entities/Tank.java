@@ -95,31 +95,42 @@ public class Tank implements KeyListener {
             tankAngle = Math.toRadians(45); // Top-right
             x += speed;
             y -= speed;
+            System.out.println("Top right");
         } else if (upPressed && leftPressed) {
             tankAngle = Math.toRadians(-45); // Top-left
             x -= speed;
             y -= speed;
+            System.out.println("Top left");
+
         } else if (downPressed && rightPressed) {
             tankAngle = Math.toRadians(135); // Bottom-right
             x += speed;
             y += speed;
+            System.out.println("Bottom right");
+
         } else if (downPressed && leftPressed) {
             tankAngle = Math.toRadians(-135); // Bottom-left
             x -= speed;
             y += speed;
+            System.out.println("Top left");
         } else if (upPressed) {
             tankAngle = Math.toRadians(0); // Moving up
             y -= speed;
+            System.out.println("Up");
         } else if (downPressed) {
             tankAngle = Math.toRadians(180); // Moving down
             y += speed;
+            System.out.println("Down");
         } else if (leftPressed) {
             tankAngle = Math.toRadians(-90); // Moving left
             x -= speed;
+            System.out.println("Left");
         } else if (rightPressed) {
             tankAngle = Math.toRadians(90); // Moving right
             x += speed;
+            System.out.println("Right");
         }
+
     }
 
     public int getX() {
