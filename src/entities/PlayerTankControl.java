@@ -30,7 +30,7 @@ public class PlayerTankControl extends JPanel {
         this.defaultBullet = new Bullet(bulletType);
 
         //Initialize tank images
-        baseImage = new ImageIcon("./src/assets/image/base.png");
+        baseImage = new ImageIcon("./src/assets/image/tank.png");
         cannonImage = new ImageIcon("./src/assets/image/cannon.png");
         aimImage = new ImageIcon("./src/assets/image/aim.png");
 
