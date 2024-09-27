@@ -1,10 +1,11 @@
 package entities;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
+import physics.CollisionHandling;
+import render.GameScreen;
+
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import javax.swing.*;
 
 public class Tank implements KeyListener {
     private boolean upPressed = false;
@@ -12,22 +13,13 @@ public class Tank implements KeyListener {
     private boolean leftPressed = false;
     private boolean rightPressed = false;
     private double tankAngle = 0; // Default angle when the tank is stationary
+    private Rectangle hitbox;
 
     private int x;
     private int y;
     private int health;
     private int speed;  // Increase speed for visible movement
     private ArrayList<Bullet> bullets = new ArrayList<>();
-
-    public Tank(int x, int y, int health, int speed) {
-        this.x = x;
-        this.y = y;
-        this.health = health;
-        this.speed = speed;  // Initialize speed
-
-        // Initialize the bullet timer for automatic firing
-
-    }
 
     public Tank() {
         x = 100;
@@ -90,47 +82,68 @@ public class Tank implements KeyListener {
     }
 
     public void updateTankPosition() {
-        // Track the movement direction and update the tank's angle
-        if (upPressed && rightPressed) {
-            tankAngle = Math.toRadians(45); // Top-right
-            x += speed;
-            y -= speed;
-            System.out.println("Top right");
-        } else if (upPressed && leftPressed) {
-            tankAngle = Math.toRadians(-45); // Top-left
-            x -= speed;
-            y -= speed;
-            System.out.println("Top left");
+        int oldX = x;
+        int oldY = y;
 
-        } else if (downPressed && rightPressed) {
-            tankAngle = Math.toRadians(135); // Bottom-right
-            x += speed;
-            y += speed;
-            System.out.println("Bottom right");
 
-        } else if (downPressed && leftPressed) {
-            tankAngle = Math.toRadians(-135); // Bottom-left
-            x -= speed;
-            y += speed;
-            System.out.println("Top left");
-        } else if (upPressed) {
-            tankAngle = Math.toRadians(0); // Moving up
-            y -= speed;
-            System.out.println("Up");
-        } else if (downPressed) {
-            tankAngle = Math.toRadians(180); // Moving down
-            y += speed;
-            System.out.println("Down");
+        // Move horizontally first and update angle if necessary
+        if (leftPressed && rightPressed) {
+            // Do nothing if both left and right are pressed
         } else if (leftPressed) {
-            tankAngle = Math.toRadians(-90); // Moving left
             x -= speed;
-            System.out.println("Left");
+            tankAngle = Math.toRadians(-90); // Moving left
         } else if (rightPressed) {
-            tankAngle = Math.toRadians(90); // Moving right
             x += speed;
-            System.out.println("Right");
+            tankAngle = Math.toRadians(90); // Moving right
         }
 
+        // Handle x-axis movement and collision
+        updateHitbox(); // Update hitbox for the new x position
+        boolean xCollision = CollisionHandling.checkMovingCollisions(this, GameScreen.blocks);
+        if (xCollision) {
+            x = oldX; // Revert x position if a collision occurs
+        }
+
+        // Now move vertically and update angle if necessary
+        if (upPressed && downPressed) {
+            // Do nothing if both up and down are pressed
+        } else if (upPressed) {
+            y -= speed;
+            tankAngle = Math.toRadians(0); // Moving up
+        } else if (downPressed) {
+            y += speed;
+            tankAngle = Math.toRadians(180); // Moving down
+        }
+
+        // Handle y-axis movement and collision
+        updateHitbox(); // Update hitbox for the new y position
+        boolean yCollision = CollisionHandling.checkMovingCollisions(this, GameScreen.blocks);
+        if (yCollision) {
+            y = oldY; // Revert y position if a collision occurs
+        }
+
+        // Handle diagonal movement and update angle
+        if (upPressed && rightPressed) {
+            tankAngle = Math.toRadians(45); // Moving top-right
+        } else if (upPressed && leftPressed) {
+            tankAngle = Math.toRadians(-45); // Moving top-left
+        } else if (downPressed && rightPressed) {
+            tankAngle = Math.toRadians(135); // Moving bottom-right
+        } else if (downPressed && leftPressed) {
+            tankAngle = Math.toRadians(-135); // Moving bottom-left
+        }
+
+        // Final hitbox update
+        updateHitbox();
+    }
+
+
+
+
+
+
+    private void updateHitbox() {
+        hitbox.setLocation(x, y);
     }
 
     public int getX() {
@@ -206,4 +219,11 @@ public class Tank implements KeyListener {
         this.bullets = bullets;
     }
 
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Rectangle hitbox) {
+        this.hitbox = hitbox;
+    }
 }

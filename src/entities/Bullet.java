@@ -1,5 +1,10 @@
 package entities;
 
+import constants.GameConstants;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
 public class Bullet {
     private double x, y;
     private double angle; // Direction in radians
@@ -9,6 +14,7 @@ public class Bullet {
     private int cooldown;
     private boolean isExplosive = false;
     private int ricochetLeft = 0;
+    private Rectangle2D.Double hitbox;
 
     public Bullet(double x, double y, BulletType bulletType, double angle) {
         this.x = x;
@@ -16,18 +22,21 @@ public class Bullet {
         this.angle = angle;
         this.bulletType = bulletType;
         bulletAttributeSetter(bulletType);
+        this.setHitbox(new Rectangle2D.Double(x, y, GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE));
+
     }
 
     public Bullet(BulletType bulletType) {
         this.bulletType = bulletType;
         bulletAttributeSetter(bulletType);
+
     }
 
     private void bulletAttributeSetter(BulletType bulletType) {
         switch (bulletType) {
             case NORMAL:
                 this.damage = 3;
-                this.cooldown = 100;
+                this.cooldown = 1;
                 this.speed = 10;
                 break;
             case EXPLOSIVE:
@@ -53,6 +62,7 @@ public class Bullet {
     public void updatePosition() {
         x += speed * Math.cos(angle);
         y += speed * Math.sin(angle);
+        hitbox.setRect(x, y, hitbox.getWidth(), hitbox.getHeight());
     }
 
     public BulletType getBulletType() {
@@ -125,5 +135,13 @@ public class Bullet {
 
     public void setAngle(double angle) {
         this.angle = angle;
+    }
+
+    public Rectangle2D.Double getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Rectangle2D.Double hitbox) {
+        this.hitbox = hitbox;
     }
 }

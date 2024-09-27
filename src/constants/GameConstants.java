@@ -5,4 +5,9 @@ public final class GameConstants {
 
     // Game physics constants
     public static final int DELAY = 5;
+    public static final int FRAME_HEIGHT = 800;
+    public static final int FRAME_WIDTH = 800;
+    public static final int BULLET_SIZE = 5;
+    public static final int BLOCK_SIZE = 16;
+
 }

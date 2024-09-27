@@ -23,22 +23,26 @@ package SpriteClasses;
  * @author Adrian Berg
  */
 
+import constants.GameConstants;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Sprite {
-    public int x;
-    public int y;
-    public int width;
-    public int height;
-    public boolean vis;
-    public Image image;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
+    private boolean vis;
+    private Image image;
+    private Rectangle hitbox;
 
     public Sprite(int x, int y) {
 
         this.x = x;
         this.y = y;
         vis = true;
+        hitbox = new Rectangle(x,y, GameConstants.BLOCK_SIZE, GameConstants.BLOCK_SIZE);
     }
 
     protected void getImageDimensions() {
@@ -71,7 +75,11 @@ public class Sprite {
         vis = visible;
     }
 
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Rectangle hitbox) {
+        this.hitbox = hitbox;
     }
 }

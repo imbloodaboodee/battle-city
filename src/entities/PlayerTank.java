@@ -8,7 +8,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
 
-public class PlayerTankControl extends JPanel {
+public class PlayerTank extends JLabel {
     //Images variables
     private ImageIcon cannonImage;
     private ImageIcon baseImage;
@@ -25,27 +25,19 @@ public class PlayerTankControl extends JPanel {
     private double cannonAngle = 0;
     private boolean canFire = true;
 
-    public PlayerTankControl(Tank tank, BulletType bulletType) {
+    public PlayerTank(Tank tank, BulletType bulletType) {
         this.tank = tank;
         this.defaultBullet = new Bullet(bulletType);
+        this.setSize(800, 800);
+
 
         //Initialize tank images
         baseImage = new ImageIcon("./src/assets/image/tank.png");
         cannonImage = new ImageIcon("./src/assets/image/cannon.png");
         aimImage = new ImageIcon("./src/assets/image/aim.png");
 
-        //Keyboard listener
-        this.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                tank.keyPressed(e);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                tank.keyReleased(e);
-            }
-        });
+        // Initialize the hitbox (assuming the tank has a known width and height)
+        tank.setHitbox(new Rectangle(tank.getX(), tank.getY(), baseImage.getIconWidth(), baseImage.getIconHeight()));
 
         //Mouse listeners
         this.addMouseListener(new MouseAdapter() {
@@ -83,6 +75,23 @@ public class PlayerTankControl extends JPanel {
         //Set and request focus on the panel
         this.setFocusable(true);
         this.requestFocusInWindow();
+        this.setSize(GameConstants.FRAME_WIDTH, GameConstants.FRAME_HEIGHT);
+
+
+    }
+
+    public void keyPressed(KeyEvent e) {
+        tank.keyPressed(e);
+    }
+
+    public void keyReleased(KeyEvent e) {
+        tank.keyReleased(e);
+    }
+
+    private void updateTankPosition() {
+        int oldX = tank.getX();
+        int oldY = tank.getY();
+        tank.updateTankPosition();
 
     }
 
@@ -176,7 +185,7 @@ public class PlayerTankControl extends JPanel {
 
         // Rotate the aim according to the mouse position
         AffineTransform atAim = AffineTransform.getRotateInstance(cannonAngle, tankCenterX, tankCenterY);
-        atAim.translate(tankCenterX - aimImage.getIconWidth() / 2, tankCenterY - aimImage.getIconHeight() -cannonImage.getIconHeight()/2);
+        atAim.translate(tankCenterX - aimImage.getIconWidth() / 2, tankCenterY - aimImage.getIconHeight() - cannonImage.getIconHeight() / 2);
 
         // Draw the rotated aim image
         g2d.drawImage(aimImage.getImage(), atAim, this);
@@ -184,13 +193,25 @@ public class PlayerTankControl extends JPanel {
         // Reset transparency to default
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
+        // Set the color to white for the bullets
+        g2d.setColor(Color.WHITE);
+
         // Draw bullets
         for (Bullet bullet : tank.getBullets()) {
-            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), 5, 5); // Drawing a simple circle for the bullet
+            g2d.setColor(Color.WHITE);
+            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE); // Drawing a simple circle for the bullet
+            g2d.setColor(Color.RED);
+
+            g2d.draw(bullet.getHitbox());
         }
+        // **Draw the hitbox for debugging**
+        g2d.setColor(Color.RED);  // Set hitbox color (e.g., red for visibility)
+        g2d.draw(tank.getHitbox());  // Draw the hitbox around the tank
 
         g2d.dispose();
     }
 
-
+    public Tank getTank() {
+        return tank;
+    }
 }

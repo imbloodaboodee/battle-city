@@ -1,10 +1,10 @@
-package environment;
+package render;
 
 import javax.swing.*;
 
-public class GameView extends javax.swing.JFrame {
+public class GameFrame extends JFrame {
 
-    public GameView() {
+    public GameFrame() {
         initComponents();
         setLocationRelativeTo(null);
     }
@@ -39,7 +39,7 @@ public class GameView extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GameView().setVisible(true);
+                new GameFrame().setVisible(true);
             }
         });
     }
