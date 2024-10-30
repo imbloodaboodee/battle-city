@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class GameScreen extends JPanel {
     public GameFrame theView;
     public static ArrayList<Block> blocks = new ArrayList<>();
-    private static int stage = 1;
+    private static int stage = 10;
     private Timer gameLoopTimer;
 
     public GameScreen(GameFrame theView) {

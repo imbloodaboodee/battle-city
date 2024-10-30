@@ -36,8 +36,8 @@ public class Bullet {
         switch (bulletType) {
             case NORMAL:
                 this.damage = 3;
-                this.cooldown = 1;
-                this.speed = 10;
+                this.cooldown = 1;  //1  100
+                this.speed = 10;    //10 1
                 break;
             case EXPLOSIVE:
                 this.damage = 5;

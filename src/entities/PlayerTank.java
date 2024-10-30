@@ -1,12 +1,15 @@
 package entities;
 
 import constants.GameConstants;
+import render.GameScreen;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.Iterator;
+
+import static physics.CollisionHandling.checkCollisionBulletsBlocks;
 
 public class PlayerTank extends JLabel {
     //Images variables
@@ -153,11 +156,11 @@ public class PlayerTank extends JLabel {
                 bulletIterator.remove(); // Safely remove the bullet
             }
         }
-
+        checkCollisionBulletsBlocks(tank.getBullets(), GameScreen.blocks);
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
