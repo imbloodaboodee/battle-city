@@ -8,10 +8,10 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 public class Tank implements KeyListener {
-    private boolean upPressed = false;
-    private boolean downPressed = false;
-    private boolean leftPressed = false;
-    private boolean rightPressed = false;
+    private boolean isMovingUp = false;
+    private boolean isMovingDown = false;
+    private boolean isMovingLeft = false;
+    private boolean isMovingRight = false;
     private double tankAngle = 0; // Default angle when the tank is stationary
     private Rectangle hitbox;
 
@@ -34,16 +34,16 @@ public class Tank implements KeyListener {
 
         switch (key) {
             case KeyEvent.VK_W:
-                upPressed = true;
+                isMovingUp = true;
                 break;
             case KeyEvent.VK_S:
-                downPressed = true;
+                isMovingDown = true;
                 break;
             case KeyEvent.VK_A:
-                leftPressed = true;
+                isMovingLeft = true;
                 break;
             case KeyEvent.VK_D:
-                rightPressed = true;
+                isMovingRight = true;
                 break;
         }
         updateTankPosition();
@@ -55,16 +55,16 @@ public class Tank implements KeyListener {
 
         switch (key) {
             case KeyEvent.VK_W:
-                upPressed = false;
+                isMovingUp = false;
                 break;
             case KeyEvent.VK_S:
-                downPressed = false;
+                isMovingDown = false;
                 break;
             case KeyEvent.VK_A:
-                leftPressed = false;
+                isMovingLeft = false;
                 break;
             case KeyEvent.VK_D:
-                rightPressed = false;
+                isMovingRight = false;
                 break;
         }
     }
@@ -87,12 +87,12 @@ public class Tank implements KeyListener {
 
 
         // Move horizontally first and update angle if necessary
-        if (leftPressed && rightPressed) {
+        if (isMovingLeft && isMovingRight) {
             // Do nothing if both left and right are pressed
-        } else if (leftPressed) {
+        } else if (isMovingLeft) {
             x -= speed;
             tankAngle = Math.toRadians(-90); // Moving left
-        } else if (rightPressed) {
+        } else if (isMovingRight) {
             x += speed;
             tankAngle = Math.toRadians(90); // Moving right
         }
@@ -105,12 +105,12 @@ public class Tank implements KeyListener {
         }
 
         // Now move vertically and update angle if necessary
-        if (upPressed && downPressed) {
+        if (isMovingUp && isMovingDown) {
             // Do nothing if both up and down are pressed
-        } else if (upPressed) {
+        } else if (isMovingUp) {
             y -= speed;
             tankAngle = Math.toRadians(0); // Moving up
-        } else if (downPressed) {
+        } else if (isMovingDown) {
             y += speed;
             tankAngle = Math.toRadians(180); // Moving down
         }
@@ -123,26 +123,28 @@ public class Tank implements KeyListener {
         }
 
         // Handle diagonal movement and update angle
-        if (upPressed && rightPressed) {
+        if (isMovingUp && isMovingRight) {
             tankAngle = Math.toRadians(45); // Moving top-right
-        } else if (upPressed && leftPressed) {
+        } else if (isMovingUp && isMovingLeft) {
             tankAngle = Math.toRadians(-45); // Moving top-left
-        } else if (downPressed && rightPressed) {
+        } else if (isMovingDown && isMovingRight) {
             tankAngle = Math.toRadians(135); // Moving bottom-right
-        } else if (downPressed && leftPressed) {
+        } else if (isMovingDown && isMovingLeft) {
             tankAngle = Math.toRadians(-135); // Moving bottom-left
         }
 
         // Final hitbox update
         updateHitbox();
     }
+public void moveUp(){
+        isMovingUp = true;
+}
 
 
 
 
 
-
-    private void updateHitbox() {
+    void updateHitbox() {
         hitbox.setLocation(x, y);
     }
 
@@ -154,37 +156,37 @@ public class Tank implements KeyListener {
         return y;
     }
 
-    public boolean isUpPressed() {
-        return upPressed;
+    public boolean isMovingUp() {
+        return isMovingUp;
     }
 
-    public void setUpPressed(boolean upPressed) {
-        this.upPressed = upPressed;
+    public void setMovingUp(boolean movingUp) {
+        this.isMovingUp = movingUp;
     }
 
-    public boolean isDownPressed() {
-        return downPressed;
+    public boolean isMovingDown() {
+        return isMovingDown;
     }
 
-    public void setDownPressed(boolean downPressed) {
-        this.downPressed = downPressed;
+    public void setMovingDown(boolean movingDown) {
+        this.isMovingDown = movingDown;
     }
 
-    public boolean isLeftPressed() {
-        return leftPressed;
+    public boolean isMovingLeft() {
+        return isMovingLeft;
     }
 
-    public void setLeftPressed(boolean leftPressed) {
-        this.leftPressed = leftPressed;
+    public void setMovingLeft(boolean movingLeft) {
+        this.isMovingLeft = movingLeft;
     }
 
 
-    public boolean isRightPressed() {
-        return rightPressed;
+    public boolean isMovingRight() {
+        return isMovingRight;
     }
 
-    public void setRightPressed(boolean rightPressed) {
-        this.rightPressed = rightPressed;
+    public void setMovingRight(boolean movingRight) {
+        this.isMovingRight = movingRight;
     }
 
     public void setX(int x) {

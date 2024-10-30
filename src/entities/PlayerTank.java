@@ -25,6 +25,9 @@ public class PlayerTank extends JLabel {
     private double cannonAngle = 0;
     private boolean canFire = true;
 
+    private double targetCannonAngle = 0; // The target angle to rotate to
+    private final double ROTATION_SPEED = 0.02; // Speed at which the cannon rotates
+
     public PlayerTank(Tank tank, BulletType bulletType) {
         this.tank = tank;
         this.defaultBullet = new Bullet(bulletType);
@@ -101,32 +104,34 @@ public class PlayerTank extends JLabel {
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(mousePosition, this);
 
-        //Update cannon's angle accordingly
+        // Calculate the target angle from the cannon center to the mouse position
         int cannonCenterX = tank.getX() + baseImage.getIconWidth() / 2;
         int cannonCenterY = tank.getY() + baseImage.getIconHeight() / 2;
-        cannonAngle = Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX) + (Math.PI / 2);
+        targetCannonAngle = Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX) + (Math.PI / 2);
+
+        // Gradually adjust the cannon angle towards the target angle
+        if (Math.abs(targetCannonAngle - cannonAngle) > ROTATION_SPEED) {
+            // Check if we need to rotate clockwise or counter-clockwise
+            if (targetCannonAngle > cannonAngle) {
+                cannonAngle += ROTATION_SPEED; // Rotate clockwise
+            } else {
+                cannonAngle -= ROTATION_SPEED; // Rotate counter-clockwise
+            }
+
+            // Keep the angle within the range of -PI to PI for consistency
+            cannonAngle = (cannonAngle + Math.PI * 2) % (Math.PI * 2);
+        }
     }
 
     //Create (fire) a bullet
     private void createBullet() {
         if (canFire) {
-            // Get the current mouse position in the panel's coordinate system
-            Point mousePosition = MouseInfo.getPointerInfo().getLocation();
-            SwingUtilities.convertPointFromScreen(mousePosition, this);
-
             // Calculate the starting point of the bullet (at the cannon tip)
             int cannonTipX = (int) (tank.getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
             int cannonTipY = (int) (tank.getY() + baseImage.getIconHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
 
-            // Calculate the center of the cannon (or tank)
-            int cannonCenterX = tank.getX() + baseImage.getIconWidth() / 2;
-            int cannonCenterY = tank.getY() + baseImage.getIconHeight() / 2;
-
-            // Calculate the angle from the cannon center to the mouse position
-            double angle = Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX);
-
-            // Create the bullet with the calculated angle, starting from the cannon's center
-            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), angle); // Adjust angle for correct firing direction
+            // Create the bullet with the current cannon angle
+            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
             tank.getBullets().add(bullet);
 
             // Mechanism for handling firing cooldown

@@ -3,6 +3,7 @@ package render;
 import SpriteClasses.*;
 import constants.GameConstants;
 import entities.BulletType;
+import entities.EnemyTank;
 import entities.PlayerTank;
 import entities.Tank;
 import environment.BlockType;
@@ -16,14 +17,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
-    public GameFrame theView;
     public static ArrayList<Block> blocks = new ArrayList<>();
     private static int stage = 1;
-    private Timer gameLoopTimer;
 
-    public GameScreen(GameFrame theView) {
-        this.theView = theView;
+    public GameScreen() {
         PlayerTank pt = new PlayerTank(new Tank(), BulletType.NORMAL);
+        EnemyTank et = new EnemyTank(new Tank(), BulletType.NORMAL);
+        this.add( et);
         this.add(pt);
         this.setVisible(true);
         this.setBackground(Color.BLACK);
@@ -41,10 +41,6 @@ public class GameScreen extends JPanel {
             }
         });
         initBlocks();
-        gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
-            CollisionHandling.checkMovingCollisions(pt.getTank(), blocks);  // Check for collisions with blocks and bullets
-        });
-        gameLoopTimer.start();
     }
 
     public void initBlocks() {

@@ -2,6 +2,7 @@ package physics;
 
 import SpriteClasses.Block;
 import entities.Tank;
+import environment.BlockType;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class CollisionHandling {
 
         // Check collision with blocks
         for (Block block : blocksCopy) {
-            if (tankHitbox.intersects(block.getHitbox())) {
+            if (tankHitbox.intersects(block.getHitbox())&& block.getType()!= BlockType.TREE.getValue()) {
                 System.out.println("Collision detected with block!");
                 // Handle block collision logic here
                 return true;
