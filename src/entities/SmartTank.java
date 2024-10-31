@@ -5,14 +5,12 @@ import physics.CollisionHandling;
 import render.GameScreen;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
-public class EnemyTank extends JLabel {
+public class SmartTank extends JLabel {
     // Image variables
     private ImageIcon cannonImage;
     private ImageIcon baseImage;
@@ -30,7 +28,7 @@ public class EnemyTank extends JLabel {
     // Random movement
     private int movementDirection;
 
-    public EnemyTank(Tank tank, BulletType bulletType) {
+    public SmartTank(Tank tank, BulletType bulletType) {
         this.tank = tank;
         this.defaultBullet = new Bullet(bulletType);
         this.setSize(800, 800);
@@ -60,7 +58,6 @@ public class EnemyTank extends JLabel {
         gameLoopTimer.start();
     }
 
-    // Simulate autonomous movement by changing directions randomly
     // Simulate autonomous movement by changing directions randomly
     private void moveTank() {
         int originalX = tank.getX();
@@ -117,14 +114,18 @@ public class EnemyTank extends JLabel {
 
     // Helper method to find a valid direction
     private int findValidDirection() {
-        Random rnd = new Random();
-        while (true) {
-            int direction = rnd.nextInt(4); // Generate a random direction (0 to 3)
-            Tank testTank = tank;
-            int testX = testTank.getX();
-            int testY = testTank.getY();
+        // Array of directions with an extra 'down' (1) to increase downward likelihood
+        ArrayList<Integer> directions = new ArrayList<>(Arrays.asList(0, 1, 1, 2, 3));
+        Collections.shuffle(directions); // Shuffle to randomize direction order
 
-            // Test the movement based on the randomly chosen direction
+        int originalX = tank.getX();
+        int originalY = tank.getY();
+
+        for (int direction : directions) {
+            int testX = originalX;
+            int testY = originalY;
+
+            // Test the movement based on the shuffled direction
             switch (direction) {
                 case 0: // Test up
                     testY -= tank.getSpeed();
@@ -140,24 +141,57 @@ public class EnemyTank extends JLabel {
                     break;
             }
 
-            // Temporarily set the tank position and update hitbox
-            testTank.setX(testX);
-            testTank.setY(testY);
-            testTank.updateHitbox();
+            // Temporarily set the test position and update hitbox
+            tank.setX(testX);
+            tank.setY(testY);
+            tank.updateHitbox();
 
             // Check if this direction is free of collisions and within bounds
-            if (!CollisionHandling.checkMovingCollisions(testTank, GameScreen.blocks) && isWithinBounds(testX, testY)) {
+            if (!CollisionHandling.checkMovingCollisions(tank, GameScreen.blocks) && isWithinBounds(testX, testY)) {
+                // Restore the tank's position if a valid direction is found
+                tank.setX(originalX);
+                tank.setY(originalY);
                 return direction; // Found a valid direction
             }
         }
 
+        // Restore the original position if no valid direction is found
+        tank.setX(originalX);
+        tank.setY(originalY);
+        return -1; // Return -1 if no valid direction is found
     }
+
+
 
     // Update cannon angle (can be random or towards player if you want to implement targeting)
     private void updateCannonAngle() {
-        cannonAngle += 0.1; // Slowly rotate the cannon
-    }
+        // Calculate the angle toward the player tank
+        int playerCenterX = GameScreen.pt.getTank().getX() + GameScreen.pt.getTank().getHitbox().width / 2;
+        int playerCenterY = GameScreen.pt.getTank().getY() + GameScreen.pt.getTank().getHitbox().height / 2;
+        int cannonCenterX = tank.getX() + baseImage.getIconWidth() / 2;
+        int cannonCenterY = tank.getY() + baseImage.getIconHeight() / 2;
 
+        // Calculate the target angle to the player
+        double targetAngle = Math.atan2(playerCenterY - cannonCenterY, playerCenterX - cannonCenterX) + (Math.PI / 2);
+
+        // Normalize angle difference to be between -PI and PI
+        double angleDifference = targetAngle - cannonAngle;
+        angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI;
+
+        // Rotate the cannon towards the target angle gradually
+        if (Math.abs(angleDifference) > GameConstants.ROTATION_SPEED) {
+            if (angleDifference > 0) {
+                cannonAngle += GameConstants.ROTATION_SPEED;
+            } else {
+                cannonAngle -= GameConstants.ROTATION_SPEED;
+            }
+        } else {
+            cannonAngle = targetAngle;
+        }
+
+        // Keep the cannon angle in the range of -PI to PI
+        cannonAngle = (cannonAngle + Math.PI) % (2 * Math.PI) - Math.PI;
+    }
     // Create (fire) a bullet, similar to player tank, but with its own logic
     private void createBullet() {
         System.out.println("shoot");
@@ -166,11 +200,11 @@ public class EnemyTank extends JLabel {
             int cannonTipX = (int) (tank.getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
             int cannonTipY = (int) (tank.getY() + baseImage.getIconHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), cannonAngle);
+            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
             tank.getBullets().add(bullet);
 
             canFire = false;
-            bulletTimerCountdown = new Timer(defaultBullet.getCooldown(), e -> {
+            bulletTimerCountdown = new Timer(defaultBullet.getCooldown()+100, e -> {
                 canFire = true;
                 bulletTimerCountdown.stop();
             });
