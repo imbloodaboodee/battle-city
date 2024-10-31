@@ -1,6 +1,8 @@
 package entities;
 
+import SpriteClasses.Block;
 import constants.GameConstants;
+import environment.BlockType;
 import render.GameScreen;
 
 import javax.swing.*;
@@ -164,7 +166,14 @@ public class PlayerTank extends JLabel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
 
-        // Rotate the tank base image according to the tankAngle
+        // Draw all blocks except Trees first
+        for (Block block : GameScreen.blocks) {
+            if (block.getType() != BlockType.TREE.getValue()) {
+                g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
+            }
+        }
+
+        // Rotate and draw the tank base image according to the tankAngle
         int tankCenterX = tank.getX() + baseImage.getIconWidth() / 2;
         int tankCenterY = tank.getY() + baseImage.getIconHeight() / 2;
         AffineTransform atTank = AffineTransform.getRotateInstance(tank.getTankAngle(), tankCenterX, tankCenterY);
@@ -173,7 +182,7 @@ public class PlayerTank extends JLabel {
         // Draw the rotated tank base
         g2d.drawImage(baseImage.getImage(), atTank, this);
 
-        // Rotate the cannon according to the mouse position
+        // Rotate and draw the cannon according to the mouse position
         int cannonX = tankCenterX - cannonImage.getIconWidth() / 2;
         int cannonY = tankCenterY - cannonImage.getIconHeight() / 2;
         AffineTransform atCannon = AffineTransform.getRotateInstance(cannonAngle, cannonX + cannonImage.getIconWidth() / 2, cannonY + cannonImage.getIconHeight() / 2);
@@ -182,11 +191,11 @@ public class PlayerTank extends JLabel {
         // Draw the rotated cannon
         g2d.drawImage(cannonImage.getImage(), atCannon, this);
 
-        //Adjust opacity for the aim
+        // Adjust opacity for the aim
         float alpha = 0.5f;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 
-        // Rotate the aim according to the mouse position
+        // Rotate and draw the aim according to the mouse position
         AffineTransform atAim = AffineTransform.getRotateInstance(cannonAngle, tankCenterX, tankCenterY);
         atAim.translate(tankCenterX - aimImage.getIconWidth() / 2, tankCenterY - aimImage.getIconHeight() - cannonImage.getIconHeight() / 2);
 
@@ -201,18 +210,26 @@ public class PlayerTank extends JLabel {
 
         // Draw bullets
         for (Bullet bullet : tank.getBullets()) {
-            g2d.setColor(Color.WHITE);
-            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE); // Drawing a simple circle for the bullet
+            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE);
             g2d.setColor(Color.RED);
-
             g2d.draw(bullet.getHitbox());
+            g2d.setColor(Color.WHITE); // Reset to white for the next bullet
         }
-        // **Draw the hitbox for debugging**
-        g2d.setColor(Color.RED);  // Set hitbox color (e.g., red for visibility)
-        g2d.draw(tank.getHitbox());  // Draw the hitbox around the tank
+
+        // Draw Tree blocks last to ensure they appear above the tank
+        for (Block block : GameScreen.blocks) {
+            if (block.getType() == BlockType.TREE.getValue()) {
+                g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
+            }
+        }
+
+        // Draw the hitbox for debugging
+        g2d.setColor(Color.RED);
+        g2d.draw(tank.getHitbox());
 
         g2d.dispose();
     }
+
 
     public Tank getTank() {
         return tank;

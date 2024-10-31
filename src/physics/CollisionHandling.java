@@ -45,6 +45,7 @@ public class CollisionHandling {
 
     private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, ArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
         switch (blockType) {
+            case RIVER:
             case TREE:
                 // Bullet goes through tree; do nothing.
                 System.out.println("Bullet passed through tree.");
