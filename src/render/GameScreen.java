@@ -1,12 +1,14 @@
 package render;
 
 import SpriteClasses.*;
+import constants.GameConstants;
 import entities.BulletType;
 import entities.SmartTank;
 import entities.PlayerTank;
 import entities.Tank;
 import environment.BlockType;
 import environment.MapLoader;
+import physics.CollisionHandling;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,9 +18,10 @@ import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
     public static ArrayList<Block> blocks = new ArrayList<>();
-    private static int stage = 1;
     public static PlayerTank pt = new PlayerTank(new Tank(), BulletType.NORMAL);
     public static SmartTank et1 = new SmartTank(new Tank(), BulletType.NORMAL);
+    private static int stage = 10;
+    private Timer gameLoopTimer;
 
     public GameScreen() {
         this.add(et1);
