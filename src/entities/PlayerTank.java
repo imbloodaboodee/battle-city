@@ -26,7 +26,7 @@ public class PlayerTank extends JLabel {
     private boolean canFire = true;
 
     private double targetCannonAngle = 0; // The target angle to rotate to
-    private final double ROTATION_SPEED = 0.02; // Speed at which the cannon rotates
+    private final double ROTATION_SPEED = 1; // Speed at which the cannon rotates
 
     public PlayerTank(Tank tank, BulletType bulletType) {
         this.tank = tank;
@@ -109,17 +109,25 @@ public class PlayerTank extends JLabel {
         int cannonCenterY = tank.getY() + baseImage.getIconHeight() / 2;
         targetCannonAngle = Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX) + (Math.PI / 2);
 
-        // Gradually adjust the cannon angle towards the target angle
-        if (Math.abs(targetCannonAngle - cannonAngle) > ROTATION_SPEED) {
-            // Check if we need to rotate clockwise or counter-clockwise
-            if (targetCannonAngle > cannonAngle) {
+        // Calculate the difference between the current angle and the target angle
+        double angleDifference = targetCannonAngle - cannonAngle;
+
+        // Normalize the angle difference to be within the range of -PI to PI
+        angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI;
+
+        // If the angle difference is greater than the rotation speed, rotate towards the target angle
+        if (Math.abs(angleDifference) > ROTATION_SPEED) {
+            if (angleDifference > 0) {
                 cannonAngle += ROTATION_SPEED; // Rotate clockwise
             } else {
                 cannonAngle -= ROTATION_SPEED; // Rotate counter-clockwise
             }
 
             // Keep the angle within the range of -PI to PI for consistency
-            cannonAngle = (cannonAngle + Math.PI * 2) % (Math.PI * 2);
+            cannonAngle = (cannonAngle + Math.PI) % (2 * Math.PI) - Math.PI;
+        } else {
+            // If the difference is smaller than the rotation speed, set the angle directly
+            cannonAngle = targetCannonAngle;
         }
     }
 

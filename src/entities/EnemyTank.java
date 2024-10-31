@@ -49,6 +49,7 @@ public class EnemyTank extends JLabel {
         // Timer for creating bullets, starts when the enemy decides to shoot
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> createBullet());
         bulletCreationTimer.setRepeats(true);
+        bulletCreationTimer.start();
 
         // Timer for updating entities (tank position, bullets, etc.)
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
@@ -117,13 +118,11 @@ public class EnemyTank extends JLabel {
     // Helper method to find a valid direction
     private int findValidDirection() {
         Random rnd = new Random();
-
-        // Attempt to find a valid direction within a certain number of tries
-        for (int i = 0; i < 4; i++) {
+        while (true) {
             int direction = rnd.nextInt(4); // Generate a random direction (0 to 3)
-
-            int testX = tank.getX();
-            int testY = tank.getY();
+            Tank testTank = tank;
+            int testX = testTank.getX();
+            int testY = testTank.getY();
 
             // Test the movement based on the randomly chosen direction
             switch (direction) {
@@ -142,36 +141,16 @@ public class EnemyTank extends JLabel {
             }
 
             // Temporarily set the tank position and update hitbox
-            tank.setX(testX);
-            tank.setY(testY);
-            tank.updateHitbox();
+            testTank.setX(testX);
+            testTank.setY(testY);
+            testTank.updateHitbox();
 
             // Check if this direction is free of collisions and within bounds
-            if (!CollisionHandling.checkMovingCollisions(tank, GameScreen.blocks) && isWithinBounds(testX, testY)) {
+            if (!CollisionHandling.checkMovingCollisions(testTank, GameScreen.blocks) && isWithinBounds(testX, testY)) {
                 return direction; // Found a valid direction
             }
         }
 
-        return -1; // No valid direction found after all attempts
-    }
-
-
-    private void revertMovement() {
-        // Revert the movement when hitting boundaries or obstacles
-        switch (movementDirection) {
-            case 0:
-                tank.setY(tank.getY() + tank.getSpeed()); // Move down (reverse of up)
-                break;
-            case 1:
-                tank.setY(tank.getY() - tank.getSpeed()); // Move up (reverse of down)
-                break;
-            case 2:
-                tank.setX(tank.getX() + tank.getSpeed()); // Move right (reverse of left)
-                break;
-            case 3:
-                tank.setX(tank.getX() - tank.getSpeed()); // Move left (reverse of right)
-                break;
-        }
     }
 
     // Update cannon angle (can be random or towards player if you want to implement targeting)
@@ -181,6 +160,7 @@ public class EnemyTank extends JLabel {
 
     // Create (fire) a bullet, similar to player tank, but with its own logic
     private void createBullet() {
+        System.out.println("shoot");
         if (canFire) {
             // Random firing logic or based on some condition
             int cannonTipX = (int) (tank.getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
