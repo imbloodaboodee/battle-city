@@ -43,7 +43,7 @@ public class DumbTank extends JLabel {
         movementTimer.start();
 
         // Timer for creating bullets, starts when the enemy decides to shoot
-        bulletCreationTimer = new Timer(GameConstants.DELAY, e -> createBullet());
+        bulletCreationTimer = new Timer(GameConstants.DELAY+1000, e -> createBullet());
         bulletCreationTimer.setRepeats(true);
         bulletCreationTimer.start();
 
@@ -174,7 +174,7 @@ public class DumbTank extends JLabel {
             int cannonTipX = (int) (tank.getX() + tankImage.getIconWidth() / 2 + Math.cos(tank.getTankAngle() - Math.PI / 2)* tankImage.getIconHeight() / 2);
             int cannonTipY = (int) (tank.getY() + tankImage.getIconHeight() / 2 + Math.sin(tank.getTankAngle() - Math.PI / 2)* tankImage.getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX,  cannonTipY , defaultBullet.getBulletType(), tank.getTankAngle()-Math.PI/2);
+            Bullet bullet = new Bullet(cannonTipX-GameConstants.BULLET_SIZE/2,  cannonTipY-GameConstants.BULLET_SIZE/2 , defaultBullet.getBulletType(), tank.getTankAngle()-Math.PI/2);
             tank.getBullets().add(bullet);
 
             canFire = false;
