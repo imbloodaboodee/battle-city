@@ -37,7 +37,7 @@ public class Bullet {
             case NORMAL:
                 this.damage = 3;
                 this.cooldown = 1;  //1  100
-                this.speed = 1;    //10 1
+                this.speed = 10;    //10 1
                 break;
             case EXPLOSIVE:
                 this.damage = 5;
@@ -144,4 +144,8 @@ public class Bullet {
     public void setHitbox(Rectangle2D.Double hitbox) {
         this.hitbox = hitbox;
     }
+    public boolean isOutOfBounds(int width, int height) {
+        return x < 0 || x > width || y < 0 || y > height;
+    }
+
 }

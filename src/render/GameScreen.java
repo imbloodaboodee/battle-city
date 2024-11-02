@@ -5,25 +5,26 @@ import constants.GameConstants;
 import entities.*;
 import environment.BlockType;
 import environment.MapLoader;
-import physics.CollisionHandling;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
     public static ArrayList<Block> blocks = new ArrayList<>();
-    public static PlayerTank pt = new PlayerTank(new Tank(), BulletType.NORMAL);
-    public static SmartTank st = new SmartTank(new Tank(), BulletType.NORMAL);
-    public static DumbTank dt = new DumbTank(new Tank(), BulletType.NORMAL);
+    public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(new Tank(), BulletType.NORMAL), this);
+//    public static SmartTank st = new SmartTank(new Tank(), BulletType.NORMAL);
+//    public static DumbTank dt = new DumbTank(new Tank(), BulletType.NORMAL);
+
     private static int stage = 10;
     private Timer gameLoopTimer;
 
     public GameScreen() {
-        this.add(dt);
-        this.add(pt);
+//        this.add(dt);
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
@@ -31,15 +32,36 @@ public class GameScreen extends JPanel {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                pt.keyPressed(e);
+                ptRenderer.getPlayerTank().keyPressed(e);
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                pt.keyReleased(e);
+                ptRenderer.getPlayerTank().keyReleased(e);
             }
         });
+        this.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                ptRenderer.getPlayerTank().mousePressed(e);
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                ptRenderer.getPlayerTank().mouseReleased(e);
+
+            }
+
+        });
+
         initBlocks();
+        gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
+            repaint();
+        });
+        gameLoopTimer.start();
+
     }
 
     public void initBlocks() {
@@ -79,15 +101,20 @@ public class GameScreen extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
-        for (Block block : blocks) {
-            if (block.isVisible()) {
+
+        for (Block block : GameScreen.blocks) {
+            if (block.getType() != BlockType.TREE.getValue()) {
                 g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
-                block.setHitbox(new Rectangle(block.getX(), block.getY(), 16, 16));
-                g2d.setColor(Color.RED);
-                g2d.draw(block.getHitbox());
             }
         }
-        Toolkit.getDefaultToolkit().sync();
+
+        ptRenderer.paintComponent(g2d);
+
+        for (Block block : GameScreen.blocks) {
+            if (block.getType() == BlockType.TREE.getValue()) {
+                g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
+            }
+        }        Toolkit.getDefaultToolkit().sync();
     }
 
     public ArrayList<Block> getBlocks() {
