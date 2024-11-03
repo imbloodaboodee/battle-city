@@ -32,8 +32,8 @@ public class PlayerTankRender extends JLabel {
         SwingUtilities.convertPointFromScreen(mousePosition, c);
 
         // Calculate the center of the tank
-        int cannonCenterX = playerTank.getTank().getX() + baseImage.getIconWidth() / 2;
-        int cannonCenterY = playerTank.getTank().getY() + baseImage.getIconHeight() / 2;
+        int cannonCenterX = playerTank.getX() + baseImage.getIconWidth() / 2;
+        int cannonCenterY = playerTank.getY() + baseImage.getIconHeight() / 2;
         playerTank.setTargetCannonAngle(Math.atan2(mousePosition.y - cannonCenterY, mousePosition.x - cannonCenterX) + (Math.PI / 2));
         // Calculate the angle from tank center to mouse position, for consistent cannon and aim rotation
 
@@ -66,11 +66,11 @@ public class PlayerTankRender extends JLabel {
 
         updateCannonAngle();
         // Draw tank base and cannon with rotation
-        int tankCenterX = playerTank.getTank().getX() + baseImage.getIconWidth() / 2;
-        int tankCenterY = playerTank.getTank().getY() + baseImage.getIconHeight() / 2;
+        int tankCenterX = playerTank.getX() + baseImage.getIconWidth() / 2;
+        int tankCenterY = playerTank.getY() + baseImage.getIconHeight() / 2;
 
-        AffineTransform atTank = AffineTransform.getRotateInstance(playerTank.getTank().getTankAngle(), tankCenterX, tankCenterY);
-        atTank.translate(playerTank.getTank().getX(), playerTank.getTank().getY());
+        AffineTransform atTank = AffineTransform.getRotateInstance(playerTank.getTankAngle(), tankCenterX, tankCenterY);
+        atTank.translate(playerTank.getX(), playerTank.getY());
         g2d.drawImage(baseImage.getImage(), atTank, this);
 
         // Rotate and draw the cannon according to the mouse position
@@ -92,7 +92,7 @@ public class PlayerTankRender extends JLabel {
 
         // Draw bullets
         g2d.setColor(Color.WHITE);
-        for (Bullet bullet : playerTank.getTank().getBullets()) {
+        for (Bullet bullet : playerTank.getBullets()) {
             g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), 5, 5);
         }
 

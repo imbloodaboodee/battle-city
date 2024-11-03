@@ -15,20 +15,21 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GameScreen extends JPanel {
+    private static GameScreen instance;  // Static instance for Singleton
     public static ArrayList<Block> blocks = new ArrayList<>();
-    public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(new Tank(), BulletType.NORMAL), this);
-//    public static SmartTank st = new SmartTank(new Tank(), BulletType.NORMAL);
-//    public static DumbTank dt = new DumbTank(new Tank(), BulletType.NORMAL);
-
+    public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
     private static int stage = 10;
     private Timer gameLoopTimer;
+    public DumbTank st = new DumbTank( BulletType.NORMAL);
+    public DumbTankRender dumbTankRender = new DumbTankRender(st, this);
 
-    public GameScreen() {
-//        this.add(dt);
+    // Private constructor to prevent external instantiation
+    private GameScreen() {
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setLayout(null);
+
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -40,28 +41,33 @@ public class GameScreen extends JPanel {
                 ptRenderer.getPlayerTank().keyReleased(e);
             }
         });
-        this.addMouseListener(new MouseAdapter() {
 
+        this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 ptRenderer.getPlayerTank().mousePressed(e);
-
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 ptRenderer.getPlayerTank().mouseReleased(e);
-
             }
-
         });
 
         initBlocks();
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
+            ptRenderer.getPlayerTank().updateTankPosition();
             repaint();
         });
         gameLoopTimer.start();
+    }
 
+    // Public method to get the single instance
+    public static GameScreen getInstance() {
+        if (instance == null) {
+            instance = new GameScreen();
+        }
+        return instance;
     }
 
     public void initBlocks() {
@@ -109,16 +115,26 @@ public class GameScreen extends JPanel {
         }
 
         ptRenderer.paintComponent(g2d);
+        dumbTankRender.paintComponent(g2d);
 
         for (Block block : GameScreen.blocks) {
             if (block.getType() == BlockType.TREE.getValue()) {
                 g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
             }
-        }        Toolkit.getDefaultToolkit().sync();
+        }
+        Toolkit.getDefaultToolkit().sync();
     }
 
     public ArrayList<Block> getBlocks() {
         return blocks;
     }
 
+    public PlayerTankRender getPlayerTankRender() {
+        return ptRenderer;
+    }
+
+
+    public static int getStage() {
+        return stage;
+    }
 }

@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Tank implements KeyListener {
+public class Tank {
     private boolean isMovingUp = false;
     private boolean isMovingDown = false;
     private boolean isMovingLeft = false;
@@ -28,50 +28,7 @@ public class Tank implements KeyListener {
         speed = 1;
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
-        int key = e.getKeyCode();
 
-        switch (key) {
-            case KeyEvent.VK_W:
-                isMovingUp = true;
-                break;
-            case KeyEvent.VK_S:
-                isMovingDown = true;
-                break;
-            case KeyEvent.VK_A:
-                isMovingLeft = true;
-                break;
-            case KeyEvent.VK_D:
-                isMovingRight = true;
-                break;
-        }
-        updateTankPosition();
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        int key = e.getKeyCode();
-
-        switch (key) {
-            case KeyEvent.VK_W:
-                isMovingUp = false;
-                break;
-            case KeyEvent.VK_S:
-                isMovingDown = false;
-                break;
-            case KeyEvent.VK_A:
-                isMovingLeft = false;
-                break;
-            case KeyEvent.VK_D:
-                isMovingRight = false;
-                break;
-        }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
 
     public double getTankAngle() {
         return tankAngle;
