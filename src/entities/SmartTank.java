@@ -18,6 +18,12 @@ public class SmartTank extends JLabel {
     private Bullet defaultBullet;
     private double cannonAngle = 0;
     private boolean canFire = true;
+    private boolean isFrozen = false;
+    private Timer freezeTimer;
+
+    public Tank getTank() {
+        return tank;
+    }
 
     // Timers
     private Timer movementTimer;
@@ -58,8 +64,29 @@ public class SmartTank extends JLabel {
         gameLoopTimer.start();
     }
 
+    public void freeze(int duration) {
+        isFrozen = true; // Đặt trạng thái đóng băng
+        System.out.println("SmartTank is now frozen for " + duration + " milliseconds.");
+
+        if (freezeTimer != null && freezeTimer.isRunning()) {
+            freezeTimer.stop();  // Dừng timer hiện có để tránh xung đột
+        }
+
+        freezeTimer = new Timer(duration, e -> {
+            isFrozen = false;
+            System.out.println("SmartTank is no longer frozen.");
+        });
+        freezeTimer.setRepeats(false);
+        freezeTimer.start();
+    }
+
     // Simulate autonomous movement by changing directions randomly
     private void moveTank() {
+        if (isFrozen) {
+            System.out.println("SmartTank is frozen, skipping movement.");
+            return; // Dừng di chuyển nếu bị đóng băng
+        }
+
         int originalX = tank.getX();
         int originalY = tank.getY();
 
@@ -194,7 +221,11 @@ public class SmartTank extends JLabel {
     }
     // Create (fire) a bullet, similar to player tank, but with its own logic
     private void createBullet() {
-        System.out.println("shoot");
+        if (isFrozen) {
+            System.out.println("SmartTank is frozen, skipping bullet creation.");
+            return; // Dừng bắn nếu bị đóng băng
+        }
+
         if (canFire) {
             // Random firing logic or based on some condition
             int cannonTipX = (int) (tank.getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);

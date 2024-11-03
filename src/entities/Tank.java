@@ -28,6 +28,13 @@ public class Tank implements KeyListener {
         speed = 1;
     }
 
+    public Tank(int x, int y) {
+        this.x = x;
+        this.y = y;
+        health = 3;
+        speed = 1;
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
