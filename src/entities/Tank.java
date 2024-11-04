@@ -3,6 +3,7 @@ package entities;
 import physics.CollisionHandling;
 import render.GameScreen;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class Tank {
     private int health;
     private int speed;  // Increase speed for visible movement
     private ArrayList<Bullet> bullets = new ArrayList<>();
+    private boolean isFrozen = false;
+    private Timer freezeTimer;
 
     public Tank() {
         x = 100;
@@ -28,6 +31,12 @@ public class Tank {
         speed = 1;
     }
 
+    public Tank(int x, int y) {
+        this.x = x;
+        this.y = y;
+        health = 3;
+        speed = 1;
+    }
 
 
     public double getTankAngle() {
@@ -93,14 +102,21 @@ public class Tank {
         // Final hitbox update
         updateHitbox();
     }
-public void moveUp(){
-        isMovingUp = true;
-}
+    public void freeze(int duration) {
+        isFrozen = true; // Đặt trạng thái đóng băng
+        System.out.println("SmartTank is now frozen for " + duration + " milliseconds.");
 
+        if (freezeTimer != null && freezeTimer.isRunning()) {
+            freezeTimer.stop();  // Dừng timer hiện có để tránh xung đột
+        }
 
-
-
-
+        freezeTimer = new Timer(duration, e -> {
+            isFrozen = false;
+            System.out.println("SmartTank is no longer frozen.");
+        });
+        freezeTimer.setRepeats(false);
+        freezeTimer.start();
+    }
     void updateHitbox() {
         hitbox.setLocation(x, y);
     }

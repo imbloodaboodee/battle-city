@@ -34,7 +34,20 @@ public class DumbTank extends Tank {
         this.defaultBullet = new Bullet(bulletType);
 
         bulletManager = new BulletManager(getBullets());
-        // Initialize tank images
+        initializeCommonResources();
+
+    }
+
+    public DumbTank(int x, int y, BulletType bulletType) {
+        super(x, y);
+        this.defaultBullet = new Bullet(bulletType);
+
+        bulletManager = new BulletManager(getBullets());
+        initializeCommonResources();
+
+    }
+
+    private void initializeCommonResources() {
         baseImage = new ImageIcon("./src/assets/image/tank.png");
         cannonImage = new ImageIcon("./src/assets/image/cannon.png");
 

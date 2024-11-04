@@ -3,8 +3,14 @@ package render;
 import SpriteClasses.*;
 import constants.GameConstants;
 import entities.*;
+import entities.BulletType;
+import entities.PlayerTank;
+import entities.Tank;
+import entities.PowerUps.PowerUp;
 import environment.BlockType;
 import environment.MapLoader;
+import physics.BoardUtility;
+import physics.CollisionHandling;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,19 +23,24 @@ import java.util.ArrayList;
 public class GameScreen extends JPanel {
     private static GameScreen instance;  // Static instance for Singleton
     public static ArrayList<Block> blocks = new ArrayList<>();
+    public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
     private static int stage = 10;
     private Timer gameLoopTimer;
-    public DumbTank st = new DumbTank( BulletType.NORMAL);
-    public DumbTankRender dumbTankRender = new DumbTankRender(st, this);
+    public DumbTank dumbTank = new DumbTank( BulletType.NORMAL);
+    public DumbTankRender dumbTankRender = new DumbTankRender(dumbTank, this);
+    private Timer powerUpSpawnTimer;
 
     // Private constructor to prevent external instantiation
     private GameScreen() {
+        enemyTanks.add(dumbTank); // Add SmartTank to the enemyTanks list
+
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setLayout(null);
 
+        // Add key listener for player tank control
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -54,12 +65,12 @@ public class GameScreen extends JPanel {
             }
         });
 
+
+        // Initialize blocks, start the game loop, and power-up spawner
         initBlocks();
-        gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
-            ptRenderer.getPlayerTank().updateTankPosition();
-            repaint();
-        });
-        gameLoopTimer.start();
+        initGameLoop();
+        initPowerUpSpawner();
+
     }
 
     // Public method to get the single instance
@@ -70,7 +81,7 @@ public class GameScreen extends JPanel {
         return instance;
     }
 
-    public void initBlocks() {
+    private void initBlocks() {
         int[][] map = MapLoader.getMap(stage);
         int type;
         for (int x = 0; x < map.length; x++) {
@@ -103,6 +114,33 @@ public class GameScreen extends JPanel {
         }
     }
 
+    private void initGameLoop() {
+        // Game loop to update the game state
+        gameLoopTimer = new Timer(16, e -> {
+            // Check for collisions with PowerUps
+            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks);
+            for (Tank enemyTank : enemyTanks) {
+                CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
+            }
+
+            // Kiểm tra va chạm giữa đạn của PlayerTank và enemy tanks
+            CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
+
+            CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
+
+            // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
+            ptRenderer.getPlayerTank().updateTankPosition();
+            repaint();
+        });
+        gameLoopTimer.start();
+    }
+
+    private void initPowerUpSpawner() {
+        // Timer to spawn PowerUps periodically
+        powerUpSpawnTimer = new Timer(1000, e -> BoardUtility.spawnRandomPowerUp()); // Spawn every second
+        powerUpSpawnTimer.start();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -122,7 +160,17 @@ public class GameScreen extends JPanel {
                 g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
             }
         }
+
+        // Draw PowerUps
+        for (PowerUp powerUp : BoardUtility.getPowerUps()) {
+            g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
+            g2d.setColor(Color.YELLOW);
+            g2d.draw(powerUp.getHitbox());
+        }
+
+        // Sync the graphics
         Toolkit.getDefaultToolkit().sync();
+        g2d.dispose();
     }
 
     public ArrayList<Block> getBlocks() {
@@ -136,5 +184,8 @@ public class GameScreen extends JPanel {
 
     public static int getStage() {
         return stage;
+    }
+    public ArrayList<Tank> getEnemyTanks() {
+        return enemyTanks;
     }
 }
