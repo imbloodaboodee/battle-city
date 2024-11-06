@@ -25,8 +25,8 @@ public class Tank {
     private Timer freezeTimer;
 
     public Tank() {
-        x = 100;
-        y = 100;
+        x = 416;
+        y = 16;
         health = 3;
         speed = 1;
     }
@@ -38,6 +38,12 @@ public class Tank {
         speed = 1;
     }
 
+    public Tank(int x, int y, int health, int speed) {
+        this.x = x;
+        this.speed = speed;
+        this.y = y;
+        this.health = health;
+    }
 
     public double getTankAngle() {
         return tankAngle;
@@ -102,6 +108,7 @@ public class Tank {
         // Final hitbox update
         updateHitbox();
     }
+
     public void freeze(int duration) {
         isFrozen = true; // Đặt trạng thái đóng băng
         System.out.println("SmartTank is now frozen for " + duration + " milliseconds.");
@@ -117,6 +124,7 @@ public class Tank {
         freezeTimer.setRepeats(false);
         freezeTimer.start();
     }
+
     void updateHitbox() {
         hitbox.setLocation(x, y);
     }

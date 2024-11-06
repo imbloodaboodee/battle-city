@@ -14,8 +14,6 @@ import static physics.CollisionHandling.checkCollisionBulletsBlocks;
 
 public class BulletManager {
     private ArrayList<Bullet> bullets;
-    private boolean canFire = true;
-    private Timer bulletTimerCountdown;
 
     public BulletManager(ArrayList<Bullet> bullets) {
         this.bullets = bullets;

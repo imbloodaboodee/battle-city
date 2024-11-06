@@ -22,8 +22,6 @@ public class SmartTank extends Tank {
     private boolean isFrozen = false;
     private Timer freezeTimer;
 
-
-
     // Timers
     private Timer movementTimer;
     private Timer bulletCreationTimer;
@@ -32,6 +30,7 @@ public class SmartTank extends Tank {
 
     // Random movement
     private int movementDirection;
+
 
     public SmartTank(BulletType bulletType) {
         super();
@@ -42,13 +41,12 @@ public class SmartTank extends Tank {
         baseImage = new ImageIcon("./src/assets/image/tank.png");
         cannonImage = new ImageIcon("./src/assets/image/cannon.png");
 
-        // Initialize the hitbox
+        // Initialize the hitboxssss
         setHitbox(new Rectangle(getX(), getY(), baseImage.getIconWidth(), baseImage.getIconHeight()));
 
         // Timer for autonomous movement
         movementTimer = new Timer(GameConstants.DELAY, e -> bumpMove());
         movementTimer.start();
-
         // Timer for creating bullets, starts when the enemy decides to shoot
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
@@ -59,23 +57,10 @@ public class SmartTank extends Tank {
             bulletManager.updateBullets();
         });
         gameLoopTimer.start();
+
     }
 
-    public void freeze(int duration) {
-        isFrozen = true; // Đặt trạng thái đóng băng
-        System.out.println("SmartTank is now frozen for " + duration + " milliseconds.");
 
-        if (freezeTimer != null && freezeTimer.isRunning()) {
-            freezeTimer.stop();  // Dừng timer hiện có để tránh xung đột
-        }
-
-        freezeTimer = new Timer(duration, e -> {
-            isFrozen = false;
-            System.out.println("SmartTank is no longer frozen.");
-        });
-        freezeTimer.setRepeats(false);
-        freezeTimer.start();
-    }
 
     // Simulate autonomous movement by changing directions randomly
     private void bumpMove() {

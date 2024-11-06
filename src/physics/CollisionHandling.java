@@ -72,67 +72,68 @@ public class CollisionHandling {
     public static boolean checkMovingCollisions(Tank tank, ArrayList<Block> blocks) {
         Rectangle tankHitbox = tank.getHitbox();
 
-        Iterator<Block> blockIterator = blocks.iterator();
-        while (blockIterator.hasNext()) {
-            Block block = blockIterator.next();
+        // Loop through the list by index instead of using an iterator
+        for (int i = 0; i < blocks.size(); i++) {
+            Block block = blocks.get(i);
+
+            // Check if the tank collides with any block except trees
             if (tankHitbox.intersects(block.getHitbox()) && block.getType() != BlockType.TREE.getValue()) {
                 System.out.println("Collision detected with block!");
-                return true;
+                return true; // Collision detected
             }
         }
-        return false;
+        return false; // No collision detected
     }
+
 
     // Check collision between bullets and blocks
     public static void checkCollisionBulletsBlocks(ArrayList<Bullet> bullets, ArrayList<Block> blocks) {
-        Iterator<Bullet> bulletIterator = bullets.iterator();
+        for (int x = 0; x < bullets.size(); x++) {
+            Bullet b = bullets.get(x);
+            Rectangle2D.Double bulletHitbox = b.getHitbox();
 
-        while (bulletIterator.hasNext()) {
-            Bullet bullet = bulletIterator.next();
-            Rectangle2D.Double bulletHitbox = bullet.getHitbox();
-
-            Iterator<Block> blockIterator = blocks.iterator();
-            while (blockIterator.hasNext()) {
-                Block block = blockIterator.next();
+            for (int i = 0; i < blocks.size(); i++) {
+                Block block = blocks.get(i);
                 Rectangle blockHitbox = block.getHitbox();
-                BlockType blockType = BlockType.getTypeFromInt(block.getType());
+                BlockType blockType = BlockType.getTypeFromInt(block.getType()); // Convert int to BlockType
 
                 if (bulletHitbox.intersects(blockHitbox)) {
                     System.out.println("Collision detected with block of type: " + blockType);
-                    handleBulletBlockCollision(bulletIterator, blockIterator, blockType);
-                    break; // Exit loop after handling collision
+                    CollisionBulletsBlocksHelper(bullets, blocks, x, i, blockType);
+                    break;  // Exit loop after handling collision
                 }
             }
         }
     }
 
-    // Updated handleBulletBlockCollision to use blockIterator
-    private static void handleBulletBlockCollision(Iterator<Bullet> bulletIterator, Iterator<Block> blockIterator, BlockType blockType) {
+    private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, ArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
         switch (blockType) {
             case RIVER:
             case TREE:
-                // Bullet goes through tree or river; do nothing
-                System.out.println("Bullet passed through tree or river.");
+                // Bullet goes through tree; do nothing.
+                System.out.println("Bullet passed through tree.");
                 break;
 
             case BRICK:
                 // Remove both the bullet and the brick block
-                bulletIterator.remove();
-                blockIterator.remove();
+                bullets.remove(bulletIndex);
+                blocks.remove(blockIndex);
                 System.out.println("Bullet and brick block removed after collision.");
-                break;
 
+                break;
             case EDGE:
             case STEEL:
-                // Only remove the bullet; steel and edge blocks remain
-                bulletIterator.remove();
-                System.out.println("Bullet removed after hitting steel or edge block.");
+                // Only remove the bullet; steel block remains
+                bullets.remove(bulletIndex);
+                System.out.println("Bullet removed after hitting steel block.");
                 break;
 
             default:
                 System.out.println("Unknown block type.");
         }
     }
+
+
 
     // Check collision between Tank and PowerUps
     public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, ArrayList<Tank> enemyTanks) {

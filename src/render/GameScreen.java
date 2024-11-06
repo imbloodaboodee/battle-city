@@ -9,6 +9,7 @@ import entities.Tank;
 import entities.PowerUps.PowerUp;
 import environment.BlockType;
 import environment.MapLoader;
+import manager.TankSpawner;
 import physics.BoardUtility;
 import physics.CollisionHandling;
 
@@ -25,21 +26,17 @@ public class GameScreen extends JPanel {
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
-    private static int stage = 10;
+    private static int stage = 5;
     private Timer gameLoopTimer;
-    public DumbTank dumbTank = new DumbTank( BulletType.NORMAL);
-    public DumbTankRender dumbTankRender = new DumbTankRender(dumbTank, this);
     private Timer powerUpSpawnTimer;
-
-    // Private constructor to prevent external instantiation
+    private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
+    private DumbTankRender dumbTankRender;
+    // Private constructor to prevent external instantiations
     private GameScreen() {
-        enemyTanks.add(dumbTank); // Add SmartTank to the enemyTanks list
-
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setLayout(null);
-
         // Add key listener for player tank control
         this.addKeyListener(new KeyAdapter() {
             @Override
@@ -67,10 +64,10 @@ public class GameScreen extends JPanel {
 
 
         // Initialize blocks, start the game loop, and power-up spawner
+        tankSpawner.spawnEnemyTanks();
         initBlocks();
         initGameLoop();
         initPowerUpSpawner();
-
     }
 
     // Public method to get the single instance
@@ -118,15 +115,14 @@ public class GameScreen extends JPanel {
         // Game loop to update the game state
         gameLoopTimer = new Timer(16, e -> {
             // Check for collisions with PowerUps
-            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks);
+//            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks);
             for (Tank enemyTank : enemyTanks) {
-                CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
+//                CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
             }
-
             // Kiểm tra va chạm giữa đạn của PlayerTank và enemy tanks
-            CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
+//            CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
 
-            CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
+//            CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
 
             // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
             ptRenderer.getPlayerTank().updateTankPosition();
@@ -153,7 +149,13 @@ public class GameScreen extends JPanel {
         }
 
         ptRenderer.paintComponent(g2d);
-        dumbTankRender.paintComponent(g2d);
+//        for (DumbTankRender dumbTankRender : dumbTankRenders) {
+//            dumbTankRender.paintComponent(g2d);
+//        }
+        for (Tank enemyTank:enemyTanks){
+            dumbTankRender= new DumbTankRender((DumbTank) enemyTank, this);
+            dumbTankRender.paintComponent(g2d);
+        }
 
         for (Block block : GameScreen.blocks) {
             if (block.getType() == BlockType.TREE.getValue()) {
@@ -185,6 +187,7 @@ public class GameScreen extends JPanel {
     public static int getStage() {
         return stage;
     }
+
     public ArrayList<Tank> getEnemyTanks() {
         return enemyTanks;
     }

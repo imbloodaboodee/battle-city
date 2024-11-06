@@ -27,16 +27,39 @@ public class SmartTankRender extends JLabel {
 
     }
 
-    private void updateCannonAngle() {
+    public void updateCannonAngle() {
         PlayerTank playerTank = GameScreen.getInstance().getPlayerTankRender().getPlayerTank();
-        // Calculate the angle toward the player tank
+
+        // Calculate the center coordinates for player, base, and cannon
         int playerCenterX = playerTank.getX() + playerTank.getHitbox().width / 2;
         int playerCenterY = playerTank.getY() + playerTank.getHitbox().height / 2;
         int cannonCenterX = smartTank.getX() + baseImage.getIconWidth() / 2;
         int cannonCenterY = smartTank.getY() + baseImage.getIconHeight() / 2;
 
-        // Calculate the target angle to the player
-        double targetAngle = Math.atan2(playerCenterY - cannonCenterY, playerCenterX - cannonCenterX) + (Math.PI / 2);
+        // Calculate distance to player
+        double distanceToPlayer = Math.sqrt(
+                Math.pow(playerCenterX - cannonCenterX, 2) + Math.pow(playerCenterY - cannonCenterY, 2)
+        );
+
+        // Calculate distance to base
+        double distanceToBase = Math.sqrt(
+                Math.pow(GameConstants.BASE_COORDINATE_X - cannonCenterX, 2) + Math.pow(GameConstants.BASE_COORDINATE_Y - cannonCenterY, 2)
+        );
+
+        // Determine the target coordinates based on the closer distance
+        int targetX, targetY;
+        if (distanceToPlayer < distanceToBase) {
+            // Target player if closer
+            targetX = playerCenterX;
+            targetY = playerCenterY;
+        } else {
+            // Target base if closer
+            targetX = (int) GameConstants.BASE_COORDINATE_X;
+            targetY = (int) GameConstants.BASE_COORDINATE_Y;
+        }
+
+        // Calculate the target angle to the chosen target
+        double targetAngle = Math.atan2(targetY - cannonCenterY, targetX - cannonCenterX) + (Math.PI / 2);
 
         // Normalize angle difference to be between -PI and PI
         double angleDifference = targetAngle - smartTank.getCannonAngle();
@@ -45,16 +68,18 @@ public class SmartTankRender extends JLabel {
         // Rotate the cannon towards the target angle gradually
         if (Math.abs(angleDifference) > GameConstants.ENEMY_TANK_ROTATION_SPEED) {
             if (angleDifference > 0) {
-                smartTank.setCannonAngle(smartTank.getCannonAngle()+GameConstants.ENEMY_TANK_ROTATION_SPEED);
+                smartTank.setCannonAngle(smartTank.getCannonAngle() + GameConstants.ENEMY_TANK_ROTATION_SPEED);
             } else {
-                smartTank.setCannonAngle(smartTank.getCannonAngle()-GameConstants.ENEMY_TANK_ROTATION_SPEED);
-
+                smartTank.setCannonAngle(smartTank.getCannonAngle() - GameConstants.ENEMY_TANK_ROTATION_SPEED);
             }
         } else {
             smartTank.setCannonAngle(targetAngle);
         }
-        smartTank.setCannonAngle((smartTank.getCannonAngle()+ Math.PI) % (2 * Math.PI) - Math.PI);
+
+        // Normalize cannon angle to be between -PI and PI
+        smartTank.setCannonAngle((smartTank.getCannonAngle() + Math.PI) % (2 * Math.PI) - Math.PI);
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -97,4 +122,7 @@ public class SmartTankRender extends JLabel {
         g2d.dispose();
     }
 
+    public SmartTank getSmartTank() {
+        return smartTank;
+    }
 }

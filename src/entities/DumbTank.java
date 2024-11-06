@@ -14,10 +14,8 @@ public class DumbTank extends Tank {
     private BulletManager bulletManager;
 
     // Image variables
-    private ImageIcon cannonImage;
     private ImageIcon baseImage;
     private Bullet defaultBullet;
-    private double cannonAngle = 0;
     private boolean canFire = true;
 
     // Timers
@@ -41,15 +39,21 @@ public class DumbTank extends Tank {
     public DumbTank(int x, int y, BulletType bulletType) {
         super(x, y);
         this.defaultBullet = new Bullet(bulletType);
-
         bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
 
     }
 
+    public DumbTank(int x, int y, int health, int speed, BulletType bulletType, ImageIcon baseImage) {
+        super(x, y, health, speed);
+        this.defaultBullet = new Bullet(bulletType);
+        this.baseImage = baseImage;
+
+        bulletManager = new BulletManager(getBullets());
+        initializeCommonResources();
+    }
+
     private void initializeCommonResources() {
-        baseImage = new ImageIcon("./src/assets/image/tank.png");
-        cannonImage = new ImageIcon("./src/assets/image/cannon.png");
 
         // Initialize the hitbox
         setHitbox(new Rectangle(getX(), getY(), baseImage.getIconWidth(), baseImage.getIconHeight()));
@@ -81,14 +85,12 @@ public class DumbTank extends Tank {
                 if (isWithinBounds(getX(), getY() - getSpeed())) {
                     setY(getY() - getSpeed());
                     setTankAngle(Math.toRadians(0));
-                    setCannonAngle(Math.toRadians(0));
                 }
                 break;
             case 1: // Move down
                 if (isWithinBounds(getX(), getY() + getSpeed())) {
                     setY(getY() + getSpeed());
                     setTankAngle(Math.toRadians(180));
-                    setCannonAngle(Math.toRadians(180));
 
                 }
                 break;
@@ -97,7 +99,6 @@ public class DumbTank extends Tank {
 
                     setX(getX() - getSpeed());
                     setTankAngle(Math.toRadians(-90));
-                    setCannonAngle(Math.toRadians(-90));
 
                 }
                 break;
@@ -105,7 +106,6 @@ public class DumbTank extends Tank {
                 if (isWithinBounds(getX() + getSpeed(), getY())) {
                     setX(getX() + getSpeed());
                     setTankAngle(Math.toRadians(90));
-                    setCannonAngle(Math.toRadians(90));
 
                 }
                 break;
@@ -189,10 +189,10 @@ public class DumbTank extends Tank {
     private void shoot() {
         if (canFire) {
             // Random firing logic or based on some condition
-            int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
-            int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
+            int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
+            int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), getTankAngle() - Math.PI / 2);
             getBullets().add(bullet);
 
             canFire = false;
@@ -204,13 +204,6 @@ public class DumbTank extends Tank {
         }
     }
 
-    public ImageIcon getCannonImage() {
-        return cannonImage;
-    }
-
-    public void setCannonImage(ImageIcon cannonImage) {
-        this.cannonImage = cannonImage;
-    }
 
     public ImageIcon getBaseImage() {
         return baseImage;
@@ -218,14 +211,6 @@ public class DumbTank extends Tank {
 
     public void setBaseImage(ImageIcon baseImage) {
         this.baseImage = baseImage;
-    }
-
-    public double getCannonAngle() {
-        return cannonAngle;
-    }
-
-    public void setCannonAngle(double cannonAngle) {
-        this.cannonAngle = cannonAngle;
     }
 
     public int getMovementDirection() {

@@ -15,7 +15,8 @@ public final class GameConstants {
     public static final String CANNON_IMAGE = "./src/assets/image/cannon.png";
     public static final String AIM_IMAGE = "./src/assets/image/aim.png";
     public static final double ENEMY_TANK_ROTATION_SPEED = 1;
-
+    public static final double BASE_COORDINATE_X = 240;
+    public static final double BASE_COORDINATE_Y = 416;
 
 
 }

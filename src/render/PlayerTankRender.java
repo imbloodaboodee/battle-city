@@ -30,7 +30,7 @@ public class PlayerTankRender extends JLabel {
     private void updateCannonAngle() {
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(mousePosition, c);
-
+        System.out.println(mousePosition);
         // Calculate the center of the tank
         int cannonCenterX = playerTank.getX() + baseImage.getIconWidth() / 2;
         int cannonCenterY = playerTank.getY() + baseImage.getIconHeight() / 2;
