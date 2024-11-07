@@ -26,7 +26,7 @@ public class GameScreen extends JPanel {
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
-    private static int stage = 5;
+    private static int stage = 3;
     private Timer gameLoopTimer;
     private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
