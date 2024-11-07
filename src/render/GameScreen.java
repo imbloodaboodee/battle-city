@@ -31,6 +31,8 @@ public class GameScreen extends JPanel {
     private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
     private DumbTankRender dumbTankRender;
+    private SmartTankRender smartTankRender;
+
     // Private constructor to prevent external instantiations
     private GameScreen() {
         this.setVisible(true);
@@ -152,19 +154,28 @@ public class GameScreen extends JPanel {
 //        for (DumbTankRender dumbTankRender : dumbTankRenders) {
 //            dumbTankRender.paintComponent(g2d);
 //        }
-        for (Tank enemyTank:enemyTanks){
-            dumbTankRender= new DumbTankRender((DumbTank) enemyTank, this);
-            dumbTankRender.paintComponent(g2d);
+        for (Tank enemyTank : enemyTanks) {
+            if (enemyTank instanceof DumbTank) {
+                dumbTankRender = new DumbTankRender((DumbTank) enemyTank, this);
+                dumbTankRender.paintComponent(g2d);
+            } else {
+                smartTankRender = new SmartTankRender((SmartTank) enemyTank, this);
+                smartTankRender.paintComponent(g2d);
+            }
+
         }
 
-        for (Block block : GameScreen.blocks) {
+
+        for (
+                Block block : GameScreen.blocks) {
             if (block.getType() == BlockType.TREE.getValue()) {
                 g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
             }
         }
 
         // Vẽ PowerUps chỉ khi chúng đang hiển thị
-        for (PowerUp powerUp : BoardUtility.getPowerUps()) {
+        for (
+                PowerUp powerUp : BoardUtility.getPowerUps()) {
             if (powerUp.isVisible()) {
                 g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
                 g2d.setColor(Color.YELLOW);
@@ -173,7 +184,9 @@ public class GameScreen extends JPanel {
         }
 
         // Sync the graphics
-        Toolkit.getDefaultToolkit().sync();
+        Toolkit.getDefaultToolkit().
+
+                sync();
         g2d.dispose();
     }
 

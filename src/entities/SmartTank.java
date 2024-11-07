@@ -19,8 +19,6 @@ public class SmartTank extends Tank {
     private Bullet defaultBullet;
     private double cannonAngle = 0;
     private boolean canFire = true;
-    private boolean isFrozen = false;
-    private Timer freezeTimer;
 
     // Timers
     private Timer movementTimer;
@@ -29,10 +27,9 @@ public class SmartTank extends Tank {
     private Timer gameLoopTimer;
 
     // Random movement
-    private int movementDirection=3;
+    private int movementDirection = 1;
     private int moveCounter = 0; // Counter to track steps in the current direction
     private final int MAX_STEPS = 100; // Maximum steps before direction change
-
 
 
     public SmartTank(BulletType bulletType) {
@@ -46,14 +43,16 @@ public class SmartTank extends Tank {
         initializeCommonResources();
 
     }
+
     public SmartTank(int x, int y, int health, int speed, BulletType bulletType, ImageIcon baseImage, ImageIcon cannonImage) {
-        super(x,y,health,speed);
+        super(x, y, health, speed);
         this.baseImage = resizeImageIcon(baseImage, 0.9);
         this.cannonImage = resizeImageIcon(cannonImage, 0.9); // or separate sizes for the cannon
         this.defaultBullet = new Bullet(bulletType);
         initializeCommonResources();
 
     }
+
     private void initializeCommonResources() {
         bulletManager = new BulletManager(getBullets());
 
@@ -65,7 +64,7 @@ public class SmartTank extends Tank {
         // Timer for creating bullets, starts when the enemy decides to shoot
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
-        bulletCreationTimer.start();
+//        bulletCreationTimer.start();
 
         // Timer for updating entities (tank position, bullets, etc.)
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {

@@ -25,7 +25,7 @@ public class DumbTank extends Tank {
     private Timer gameLoopTimer;
 
     // Random movement
-    private int movementDirection=1;
+    private int movementDirection = 1;
     private int moveCounter = 0; // Counter to track steps in the current direction
     private final int MAX_STEPS = 60; // Maximum steps before direction change
 
@@ -66,7 +66,7 @@ public class DumbTank extends Tank {
         // Timer for creating bullets, starts when the enemy decides to shoot
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
-        bulletCreationTimer.start();
+//        bulletCreationTimer.start();
 
         // Timer for updating entities (tank position, bullets, etc.)
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
@@ -74,6 +74,7 @@ public class DumbTank extends Tank {
         });
         gameLoopTimer.start();
     }
+
     private ImageIcon resizeImageIcon(ImageIcon icon, double ratio) {
         // Get the original width and height of the image
         int originalWidth = icon.getIconWidth();
