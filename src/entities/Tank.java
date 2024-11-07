@@ -22,6 +22,8 @@ public class Tank {
     private int speed;  // Increase speed for visible movement
     private ArrayList<Bullet> bullets = new ArrayList<>();
     private boolean isFrozen = false;
+    public boolean shield = false;
+    private long shieldEndTime = 0;
     private Timer freezeTimer;
 
     public Tank() {
@@ -125,6 +127,27 @@ public class Tank {
         freezeTimer.start();
     }
 
+    public void activateShield(long duration) {
+        this.shield = true;
+        this.shieldEndTime = System.currentTimeMillis() + duration;
+    }
+
+    public void checkShieldStatus() {
+        if (shield && System.currentTimeMillis() > shieldEndTime) {
+            shield = false;
+        }
+    }
+
+    public void downHealth(int amount) {
+        if (!shield) {
+            this.health -= amount;
+        }
+    }
+
+    public void upHealth(int amount) {
+        this.health += amount;
+    }
+
     void updateHitbox() {
         hitbox.setLocation(x, y);
     }
@@ -212,5 +235,9 @@ public class Tank {
 
     public void setHitbox(Rectangle hitbox) {
         this.hitbox = hitbox;
+    }
+
+    public boolean isFrozen() {
+        return isFrozen;
     }
 }

@@ -19,6 +19,8 @@ public class SmartTank extends Tank {
     private Bullet defaultBullet;
     private double cannonAngle = 0;
     private boolean canFire = true;
+    private boolean isFrozen = false;
+    private Timer freezeTimer;
 
     // Timers
     private Timer movementTimer;
