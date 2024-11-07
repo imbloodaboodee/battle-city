@@ -91,93 +91,56 @@ public class SmartTank extends Tank {
 
     // Simulate autonomous movement by changing directions randomly
     private void bumpMove() {
-        if (isFrozen()) {
-            System.out.println("SmartTank is frozen, skipping movement.");
-            return; // Stop movement if frozen
-        }
-
         int originalX = getX();
         int originalY = getY();
 
-        // Check if the current direction is blocked
-        if (willCollideInDirection(movementDirection)) {
-            // Choose a new direction if the current one is blocked
-            movementDirection = findValidDirection();
-        }
-
-        // Move in the current direction and increment move counter
+        // Try moving in the current direction
         switch (movementDirection) {
             case 0: // Move up
-                setY(getY() - getSpeed());
-                setTankAngle(Math.toRadians(0));
+                if (isWithinBounds(getX(), getY() - getSpeed())) {
+                    setY(getY() - getSpeed());
+                    setTankAngle(Math.toRadians(0));
+                }
                 break;
             case 1: // Move down
-                setY(getY() + getSpeed());
-                setTankAngle(Math.toRadians(180));
+                if (isWithinBounds(getX(), getY() + getSpeed())) {
+                    setY(getY() + getSpeed());
+                    setTankAngle(Math.toRadians(180));
+
+                }
                 break;
             case 2: // Move left
-                setX(getX() - getSpeed());
-                setTankAngle(Math.toRadians(-90));
+                if (isWithinBounds(getX() - getSpeed(), getY())) {
+
+                    setX(getX() - getSpeed());
+                    setTankAngle(Math.toRadians(-90));
+
+                }
                 break;
             case 3: // Move right
-                setX(getX() + getSpeed());
-                setTankAngle(Math.toRadians(90));
+                if (isWithinBounds(getX() + getSpeed(), getY())) {
+                    setX(getX() + getSpeed());
+                    setTankAngle(Math.toRadians(90));
+
+                }
                 break;
         }
 
-        updateHitbox(); // Update the hitbox after moving
+        // Update the hitbox after moving
+        updateHitbox();
 
-        // Check for collisions after moving
-        if (CollisionHandling.checkMovingCollisions(this, GameScreen.blocks) || !isWithinBounds(getX(), getY()) || moveCounter >= MAX_STEPS) {
+        // Check if the movement results in a collision
+        if (CollisionHandling.checkMovingCollisions(this, GameScreen.blocks) || !isWithinBounds(getX(), getY())) {
             // Revert to original position if collision or boundary violation occurs
             setX(originalX);
             setY(originalY);
 
-            // Reset the counter and find a new random direction
-            moveCounter = 0;
+            // Find a valid direction that does not result in a collision or boundary violation
             int newDirection = findValidDirection();
             if (newDirection != -1) {
-                movementDirection = newDirection;
+                movementDirection = newDirection; // Change to the valid direction
             }
-        } else {
-            moveCounter++; // Increment counter if no collision occurs and maximum steps are not reached
         }
-    }
-
-    // Helper method to check if moving in the given direction would result in a collision
-    private boolean willCollideInDirection(int direction) {
-        int testX = getX();
-        int testY = getY();
-
-        // Determine the test position based on the direction
-        switch (direction) {
-            case 0: // Up
-                testY -= getSpeed();
-                break;
-            case 1: // Down
-                testY += getSpeed();
-                break;
-            case 2: // Left
-                testX -= getSpeed();
-                break;
-            case 3: // Right
-                testX += getSpeed();
-                break;
-        }
-
-        // Check if this position collides with any blocks
-        setX(testX);
-        setY(testY);
-        updateHitbox();
-
-        boolean willCollide = CollisionHandling.checkMovingCollisions(this, GameScreen.blocks) || !isWithinBounds(testX, testY);
-
-        // Restore original position
-        setX(getX());
-        setY(getY());
-        updateHitbox();
-
-        return willCollide;
     }
 
     // Helper method to check if the tank is within bounds
@@ -236,7 +199,6 @@ public class SmartTank extends Tank {
         setY(originalY);
         return -1; // Return -1 if no valid direction is found
     }
-
     // Create (fire) a bullet, similar to player tank, but with its own logic
     private void shoot() {
         if (isFrozen()) {

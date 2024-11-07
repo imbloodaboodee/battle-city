@@ -1,13 +1,16 @@
 package physics;
 
 import SpriteClasses.Block;
+import entities.BlockExplosion;
 import entities.Bullet;
 import entities.PowerUps.ShieldPowerUp;
 import entities.Tank;
 import entities.PowerUps.BombPowerUp;
 import entities.PowerUps.ClockPowerUp;
 import entities.PowerUps.PowerUp;
+import entities.TankExplosion;
 import environment.BlockType;
+import render.GameScreen;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -60,7 +63,9 @@ public class CollisionHandling {
 
                     // Nếu xe tăng đối phương bị tiêu diệt, xóa xe tăng đó khỏi danh sách
                     if (enemy.getHealth() <= 0) {
+                        GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 100, 1, false));
                         enemyTanks.remove(i); // Loại bỏ enemy khỏi danh sách
+                        GameScreen.tankDestroyed+=1;
                     }
                     // Đảm bảo thoát khỏi vòng lặp đạn sau khi xử lý va chạm
                     break;
@@ -73,9 +78,9 @@ public class CollisionHandling {
     // Check collision between moving tanks and blocks
     public static boolean checkMovingCollisions(Tank tank, ArrayList<Block> blocks) {
         Rectangle tankHitbox = tank.getHitbox();
-
+        ArrayList<Block> blocksClone = new ArrayList<>(blocks);
         // Loop through the list by index instead of using an iterator
-        for (Block block : blocks) {
+        for (Block block : blocksClone) {
             // Check if the tank collides with any block except trees
             if (tankHitbox.intersects(block.getHitbox()) && block.getType() != BlockType.TREE.getValue()) {
 //                System.out.println("Collision detected with block!");
@@ -116,6 +121,7 @@ public class CollisionHandling {
 
             case BRICK:
                 // Remove both the bullet and the brick block
+                GameScreen.animations.add(new BlockExplosion(blocks.get(blockIndex).getX(), blocks.get(blockIndex).getY(), 100, 0.5, false));
                 bullets.remove(bulletIndex);
                 blocks.remove(blockIndex);
                 System.out.println("Bullet and brick block removed after collision.");

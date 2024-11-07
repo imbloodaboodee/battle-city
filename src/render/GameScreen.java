@@ -1,7 +1,6 @@
 package render;
 
 import SpriteClasses.*;
-import constants.GameConstants;
 import entities.*;
 import entities.BulletType;
 import entities.PlayerTank;
@@ -9,6 +8,7 @@ import entities.Tank;
 import entities.PowerUps.PowerUp;
 import environment.BlockType;
 import environment.MapLoader;
+import manager.GameStateManager;
 import manager.TankSpawner;
 import physics.BoardUtility;
 import physics.CollisionHandling;
@@ -25,13 +25,17 @@ public class GameScreen extends JPanel {
     private static GameScreen instance;  // Static instance for Singleton
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
+    public static ArrayList<Animation> animations = new ArrayList<>();
+
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
-    private static int stage = 5;
+    public static int stage = 1;
     private Timer gameLoopTimer;
     private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
     private DumbTankRender dumbTankRender;
     private SmartTankRender smartTankRender;
+    public static int tankDestroyed;
+    public static boolean isSpawning = false;
 
     // Private constructor to prevent external instantiations
     private GameScreen() {
@@ -80,7 +84,7 @@ public class GameScreen extends JPanel {
         return instance;
     }
 
-    private void initBlocks() {
+    public void initBlocks() {
         int[][] map = MapLoader.getMap(stage);
         int type;
         for (int x = 0; x < map.length; x++) {
@@ -128,6 +132,7 @@ public class GameScreen extends JPanel {
             // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
             ptRenderer.getPlayerTank().updateTankPosition();
             ptRenderer.getPlayerTank().checkShieldStatus();
+            GameStateManager.checkTankDestroyed();
             repaint();
         });
         gameLoopTimer.start();
@@ -151,9 +156,6 @@ public class GameScreen extends JPanel {
         }
 
         ptRenderer.paintComponent(g2d);
-//        for (DumbTankRender dumbTankRender : dumbTankRenders) {
-//            dumbTankRender.paintComponent(g2d);
-//        }
         for (Tank enemyTank : enemyTanks) {
             if (enemyTank instanceof DumbTank) {
                 dumbTankRender = new DumbTankRender((DumbTank) enemyTank, this);
@@ -166,16 +168,19 @@ public class GameScreen extends JPanel {
         }
 
 
-        for (
-                Block block : GameScreen.blocks) {
+        for (Block block : GameScreen.blocks) {
             if (block.getType() == BlockType.TREE.getValue()) {
                 g2d.drawImage(block.getImage(), block.getX(), block.getY(), this);
             }
         }
-
+        for (Animation animation : new ArrayList<>(animations)) {
+            animation.draw(g);
+            if (animation.isFinished()) {
+                animations.remove(animation);
+            }
+        }
         // Vẽ PowerUps chỉ khi chúng đang hiển thị
-        for (
-                PowerUp powerUp : BoardUtility.getPowerUps()) {
+        for (PowerUp powerUp : BoardUtility.getPowerUps()) {
             if (powerUp.isVisible()) {
                 g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
                 g2d.setColor(Color.YELLOW);
@@ -184,9 +189,7 @@ public class GameScreen extends JPanel {
         }
 
         // Sync the graphics
-        Toolkit.getDefaultToolkit().
-
-                sync();
+        Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
     }
 
@@ -201,6 +204,14 @@ public class GameScreen extends JPanel {
 
     public static int getStage() {
         return stage;
+    }
+
+    public static void setStage(int stage) {
+        GameScreen.stage = stage;
+    }
+
+    public TankSpawner getTankSpawner() {
+        return tankSpawner;
     }
 
     public ArrayList<Tank> getEnemyTanks() {

@@ -3,15 +3,22 @@ package environment;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapLoader {
-
-//    public static final int BOARD_WIDTH = 16 * 33;
-//    public static final int BOARD_HEIGHT = 16 * 28;
     private static final int ROW_SHIFT = 1;
     private static final int COL_SHIFT = 2;
     private static final int BASE_POS = 14;
+
+    private static final Map<Character, Integer> CHAR_TO_BLOCK_MAP = new HashMap<>();
+    static {
+        CHAR_TO_BLOCK_MAP.put('#', 1);  // Brick
+        CHAR_TO_BLOCK_MAP.put('@', 2);  // Steel
+        CHAR_TO_BLOCK_MAP.put('%', 5);  // Base
+        CHAR_TO_BLOCK_MAP.put('~', 4);  // River
+        CHAR_TO_BLOCK_MAP.put('.', 0);  // Blank
+    }
 
     public static int[][] getMap(int stage) {
         return createNewStageMap(stage);
@@ -48,63 +55,44 @@ public class MapLoader {
             {6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6}};
 
 
-    public static ArrayList<ArrayList<Integer>> readFromFile(String fileName) {
-        ArrayList<ArrayList<Integer>> tempMap = new ArrayList<>();
+    public static int[][] readMapFromFile(String fileName) {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String currentLine;
-            while ((currentLine = br.readLine()) != null) {
-                if (!currentLine.isEmpty()) {
-                    ArrayList<Integer> row = new ArrayList<>();
-                    String[] values = currentLine.trim().split("");
-                    for (String string : values) {
-                        if (!string.isEmpty()) {
-                            switch (string) {
-                                case "#":
-                                    row.add(1);  // Brick
-                                    break;
-                                case "@":
-                                    row.add(2);  // Steel
-                                    break;
-                                case "%":
-                                    row.add(5);  // Base
-                                    break;
-                                case "~":
-                                    row.add(4);  // River
-                                    break;
-                                default:
-                                    row.add(0);  // Blank(.)
-                                    break;
-                            }
-                        }
-                    }
-                    tempMap.add(row);
-                }
-            }
+            return br.lines()
+                    .filter(line -> !line.trim().isEmpty())
+                    .map(MapLoader::parseLineToRow)
+                    .toArray(int[][]::new);
         } catch (IOException e) {
             System.err.println("Error reading map file: " + e.getMessage());
             e.printStackTrace();
+            return level0; // Fallback to default map if there's an error
         }
-        return tempMap;
     }
 
-    public static int[][] arrayListToArray(ArrayList<ArrayList<Integer>> arrayList) {
-        int[][] intArray = arrayList.stream()
-                .map(u -> u.stream().mapToInt(i -> i).toArray())
-                .toArray(int[][]::new);
-        return intArray;
+    private static int[] parseLineToRow(String line) {
+        return line.trim().chars()
+                .map(c -> CHAR_TO_BLOCK_MAP.getOrDefault((char) c, 0)) // Map each character to its block type
+                .toArray();
     }
 
     public static int[][] createNewStageMap(int stage) {
-        int[][] newLevel = level0;
-        ArrayList<ArrayList<Integer>> levelReadFromFile = readFromFile(
-                "./src/assets/stages/" + String.valueOf(stage));
-        int[][] array = arrayListToArray(levelReadFromFile);
-        for (int i = ROW_SHIFT; i < array.length + ROW_SHIFT; i++) {
-            for (int j = COL_SHIFT; j < array[0].length + COL_SHIFT; j++) {
-                newLevel[i][j] = array[i - ROW_SHIFT][j - COL_SHIFT];
+        int[][] baseLevel = deepCopyArray(level0);
+        int[][] fileLevel = readMapFromFile("./src/assets/stages/" + stage);
+
+        for (int i = 0; i < fileLevel.length; i++) {
+            for (int j = 0; j < fileLevel[i].length; j++) {
+                baseLevel[i + ROW_SHIFT][j + COL_SHIFT] = fileLevel[i][j];
             }
         }
-        newLevel[array.length - 1][BASE_POS] = BlockType.BASE.getValue();
-        return newLevel;
+
+        baseLevel[fileLevel.length - 1][BASE_POS] = BlockType.BASE.getValue();
+        return baseLevel;
+    }
+
+    private static int[][] deepCopyArray(int[][] source) {
+        int[][] copy = new int[source.length][];
+        for (int i = 0; i < source.length; i++) {
+            copy[i] = source[i].clone();
+        }
+        return copy;
     }
 }

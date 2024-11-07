@@ -159,7 +159,7 @@ public class DumbTank extends Tank {
     // Helper method to find a valid direction
     private int findValidDirection() {
         // Array of directions with an extra 'down' (1) to increase downward likelihood
-        ArrayList<Integer> directions = new ArrayList<>(Arrays.asList(0, 1, 1, 2, 3));
+        ArrayList<Integer> directions = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
         Collections.shuffle(directions); // Shuffle to randomize direction order
 
         int originalX = getX();

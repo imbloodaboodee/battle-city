@@ -1,9 +1,7 @@
 package manager;
 
-import entities.BulletType;
-import entities.DumbTank;
-import entities.SmartTank;
-import entities.Tank;
+import entities.*;
+import render.GameScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,90 +16,104 @@ public class TankSpawner {
     private int powerTankCount;
     private int armorTankCount;
 
-    private final int maxBasicTanks;
-    private final int maxFastTanks;
-    private final int maxPowerTanks;
-    private final int maxArmorTanks;
+    private int maxBasicTanks;
+    private int maxFastTanks;
+    private int maxPowerTanks;
+    private int maxArmorTanks;
 
     private Timer spawnTimer;
+    private static final int SPAWN_DELAY_MS = 3000; // 3 seconds
 
     public TankSpawner(ArrayList<Tank> enemyTanks, int stage) {
         this.enemyTanks = enemyTanks;
-        this.stage = stage;
-
-        // Set tank limits based on stage
-        this.maxBasicTanks = Math.max(2 * stage - 5, 2);
-        this.maxFastTanks = Math.max(2 * stage - 5, 2);
-        this.maxPowerTanks = stage / 2;
-        this.maxArmorTanks = stage / 3;
-
-        basicTankCount = 0;
-        fastTankCount = 0;
-        powerTankCount = 0;
-        armorTankCount = 0;
+        setStage(stage);
     }
 
     public void startSpawning() {
-        // Set up a timer to spawn tanks in cycles, one of each type per second
-        spawnCycle();
+        if (spawnTimer != null) {
+            spawnTimer.stop();
+        }
+
+        GameScreen.isSpawning = true;
+        resetSpawner();
+        updateTankLimits();
         spawnTimer = new Timer(10000, e -> spawnCycle());
+        spawnCycle();
         spawnTimer.start();
     }
 
     private void spawnCycle() {
-        // Spawn one basic tank if limit not reached
         if (basicTankCount < maxBasicTanks) {
-            spawnBasicTank();
+            final Point spawnpoint = findSpawnPoint();  // Declare spawnpoint as final
+            scheduleTankSpawn(() -> spawnBasicTank(spawnpoint), SPAWN_DELAY_MS, spawnpoint);
             basicTankCount++;
         }
-
-        // Spawn one fast tank if limit not reached
         if (fastTankCount < maxFastTanks) {
-            spawnFastTank();
+            final Point spawnpoint = findSpawnPoint();  // Declare spawnpoint as final
+            scheduleTankSpawn(() -> spawnFastTank(spawnpoint), SPAWN_DELAY_MS, spawnpoint);
             fastTankCount++;
         }
-
-        // Spawn one power tank if limit not reached
         if (powerTankCount < maxPowerTanks) {
-            spawnPowerTank();
+            final Point spawnpoint = findSpawnPoint();  // Declare spawnpoint as final
+            scheduleTankSpawn(() -> spawnPowerTank(spawnpoint), SPAWN_DELAY_MS, spawnpoint);
             powerTankCount++;
         }
-
-        // Spawn one armor tank if limit not reached
         if (armorTankCount < maxArmorTanks) {
-            spawnArmorTank();
+            final Point spawnpoint = findSpawnPoint();  // Declare spawnpoint as final
+            scheduleTankSpawn(() -> spawnArmorTank(spawnpoint), SPAWN_DELAY_MS, spawnpoint);
             armorTankCount++;
         }
 
-        // Stop the timer if all tanks of each type have been spawned
         if (basicTankCount >= maxBasicTanks &&
                 fastTankCount >= maxFastTanks &&
                 powerTankCount >= maxPowerTanks &&
                 armorTankCount >= maxArmorTanks) {
+            GameScreen.isSpawning = false;
             spawnTimer.stop();
         }
     }
 
-    private void spawnBasicTank() {
-        Point spawnPoint = findSpawnPoint();
+    private void resetSpawner() {
+        basicTankCount = 0;
+        fastTankCount = 0;
+        powerTankCount = 0;
+        armorTankCount = 0;
+        setStage(GameScreen.stage);
+    }
+
+    private void updateTankLimits() {
+        this.maxBasicTanks = Math.max(2 * stage - 5, 2);
+        this.maxFastTanks = Math.max(2 * stage - 5, 2);
+        this.maxPowerTanks = stage / 2;
+        this.maxArmorTanks = stage / 3;
+    }
+
+    private void scheduleTankSpawn(Runnable spawnMethod, int delay, Point spawnPoint) {
+        GameScreen.animations.add(new SpawnAnimation(spawnPoint.x, spawnPoint.y, 100, 1, true));
+
+        // Delay the tank spawn by `delay` milliseconds after the animation starts
+        new Timer(delay, e -> {
+            spawnMethod.run();
+            ((Timer) e.getSource()).stop();  // Stop the timer after it fires once
+        }).start();
+    }
+
+    private void spawnBasicTank(Point spawnPoint) {
         DumbTank basicTank = new DumbTank(spawnPoint.x, spawnPoint.y, 3, 1, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_basic.png"));
         enemyTanks.add(basicTank);
     }
 
-    private void spawnFastTank() {
-        Point spawnPoint = findSpawnPoint();
+    private void spawnFastTank(Point spawnPoint) {
         DumbTank fastTank = new DumbTank(spawnPoint.x, spawnPoint.y, 3, 3, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_fast.png"));
         enemyTanks.add(fastTank);
     }
 
-    private void spawnPowerTank() {
-        Point spawnPoint = findSpawnPoint();
+    private void spawnPowerTank(Point spawnPoint) {
         SmartTank powerTank = new SmartTank(spawnPoint.x, spawnPoint.y, 3, 1, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_power_base.png"), new ImageIcon("./src/assets/image/tank_power_cannon.png"));
         enemyTanks.add(powerTank);
     }
 
-    private void spawnArmorTank() {
-        Point spawnPoint = findSpawnPoint();
+    private void spawnArmorTank(Point spawnPoint) {
         SmartTank armorTank = new SmartTank(spawnPoint.x, spawnPoint.y, 3, 1, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_armor_base.png"), new ImageIcon("./src/assets/image/tank_armor_cannon.png"));
         enemyTanks.add(armorTank);
     }
@@ -114,5 +126,6 @@ public class TankSpawner {
 
     public void setStage(int stage) {
         this.stage = stage;
+        updateTankLimits();
     }
 }

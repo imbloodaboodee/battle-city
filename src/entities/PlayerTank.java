@@ -2,6 +2,7 @@ package entities;
 
 import constants.GameConstants;
 import manager.BulletManager;
+import physics.SoundUtility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,6 +116,7 @@ public class PlayerTank extends Tank implements KeyListener {
                 bulletTimerCountdown.stop();
             });
             bulletTimerCountdown.start();
+            SoundUtility.fireSound();
         }
     }
 
@@ -149,5 +151,10 @@ public class PlayerTank extends Tank implements KeyListener {
 
     public ImageIcon getAimImage() {
         return aimImage;
+    }
+
+    public void resetPosition() {
+        setX(176);
+        setY(400);
     }
 }
