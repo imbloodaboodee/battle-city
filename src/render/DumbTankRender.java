@@ -22,7 +22,7 @@ public class DumbTankRender extends JComponent {
         baseImage = dumbTank.getBaseImage();
 
         this.setSize(800, 800);
-        System.out.println("bbbbb");
+//        System.out.println("bbbbb");
 
     }
 

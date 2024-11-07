@@ -112,16 +112,18 @@ public class GameScreen extends JPanel {
     }
 
     private void initGameLoop() {
+        // Giả sử bạn đã có danh sách blocks từ nơi khác trong game (ví dụ từ lớp Board)
+        ArrayList<Block> blocks = getBlocks(); // Phương thức này lấy danh sách các Block
+
         // Game loop to update the game state
         gameLoopTimer = new Timer(16, e -> {
             // Check for collisions with PowerUps
-            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks);
+            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks, blocks);  // Truyền blocks vào đây
+
             for (Tank enemyTank : enemyTanks) {
                 CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
             }
             CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
-
-//            CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
 
             // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
             ptRenderer.getPlayerTank().updateTankPosition();
@@ -130,6 +132,7 @@ public class GameScreen extends JPanel {
         });
         gameLoopTimer.start();
     }
+
 
     private void initPowerUpSpawner() {
         // Timer to spawn PowerUps periodically

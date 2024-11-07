@@ -1,17 +1,16 @@
 package physics;
 
+import SpriteClasses.Base;
 import SpriteClasses.Block;
 import entities.Bullet;
-import entities.PowerUps.ShieldPowerUp;
+import entities.PowerUps.*;
 import entities.Tank;
-import entities.PowerUps.BombPowerUp;
-import entities.PowerUps.ClockPowerUp;
-import entities.PowerUps.PowerUp;
 import environment.BlockType;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CollisionHandling {
 
@@ -135,7 +134,7 @@ public class CollisionHandling {
 
 
 
-    public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, ArrayList<Tank> enemyTanks) {
+    public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, ArrayList<Tank> enemyTanks, ArrayList<Block> blocks) {
         for (PowerUp powerUp : powerUps) {
             if (playerTank.getHitbox().intersects(powerUp.getHitbox()) && powerUp.isVisible()) {
                 if (powerUp instanceof BombPowerUp) {
@@ -144,12 +143,16 @@ public class CollisionHandling {
                     BoardUtility.activateShieldPowerUp(playerTank);
                 } else if (powerUp instanceof ClockPowerUp) {
                     BoardUtility.activateClockPowerUp(enemyTanks);
+                } else if (powerUp instanceof ShovelPowerUp) {
+                    BoardUtility.activateShovelPowerUp(blocks); // Truyền blocks vào đây
                 }
                 powerUp.setVisible(false); // Ẩn PowerUp sau khi được nhặt
                 break;
             }
         }
     }
+
+
 
 
 //    public static void checkCollisionTankTankAI(Tank playerTank, ArrayList<Tank> enemyTanks) {

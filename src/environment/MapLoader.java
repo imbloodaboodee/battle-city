@@ -60,19 +60,19 @@ public class MapLoader {
                         if (!string.isEmpty()) {
                             switch (string) {
                                 case "#":
-                                    row.add(1);  // Brick
+                                    row.add(1);
                                     break;
                                 case "@":
-                                    row.add(2);  // Steel
+                                    row.add(2);
                                     break;
                                 case "%":
-                                    row.add(5);  // Base
+                                    row.add(5);
                                     break;
                                 case "~":
-                                    row.add(4);  // River
+                                    row.add(4);
                                     break;
                                 default:
-                                    row.add(0);  // Blank(.)
+                                    row.add(0);
                                     break;
                             }
                         }
