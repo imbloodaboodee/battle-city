@@ -26,11 +26,12 @@ public class GameScreen extends JPanel {
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
-    private static int stage = 5;
+    private static int stage = 3;
     private Timer gameLoopTimer;
     private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
     private DumbTankRender dumbTankRender;
+    private SmartTankRender smartTankRender;
     // Private constructor to prevent external instantiations
     private GameScreen() {
         this.setVisible(true);
@@ -153,8 +154,13 @@ public class GameScreen extends JPanel {
 //            dumbTankRender.paintComponent(g2d);
 //        }
         for (Tank enemyTank:enemyTanks){
+            if (enemyTank instanceof DumbTank){
             dumbTankRender= new DumbTankRender((DumbTank) enemyTank, this);
-            dumbTankRender.paintComponent(g2d);
+            dumbTankRender.paintComponent(g2d);}
+            else if(enemyTank instanceof SmartTank){
+                smartTankRender = new SmartTankRender((SmartTank) enemyTank, this);
+                smartTankRender.paintComponent(g2d);
+            }
         }
 
         for (Block block : GameScreen.blocks) {

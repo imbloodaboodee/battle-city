@@ -20,7 +20,6 @@ public class SmartTank extends Tank {
     private double cannonAngle = 0;
     private boolean canFire = true;
     private boolean isFrozen = false;
-    private Timer freezeTimer;
 
     // Timers
     private Timer movementTimer;
@@ -36,12 +35,25 @@ public class SmartTank extends Tank {
         super();
         this.defaultBullet = new Bullet(bulletType);
 
-        bulletManager = new BulletManager(getBullets());
         // Initialize tank images
         baseImage = new ImageIcon("./src/assets/image/tank.png");
         cannonImage = new ImageIcon("./src/assets/image/cannon.png");
 
         // Initialize the hitboxssss
+        initializeCommonResources();
+
+    }
+    public SmartTank(int x, int y, int health, int speed, BulletType bulletType, ImageIcon baseImage, ImageIcon cannonImage) {
+        super(x,y,health,speed);
+        this.baseImage = baseImage;
+        this.cannonImage = cannonImage;
+        this.defaultBullet = new Bullet(bulletType);
+        initializeCommonResources();
+
+    }
+    private void initializeCommonResources() {
+        bulletManager = new BulletManager(getBullets());
+
         setHitbox(new Rectangle(getX(), getY(), baseImage.getIconWidth(), baseImage.getIconHeight()));
 
         // Timer for autonomous movement
@@ -57,7 +69,6 @@ public class SmartTank extends Tank {
             bulletManager.updateBullets();
         });
         gameLoopTimer.start();
-
     }
 
 

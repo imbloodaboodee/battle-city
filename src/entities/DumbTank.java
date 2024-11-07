@@ -31,7 +31,6 @@ public class DumbTank extends Tank {
         super();
         this.defaultBullet = new Bullet(bulletType);
 
-        bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
 
     }
@@ -39,7 +38,6 @@ public class DumbTank extends Tank {
     public DumbTank(int x, int y, BulletType bulletType) {
         super(x, y);
         this.defaultBullet = new Bullet(bulletType);
-        bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
 
     }
@@ -49,11 +47,11 @@ public class DumbTank extends Tank {
         this.defaultBullet = new Bullet(bulletType);
         this.baseImage = baseImage;
 
-        bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
     }
 
     private void initializeCommonResources() {
+        bulletManager = new BulletManager(getBullets());
 
         // Initialize the hitbox
         setHitbox(new Rectangle(getX(), getY(), baseImage.getIconWidth(), baseImage.getIconHeight()));
