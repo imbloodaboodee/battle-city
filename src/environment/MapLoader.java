@@ -97,7 +97,7 @@ public class MapLoader {
     public static int[][] createNewStageMap(int stage) {
         int[][] newLevel = level0;
         ArrayList<ArrayList<Integer>> levelReadFromFile = readFromFile(
-                "stages/" + String.valueOf(stage));
+                "./src/assets/stages/" + String.valueOf(stage));
         int[][] array = arrayListToArray(levelReadFromFile);
         for (int i = ROW_SHIFT; i < array.length + ROW_SHIFT; i++) {
             for (int j = COL_SHIFT; j < array[0].length + COL_SHIFT; j++) {

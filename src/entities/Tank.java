@@ -25,8 +25,8 @@ public class Tank {
     private Timer freezeTimer;
 
     public Tank() {
-        x = 416;
-        y = 16;
+        x = 176;
+        y = 400;
         health = 3;
         speed = 1;
     }
@@ -188,6 +188,10 @@ public class Tank {
 
     public int getSpeed() {
         return speed;
+    }
+
+    public boolean isFrozen() {
+        return isFrozen;
     }
 
     public void setSpeed(int speed) {

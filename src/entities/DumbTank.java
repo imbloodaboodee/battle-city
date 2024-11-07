@@ -25,7 +25,10 @@ public class DumbTank extends Tank {
     private Timer gameLoopTimer;
 
     // Random movement
-    private int movementDirection;
+    private int movementDirection=1;
+    private int moveCounter = 0; // Counter to track steps in the current direction
+    private final int MAX_STEPS = 60; // Maximum steps before direction change
+
 
     public DumbTank(BulletType bulletType) {
         super();
@@ -45,7 +48,7 @@ public class DumbTank extends Tank {
     public DumbTank(int x, int y, int health, int speed, BulletType bulletType, ImageIcon baseImage) {
         super(x, y, health, speed);
         this.defaultBullet = new Bullet(bulletType);
-        this.baseImage = baseImage;
+        this.baseImage = resizeImageIcon(baseImage, 0.9);
 
         initializeCommonResources();
     }
@@ -71,13 +74,33 @@ public class DumbTank extends Tank {
         });
         gameLoopTimer.start();
     }
+    private ImageIcon resizeImageIcon(ImageIcon icon, double ratio) {
+        // Get the original width and height of the image
+        int originalWidth = icon.getIconWidth();
+        int originalHeight = icon.getIconHeight();
+
+        // Calculate the new width and height based on the ratio
+        int newWidth = (int) (originalWidth * ratio);
+        int newHeight = (int) (originalHeight * ratio);
+
+        // Scale the image to the new dimensions
+        Image resizedImage = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+        // Return a new ImageIcon from the scaled image
+        return new ImageIcon(resizedImage);
+    }
 
     // Simulate autonomous movement by changing directions randomly
     private void bumpMove() {
+        if (isFrozen()) {
+            System.out.println("SmartTank is frozen, skipping movement.");
+            return; // Stop movement if frozen
+        }
+
         int originalX = getX();
         int originalY = getY();
 
-        // Try moving in the current direction
+        // Move in the current direction and increment move counter
         switch (movementDirection) {
             case 0: // Move up
                 if (isWithinBounds(getX(), getY() - getSpeed())) {
@@ -89,40 +112,38 @@ public class DumbTank extends Tank {
                 if (isWithinBounds(getX(), getY() + getSpeed())) {
                     setY(getY() + getSpeed());
                     setTankAngle(Math.toRadians(180));
-
                 }
                 break;
             case 2: // Move left
                 if (isWithinBounds(getX() - getSpeed(), getY())) {
-
                     setX(getX() - getSpeed());
                     setTankAngle(Math.toRadians(-90));
-
                 }
                 break;
             case 3: // Move right
                 if (isWithinBounds(getX() + getSpeed(), getY())) {
                     setX(getX() + getSpeed());
                     setTankAngle(Math.toRadians(90));
-
                 }
                 break;
         }
 
-        // Update the hitbox after moving
-        updateHitbox();
+        updateHitbox(); // Update the hitbox after moving
 
-        // Check if the movement results in a collision
-        if (CollisionHandling.checkMovingCollisions(this, GameScreen.blocks) || !isWithinBounds(getX(), getY())) {
+        // Check if the movement results in a collision or if the maximum steps are reached
+        if (CollisionHandling.checkMovingCollisions(this, GameScreen.blocks) || !isWithinBounds(getX(), getY()) || moveCounter >= MAX_STEPS) {
             // Revert to original position if collision or boundary violation occurs
             setX(originalX);
             setY(originalY);
 
-            // Find a valid direction that does not result in a collision or boundary violation
+            // Reset the counter and find a new random direction
+            moveCounter = 0;
             int newDirection = findValidDirection();
             if (newDirection != -1) {
-                movementDirection = newDirection; // Change to the valid direction
+                movementDirection = newDirection;
             }
+        } else {
+            moveCounter++; // Increment counter if no collision occurs and maximum steps are not reached
         }
     }
 
@@ -185,6 +206,11 @@ public class DumbTank extends Tank {
 
     // Create (fire) a bullet, similar to player tank, but with its own logic
     private void shoot() {
+        if (isFrozen()) {
+            System.out.println("SmartTank is frozen, skipping movement.");
+            return; // Stop movement if frozen
+        }
+
         if (canFire) {
             // Random firing logic or based on some condition
             int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
