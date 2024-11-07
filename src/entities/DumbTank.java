@@ -31,6 +31,7 @@ public class DumbTank extends Tank {
         super();
         this.defaultBullet = new Bullet(bulletType);
 
+        bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
 
     }
@@ -38,6 +39,7 @@ public class DumbTank extends Tank {
     public DumbTank(int x, int y, BulletType bulletType) {
         super(x, y);
         this.defaultBullet = new Bullet(bulletType);
+        bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
 
     }
@@ -47,11 +49,11 @@ public class DumbTank extends Tank {
         this.defaultBullet = new Bullet(bulletType);
         this.baseImage = baseImage;
 
+        bulletManager = new BulletManager(getBullets());
         initializeCommonResources();
     }
 
     private void initializeCommonResources() {
-        bulletManager = new BulletManager(getBullets());
 
         // Initialize the hitbox
         setHitbox(new Rectangle(getX(), getY(), baseImage.getIconWidth(), baseImage.getIconHeight()));
@@ -74,6 +76,9 @@ public class DumbTank extends Tank {
 
     // Simulate autonomous movement by changing directions randomly
     private void bumpMove() {
+        if (isFrozen()) {
+            return;
+        }
         int originalX = getX();
         int originalY = getY();
 
@@ -108,6 +113,8 @@ public class DumbTank extends Tank {
                 }
                 break;
         }
+
+
 
         // Update the hitbox after moving
         updateHitbox();
@@ -185,6 +192,9 @@ public class DumbTank extends Tank {
 
     // Create (fire) a bullet, similar to player tank, but with its own logic
     private void shoot() {
+        if (isFrozen()) {
+            return;
+        }
         if (canFire) {
             // Random firing logic or based on some condition
             int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);

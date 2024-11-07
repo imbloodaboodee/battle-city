@@ -26,12 +26,11 @@ public class GameScreen extends JPanel {
     public static ArrayList<Block> blocks = new ArrayList<>();
     public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
-    private static int stage = 3;
+    private static int stage = 5;
     private Timer gameLoopTimer;
     private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
     private DumbTankRender dumbTankRender;
-    private SmartTankRender smartTankRender;
     // Private constructor to prevent external instantiations
     private GameScreen() {
         this.setVisible(true);
@@ -116,17 +115,17 @@ public class GameScreen extends JPanel {
         // Game loop to update the game state
         gameLoopTimer = new Timer(16, e -> {
             // Check for collisions with PowerUps
-//            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks);
+            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks);
             for (Tank enemyTank : enemyTanks) {
-//                CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
+                CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
             }
-            // Kiểm tra va chạm giữa đạn của PlayerTank và enemy tanks
-//            CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
+            CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
 
 //            CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
 
             // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
             ptRenderer.getPlayerTank().updateTankPosition();
+            ptRenderer.getPlayerTank().checkShieldStatus();
             repaint();
         });
         gameLoopTimer.start();
@@ -154,13 +153,8 @@ public class GameScreen extends JPanel {
 //            dumbTankRender.paintComponent(g2d);
 //        }
         for (Tank enemyTank:enemyTanks){
-            if (enemyTank instanceof DumbTank){
             dumbTankRender= new DumbTankRender((DumbTank) enemyTank, this);
-            dumbTankRender.paintComponent(g2d);}
-            else if(enemyTank instanceof SmartTank){
-                smartTankRender = new SmartTankRender((SmartTank) enemyTank, this);
-                smartTankRender.paintComponent(g2d);
-            }
+            dumbTankRender.paintComponent(g2d);
         }
 
         for (Block block : GameScreen.blocks) {
@@ -169,11 +163,13 @@ public class GameScreen extends JPanel {
             }
         }
 
-        // Draw PowerUps
+        // Vẽ PowerUps chỉ khi chúng đang hiển thị
         for (PowerUp powerUp : BoardUtility.getPowerUps()) {
-            g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
-            g2d.setColor(Color.YELLOW);
-            g2d.draw(powerUp.getHitbox());
+            if (powerUp.isVisible()) {
+                g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
+                g2d.setColor(Color.YELLOW);
+                g2d.draw(powerUp.getHitbox());
+            }
         }
 
         // Sync the graphics
