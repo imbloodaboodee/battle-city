@@ -17,7 +17,7 @@ public class PlayerTank extends Tank implements KeyListener {
     private Timer bulletTimerCountdown;
 
     // Attributes
-    private static int lives = GameConstants.INITIAL_LIVES; // Số mạng của tank
+    public static int lives = GameConstants.INITIAL_LIVES; // Số mạng của tank
     private double targetCannonAngle = 0; // The target angle to rotate to
 
 
@@ -102,19 +102,6 @@ public class PlayerTank extends Tank implements KeyListener {
             });
             bulletTimerCountdown.start();
             SoundUtility.fireSound();
-        }
-    }
-
-    // Check if health is zero and manage lives
-    private void checkHealth() {
-        if (getHealth() <= 0) {
-            lives--;
-            if (lives > 0) {
-                resetPosition();
-                setHealth(GameConstants.PLAYER_MAX_HEALTH); // Reset health
-            } else {
-                System.out.println("Game Over");
-            }
         }
     }
 

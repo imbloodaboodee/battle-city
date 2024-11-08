@@ -1,6 +1,7 @@
 package render;
 
 import SpriteClasses.*;
+import constants.GameConstants;
 import entities.*;
 import entities.BulletType;
 import entities.PlayerTank;
@@ -145,6 +146,8 @@ public class GameScreen extends JPanel {
                 enemyTank.bumpMove();
                 enemyTank.shoot(enemyTank.getBaseImage());
                 enemyTank.getBulletManager().updateBullets();
+                CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
+
             }
             CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
 
@@ -153,6 +156,7 @@ public class GameScreen extends JPanel {
             ptRenderer.getPlayerTank().getBulletManager().updateBullets();
             ptRenderer.getPlayerTank().checkShieldStatus();
             GameStateManager.checkTankDestroyed();
+            checkHealth(ptRenderer.getPlayerTank());
             repaint();
         });
         gameLoopTimer.start();
@@ -219,11 +223,38 @@ public class GameScreen extends JPanel {
         g.drawString(String.valueOf(lives < 0 ? 0 : lives), (initX + 1) * 16, 18 * 16);
         g.setFont(originalFont);
 
+        // draw the enemyIcon
+        int totalEnemyTanks = TankSpawner.getTotalEnemyTanks();
+        ImageUtility imageInstance = ImageUtility.getInstance();
+        Image enemyIcon = imageInstance.getEnemyIcon();
+
+        // Vẽ enemyIcon
+        g.drawImage(enemyIcon, initX * 16, 5 * 16, this);
+
+        // Hiển thị số lượng enemy tanks còn lại
+        g.setFont(largeBoldFont);
+        g.drawString(String.valueOf(totalEnemyTanks < 0 ? 0 : totalEnemyTanks), (initX +1) * 16, 6 * 16);
+        g.setFont(originalFont);
+
         // Sync the graphics
         Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
     }
 
+    public static void checkHealth(PlayerTank playerTank) {
+        // Kiểm tra nếu sức khỏe của tank <= 0
+        if (playerTank.getHealth() <= 0) {
+            PlayerTank.lives--;  // Giảm mạng của người chơi
+            if (PlayerTank.lives > 0) {
+                playerTank.resetPosition(); // Đặt lại vị trí của tank
+                playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH); // Đặt lại sức khỏe
+            } else {
+                System.out.println("Game Over");
+                // Dừng vòng lặp game nếu game over
+                // gameLoopTimer.stop(); // Cần tham chiếu đến gameLoopTimer hoặc dừng game theo cách khác
+            }
+        }
+    }
     public CopyOnWriteArrayList<Block> getBlocks() {
         return blocks;
     }

@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
  */
 public class ImageUtility {
     // Instance variable for the lives image
-    private final Image lives;
+    private final Image lives, enemyIcon;
     private static ImageUtility instance;
 
     /**
@@ -28,6 +28,7 @@ public class ImageUtility {
      */
     private ImageUtility() {
         lives = loadImage("src/assets/image/lives.png");
+        enemyIcon = loadImage("src/assets/image/enemy.png");
     }
 
     /**
@@ -41,12 +42,11 @@ public class ImageUtility {
         return icon.getImage();
     }
 
-    /**
-     * Get lives image
-     *
-     * @return lives
-     */
     public Image getLives() {
         return lives;
+    }
+
+    public Image getEnemyIcon() {
+        return enemyIcon;
     }
 }

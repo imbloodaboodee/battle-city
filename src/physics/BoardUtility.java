@@ -1,18 +1,17 @@
 package physics;
 
-import SpriteClasses.Base;
 import SpriteClasses.Block;
 import constants.GameConstants;
+import entities.PlayerTank;
 import entities.PowerUps.*;
 import entities.Tank;
 import entities.TankExplosion;
+import manager.TankSpawner;
 import render.GameScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BoardUtility {
@@ -32,6 +31,8 @@ public class BoardUtility {
                 case 1 -> powerUps.add(new ClockPowerUp(x, y));
                 case 2 -> powerUps.add(new ShieldPowerUp(x, y));
                 case 3 -> powerUps.add(new ShovelPowerUp(x, y));
+                case 4 -> powerUps.add(new TankPowerUp(x, y));
+                case 5 -> powerUps.add(new StarPowerUp(x, y));
             }
         }
     }
@@ -52,17 +53,29 @@ public class BoardUtility {
     }
 
 
-    public static void activateBombPowerUp(CopyOnWriteArrayList<Tank> enemyTanks) {
+    public static int activateBombPowerUp(CopyOnWriteArrayList<Tank> enemyTanks) {
+        int destroyedCount = 0;
+        List<Tank> tanksToRemove = new ArrayList<>();
+
         for (Tank enemyTank : enemyTanks) {
             GameScreen.animations.add(new TankExplosion(enemyTank.getX(), enemyTank.getY(), 100, 1, false));
             BoardUtility.spawnRandomPowerUp(enemyTank.getX(), enemyTank.getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
-            enemyTanks.remove(enemyTank); // Loại bỏ enemy khỏi danh sách
+
+            tanksToRemove.add(enemyTank);  // Thêm enemyTank vào danh sách tạm thời
+            destroyedCount++;  // Tăng số lượng enemy bị tiêu diệt
         }
-        System.out.println("Bomb PowerUp activated: All enemy tanks destroyed.");
+
+        // Sau khi vòng lặp kết thúc, xóa tất cả enemyTanks từ danh sách tạm
+        enemyTanks.removeAll(tanksToRemove);
+        for (int i = 0; i < destroyedCount; i++) {
+            TankSpawner.onEnemyTankDestroyed();
+        }
+
+        return destroyedCount;  // Trả về số lượng enemy bị tiêu diệt
+
     }
 
     public static void activateClockPowerUp(CopyOnWriteArrayList<Tank> enemyTanks) {
-        System.out.println("Clock PowerUp activated: All enemy tanks frozen for 10 seconds.");
         for (Tank enemy : enemyTanks) {
             enemy.freeze(10000); // Freeze each enemy tank for 10 seconds
         }
@@ -77,6 +90,14 @@ public class BoardUtility {
         ShovelPowerUp shovelPowerUp = new ShovelPowerUp(0, 0); // Tọa độ có thể không cần thiết nếu chỉ sử dụng logic kích hoạt
         // Kích hoạt powerup
         shovelPowerUp.activate(blocks); // Truyền danh sách các block vào để powerup kích hoạt
+    }
+
+    public static void activateTankPowerUp() {
+        PlayerTank.lives++;
+    }
+
+    public static void activateStarPowerUp() {
+        return;
     }
 
 
