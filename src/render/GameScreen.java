@@ -123,7 +123,7 @@ public class GameScreen extends JPanel {
         CopyOnWriteArrayList<Block> blocks = getBlocks(); // Phương thức này lấy danh sách các Block
 
         // Game loop to update the game state
-        gameLoopTimer = new Timer(16, e -> {
+        gameLoopTimer = new Timer(20, e -> {
             if (ptRenderer.getPlayerTank().isShield()) {
                 if (shieldAnimation == null || shieldAnimation.isFinished()) {
                     shieldAnimation = new ShieldAnimation(ptRenderer.getPlayerTank().getX(),
@@ -142,18 +142,21 @@ public class GameScreen extends JPanel {
 
             for (Tank enemyTank : enemyTanks) {
                 CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
+                enemyTank.bumpMove();
+                enemyTank.shoot(enemyTank.getBaseImage());
+                enemyTank.getBulletManager().updateBullets();
             }
             CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
 
             // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
             ptRenderer.getPlayerTank().updateTankPosition();
+            ptRenderer.getPlayerTank().getBulletManager().updateBullets();
             ptRenderer.getPlayerTank().checkShieldStatus();
             GameStateManager.checkTankDestroyed();
             repaint();
         });
         gameLoopTimer.start();
     }
-
 
 
     @Override
@@ -170,7 +173,7 @@ public class GameScreen extends JPanel {
         ptRenderer.paintComponent(g2d);
         if (ptRenderer.getPlayerTank().isShield() && shieldAnimation != null) {
             shieldAnimation.setPosition(ptRenderer.getPlayerTank().getX() - 3,
-                    ptRenderer.getPlayerTank().getY()-4);  // Update position to follow the tank
+                    ptRenderer.getPlayerTank().getY() - 4);  // Update position to follow the tank
             shieldAnimation.draw(g2d);
         }
         for (Tank enemyTank : enemyTanks) {

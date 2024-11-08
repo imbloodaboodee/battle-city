@@ -44,11 +44,11 @@ public class PlayerTankRender extends JLabel {
         angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI;
 
         // If the angle difference is greater than the rotation speed, rotate towards the target angle
-        if (Math.abs(angleDifference) > playerTank.getROTATION_SPEED()) {
+        if (Math.abs(angleDifference) > GameConstants.PLAYER_ROTATION_SPEED) {
             if (angleDifference > 0) {
-                playerTank.setCannonAngle(playerTank.getCannonAngle() + playerTank.getROTATION_SPEED());
+                playerTank.setCannonAngle(playerTank.getCannonAngle() + GameConstants.PLAYER_ROTATION_SPEED);
             } else {
-                playerTank.setCannonAngle(playerTank.getCannonAngle() - playerTank.getROTATION_SPEED());
+                playerTank.setCannonAngle(playerTank.getCannonAngle() - GameConstants.PLAYER_ROTATION_SPEED);
             }
 
             // Keep the angle within the range of -PI to PI for consistency
