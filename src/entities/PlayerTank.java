@@ -23,7 +23,7 @@ public class PlayerTank extends Tank implements KeyListener {
     private Bullet defaultBullet;
     private double cannonAngle = 0;
     private boolean canFire = true;
-
+    private static int lives = GameConstants.INITIAL_LIVES; // Số mạng của tank
     private double targetCannonAngle = 0; // The target angle to rotate to
     private final double ROTATION_SPEED = GameConstants.PLAYER_ROTATION_SPEED; // Speed at which the cannon rotates
 
@@ -53,6 +53,7 @@ public class PlayerTank extends Tank implements KeyListener {
         // Timer for updating entities that need constant updating
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
             bulletManager.updateBullets();
+            checkHealth();
         });
         gameLoopTimer.start();
     }
@@ -120,6 +121,20 @@ public class PlayerTank extends Tank implements KeyListener {
         }
     }
 
+    // Check if health is zero and manage lives
+    private void checkHealth() {
+        if (getHealth() <= 0) {
+            lives--;
+            if (lives > 0) {
+                resetPosition();
+                setHealth(GameConstants.PLAYER_MAX_HEALTH); // Reset health
+            } else {
+                System.out.println("Game Over");
+                gameLoopTimer.stop(); // Dừng game hoặc xử lý theo cách bạn muốn
+            }
+        }
+    }
+
 
     public double getCannonAngle() {
         return cannonAngle;
@@ -151,6 +166,10 @@ public class PlayerTank extends Tank implements KeyListener {
 
     public ImageIcon getAimImage() {
         return aimImage;
+    }
+
+    public static int getLives() {
+        return lives;
     }
 
     public void resetPosition() {

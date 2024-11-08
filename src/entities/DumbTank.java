@@ -66,7 +66,7 @@ public class DumbTank extends Tank {
         // Timer for creating bullets, starts when the enemy decides to shoot
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
-//        bulletCreationTimer.start();
+        bulletCreationTimer.start();
 
         // Timer for updating entities (tank position, bullets, etc.)
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {

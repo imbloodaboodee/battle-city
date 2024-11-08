@@ -12,6 +12,7 @@ import manager.GameStateManager;
 import manager.TankSpawner;
 import physics.BoardUtility;
 import physics.CollisionHandling;
+import physics.ImageUtility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class GameScreen extends JPanel {
 
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
     public static int stage = 1;
+    private final ImageUtility imageInstance = ImageUtility.getInstance();
     private Timer gameLoopTimer;
     private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
@@ -203,6 +205,17 @@ public class GameScreen extends JPanel {
                 g2d.draw(powerUp.getHitbox());
             }
         }
+        // draw the lives
+        int lives = PlayerTank.getLives();
+        Image liveIcon = imageInstance.getLives();
+        int initX = 29;
+        g.drawImage(liveIcon, initX * 16, 17 * 16, this);
+
+        Font originalFont = g.getFont();
+        Font largeBoldFont = new Font("Arial", Font.BOLD, 20);
+        g.setFont(largeBoldFont);
+        g.drawString(String.valueOf(lives < 0 ? 0 : lives), (initX + 1) * 16, 18 * 16);
+        g.setFont(originalFont);
 
         // Sync the graphics
         Toolkit.getDefaultToolkit().sync();

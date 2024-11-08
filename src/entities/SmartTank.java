@@ -64,7 +64,7 @@ public class SmartTank extends Tank {
         // Timer for creating bullets, starts when the enemy decides to shoot
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
-//        bulletCreationTimer.start();
+        bulletCreationTimer.start();
 
         // Timer for updating entities (tank position, bullets, etc.)
         gameLoopTimer = new Timer(GameConstants.DELAY, e -> {
@@ -91,6 +91,11 @@ public class SmartTank extends Tank {
 
     // Simulate autonomous movement by changing directions randomly
     private void bumpMove() {
+        if (isFrozen()) {
+            System.out.println("SmartTank is frozen, skipping movement.");
+            return; // Stop movement if frozen
+        }
+
         int originalX = getX();
         int originalY = getY();
 
