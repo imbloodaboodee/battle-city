@@ -94,7 +94,6 @@ public class CollisionHandling {
         return false; // No collision detected
     }
 
-
     // Check collision between bullets and blocks
     public static void checkCollisionBulletsBlocks(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
         for (int x = 0; x < bullets.size(); x++) {
