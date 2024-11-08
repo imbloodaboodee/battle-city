@@ -237,4 +237,7 @@ public class Tank {
         this.hitbox = hitbox;
     }
 
+    public boolean isShield() {
+        return shield;
+    }
 }

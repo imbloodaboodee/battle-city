@@ -73,4 +73,9 @@ public abstract class Animation {
     public void setLoop(boolean loop) {
         this.loop = loop;
     }
+
+    public void setPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 }

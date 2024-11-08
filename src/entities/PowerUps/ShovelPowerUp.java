@@ -4,7 +4,12 @@ import SpriteClasses.Brick;
 import SpriteClasses.Steel;
 import environment.BlockType;
 import SpriteClasses.Block;
+
 import java.util.ArrayList;
+import java.util.TimerTask;
+import java.util.Timer;
+
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ShovelPowerUp extends PowerUp {
 
@@ -18,50 +23,55 @@ public class ShovelPowerUp extends PowerUp {
         imagePath = "src/assets/image/powerup_shovel.png";
     }
 
-    public void activate(ArrayList<Block> blocks) {
-        // Step 1: Find all bricks around the base (using predefined coordinates)
-        ArrayList<Block> affectedBlocks = new ArrayList<>();
+    public void activate(CopyOnWriteArrayList<Block> blocks) {
+        // Remove all brick blocks around the base
+        removeBlocks(blocks);
 
-        for (Block block : blocks) {
-            // Kiểm tra điều kiện cho 3 phạm vi tọa độ đã nêu
-            if ((block.getX() >= 192 && block.getX() <= 256 && block.getY() == 384) ||  // Điều kiện 1
-                    (block.getX() >= 192 && block.getX() <= 208 && block.getY() >= 400 && block.getY() <= 416) ||  // Điều kiện 2
-                    (block.getX() >= 240 && block.getX() <= 256 && block.getY() >= 400 && block.getY() <= 416)) {  // Điều kiện 3
-                affectedBlocks.add(block);
+        // Replace with steel blocks
+        addSteelBlocks(blocks);
+
+        // Set a timer to replace steel blocks with brick blocks after SHOVEL_DURATION
+        Timer shovelTimer = new Timer();
+        shovelTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                removeBlocks(blocks);
+                addBrickBlocks(blocks);
             }
-        }
-
-        // Step 2: Replace brick blocks with steel blocks
-        for (int i = 0; i < affectedBlocks.size(); i++) {
-            Block block = affectedBlocks.get(i);
-            // Create a new Steel block at the same position as the old block
-            Block steelBlock = new Steel(block.getX(), block.getY());
-            blocks.remove(block); // Remove the old brick block
-            blocks.add(steelBlock); // Add the new steel block
-            System.out.println("Brick block changed to steel.");
-        }
-
-        // Step 3: Set a timer to revert steel blocks back to brick after SHOVEL_DURATION
-        new Thread(() -> {
-            try {
-                // Wait for the duration of the shovel power-up (10 seconds)
-                Thread.sleep(SHOVEL_DURATION);
-
-                // After 10 seconds, replace steel blocks with brick blocks
-                for (int i = 0; i < affectedBlocks.size(); i++) {
-                    Block block = affectedBlocks.get(i);
-                    // Create a new Brick block at the same position as the steel block
-                    Block brickBlock = new Brick(block.getX(), block.getY());
-                    brickBlock.setType(BlockType.BRICK.getValue());
-                    blocks.remove(block); // Remove the steel block
-                    blocks.add(brickBlock); // Add the new brick block
-                    System.out.println("Steel block reverted back to brick.");
-                }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+        }, SHOVEL_DURATION);
     }
+
+    // Helper method to remove blocks around specific coordinates
+    private void removeBlocks(CopyOnWriteArrayList<Block> blocks) {
+        blocks.removeIf(block ->
+                (block.getX() >= 192 && block.getX() <= 256 && block.getY() == 384) ||
+                        (block.getX() >= 192 && block.getX() <= 208 && block.getY() >= 400 && block.getY() <= 416) ||
+                        (block.getX() >= 240 && block.getX() <= 256 && block.getY() >= 400 && block.getY() <= 416)
+        );
+    }
+
+    // Helper method to add steel blocks at specific coordinates
+    private void addSteelBlocks(CopyOnWriteArrayList<Block> blocks) {
+        for (int x = 208; x <= 256; x += 16) {
+            blocks.add(new Steel(x, 384));
+        }
+        for (int y = 400; y <= 416; y += 16) {
+            blocks.add(new Steel(208, y));
+            blocks.add(new Steel(256, y));
+        }
+    }
+
+    // Helper method to add brick blocks at specific coordinates
+    private void addBrickBlocks(CopyOnWriteArrayList<Block> blocks) {
+        for (int x = 208; x <= 256; x += 16) {
+            blocks.add(new Brick(x, 384));
+        }
+        for (int y = 400; y <= 416; y += 16) {
+            blocks.add(new Brick(208, y));
+            blocks.add(new Brick(256, y));
+        }
+    }
+
 
 
 

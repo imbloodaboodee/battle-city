@@ -20,11 +20,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameScreen extends JPanel {
     private static GameScreen instance;  // Static instance for Singleton
-    public static ArrayList<Block> blocks = new ArrayList<>();
-    public static ArrayList<Tank> enemyTanks = new ArrayList<>(); // To hold multiple SmartTanks
+    public static CopyOnWriteArrayList<Block> blocks = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Tank> enemyTanks = new CopyOnWriteArrayList<>(); // To hold multiple SmartTanks
     public static ArrayList<Animation> animations = new ArrayList<>();
 
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
@@ -34,7 +35,7 @@ public class GameScreen extends JPanel {
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
     private DumbTankRender dumbTankRender;
     private SmartTankRender smartTankRender;
-    public static int tankDestroyed;
+    public static ShieldAnimation shieldAnimation;
     public static boolean isSpawning = false;
 
     // Private constructor to prevent external instantiations
@@ -68,12 +69,10 @@ public class GameScreen extends JPanel {
             }
         });
 
-
         // Initialize blocks, start the game loop, and power-up spawner
         tankSpawner.startSpawning();
         initBlocks();
         initGameLoop();
-        initPowerUpSpawner();
     }
 
     // Public method to get the single instance
@@ -117,12 +116,26 @@ public class GameScreen extends JPanel {
         }
     }
 
+
     private void initGameLoop() {
         // Giả sử bạn đã có danh sách blocks từ nơi khác trong game (ví dụ từ lớp Board)
-        ArrayList<Block> blocks = getBlocks(); // Phương thức này lấy danh sách các Block
+        CopyOnWriteArrayList<Block> blocks = getBlocks(); // Phương thức này lấy danh sách các Block
 
         // Game loop to update the game state
         gameLoopTimer = new Timer(16, e -> {
+            if (ptRenderer.getPlayerTank().isShield()) {
+                if (shieldAnimation == null || shieldAnimation.isFinished()) {
+                    shieldAnimation = new ShieldAnimation(ptRenderer.getPlayerTank().getX(),
+                            ptRenderer.getPlayerTank().getY(), 100, 1, true);
+                }
+                shieldAnimation.setLoop(true);
+            } else {
+                if (shieldAnimation != null) {
+                    shieldAnimation.setLoop(false);  // Stop the animation when shield is inactive
+                    shieldAnimation = null;
+                }
+            }
+
             // Check for collisions with PowerUps
             BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks, blocks);  // Truyền blocks vào đây
 
@@ -141,11 +154,6 @@ public class GameScreen extends JPanel {
     }
 
 
-    private void initPowerUpSpawner() {
-        // Timer to spawn PowerUps periodically
-        powerUpSpawnTimer = new Timer(1000, e -> BoardUtility.spawnRandomPowerUp()); // Spawn every second
-        powerUpSpawnTimer.start();
-    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -159,6 +167,11 @@ public class GameScreen extends JPanel {
         }
 
         ptRenderer.paintComponent(g2d);
+        if (ptRenderer.getPlayerTank().isShield() && shieldAnimation != null) {
+            shieldAnimation.setPosition(ptRenderer.getPlayerTank().getX() - 3,
+                    ptRenderer.getPlayerTank().getY()-4);  // Update position to follow the tank
+            shieldAnimation.draw(g2d);
+        }
         for (Tank enemyTank : enemyTanks) {
             if (enemyTank instanceof DumbTank) {
                 dumbTankRender = new DumbTankRender((DumbTank) enemyTank, this);
@@ -196,7 +209,7 @@ public class GameScreen extends JPanel {
         g2d.dispose();
     }
 
-    public ArrayList<Block> getBlocks() {
+    public CopyOnWriteArrayList<Block> getBlocks() {
         return blocks;
     }
 
@@ -217,7 +230,7 @@ public class GameScreen extends JPanel {
         return tankSpawner;
     }
 
-    public ArrayList<Tank> getEnemyTanks() {
+    public CopyOnWriteArrayList<Tank> getEnemyTanks() {
         return enemyTanks;
     }
 }

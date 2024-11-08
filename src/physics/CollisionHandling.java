@@ -2,6 +2,7 @@ package physics;
 
 import SpriteClasses.Base;
 import SpriteClasses.Block;
+import constants.GameConstants;
 import entities.BlockExplosion;
 import entities.Bullet;
 import entities.PowerUps.*;
@@ -17,6 +18,7 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollisionHandling {
 
@@ -47,7 +49,7 @@ public class CollisionHandling {
 
 
     // Check collision between bullets and enemy tanks (Tank)
-    public static void checkCollisionBulletsTankAI(ArrayList<Bullet> bullets, ArrayList<Tank> enemyTanks) {
+    public static void checkCollisionBulletsTankAI(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Tank> enemyTanks) {
         for (int i = 0; i < enemyTanks.size(); i++) {
             Tank enemy = enemyTanks.get(i);
             Rectangle enemyHitbox = enemy.getHitbox();
@@ -66,8 +68,8 @@ public class CollisionHandling {
                     // Nếu xe tăng đối phương bị tiêu diệt, xóa xe tăng đó khỏi danh sách
                     if (enemy.getHealth() <= 0) {
                         GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 100, 1, false));
+                        BoardUtility.spawnRandomPowerUp(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
                         enemyTanks.remove(i); // Loại bỏ enemy khỏi danh sách
-                        GameScreen.tankDestroyed+=1;
                     }
                     // Đảm bảo thoát khỏi vòng lặp đạn sau khi xử lý va chạm
                     break;
@@ -78,7 +80,7 @@ public class CollisionHandling {
 
 
     // Check collision between moving tanks and blocks
-    public static boolean checkMovingCollisions(Tank tank, ArrayList<Block> blocks) {
+    public static boolean checkMovingCollisions(Tank tank, CopyOnWriteArrayList<Block> blocks) {
         Rectangle tankHitbox = tank.getHitbox();
         ArrayList<Block> blocksClone = new ArrayList<>(blocks);
         // Loop through the list by index instead of using an iterator
@@ -94,7 +96,7 @@ public class CollisionHandling {
 
 
     // Check collision between bullets and blocks
-    public static void checkCollisionBulletsBlocks(ArrayList<Bullet> bullets, ArrayList<Block> blocks) {
+    public static void checkCollisionBulletsBlocks(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
         for (int x = 0; x < bullets.size(); x++) {
             Bullet b = bullets.get(x);
             Rectangle2D.Double bulletHitbox = b.getHitbox();
@@ -113,7 +115,7 @@ public class CollisionHandling {
         }
     }
 
-    private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, ArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
+    private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
         switch (blockType) {
             case RIVER:
             case TREE:
@@ -124,8 +126,15 @@ public class CollisionHandling {
             case BRICK:
                 // Remove both the bullet and the brick block
                 GameScreen.animations.add(new BlockExplosion(blocks.get(blockIndex).getX(), blocks.get(blockIndex).getY(), 100, 0.5, false));
-                bullets.remove(bulletIndex);
-                blocks.remove(blockIndex);
+                Bullet bulletToRemove = bullets.get(bulletIndex);
+                Block blockToRemove = blocks.get(blockIndex);
+
+                synchronized (bullets) {
+                    bullets.remove(bulletToRemove); // Remove bullet
+                }
+                synchronized (blocks) {
+                    blocks.remove(blockToRemove); // Remove block
+                }
                 System.out.println("Bullet and brick block removed after collision.");
 
                 break;
@@ -143,7 +152,7 @@ public class CollisionHandling {
 
 
 
-    public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, ArrayList<Tank> enemyTanks, ArrayList<Block> blocks) {
+    public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, CopyOnWriteArrayList<Tank> enemyTanks, CopyOnWriteArrayList<Block> blocks) {
         for (PowerUp powerUp : powerUps) {
             if (playerTank.getHitbox().intersects(powerUp.getHitbox()) && powerUp.isVisible()) {
                 if (powerUp instanceof BombPowerUp) {

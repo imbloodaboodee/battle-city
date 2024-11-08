@@ -89,16 +89,6 @@ public class PlayerTankRender extends JLabel {
         // Reset opacity
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
-        // Kiểm tra nếu shield đang bật, vẽ viền màu vàng
-        if (playerTank.shield) {
-            g2d.setColor(Color.YELLOW); // Màu viền là vàng
-            int padding = 5; // Độ dày của viền
-
-            g2d.setStroke(new BasicStroke(3)); // Đặt độ dày nét vẽ cho viền
-            g2d.drawRect(playerTank.getX() - padding, playerTank.getY() - padding,
-                    baseImage.getIconWidth() + padding * 2, baseImage.getIconHeight() + padding * 2);
-        }
-
         // Draw bullets
         g2d.setColor(Color.WHITE);
         for (Bullet bullet : playerTank.getBullets()) {

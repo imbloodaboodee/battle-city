@@ -13,10 +13,13 @@ public class SpawnAnimation extends Animation {
     }
 
     private static BufferedImage[] loadExplosionFrames() {
-        BufferedImage[] frames = new BufferedImage[2];
+        BufferedImage[] frames = new BufferedImage[4];
         try {
             frames[0] = ImageIO.read(new File("./src/assets/image/spawn_1.png"));
             frames[1] = ImageIO.read(new File("./src/assets/image/spawn_2.png"));
+            frames[2] = ImageIO.read(new File("./src/assets/image/spawn_3.png"));
+            frames[3] = ImageIO.read(new File("./src/assets/image/spawn_4.png"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
