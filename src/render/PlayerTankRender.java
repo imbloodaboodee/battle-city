@@ -1,6 +1,7 @@
 
 package render;
 
+import constants.GameConstants;
 import entities.Bullet;
 import entities.PlayerTank;
 
@@ -92,7 +93,7 @@ public class PlayerTankRender extends JLabel {
         // Draw bullets
         g2d.setColor(Color.WHITE);
         for (Bullet bullet : playerTank.getBullets()) {
-            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), 5, 5);
+            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE);
         }
 
         g2d.dispose();

@@ -22,7 +22,6 @@ package SpriteClasses;
  *
  * @param int x represents the starting x location in pixels
  * @param int y represents the starting y location in pixels
- *
  * @author Adrian Berg
  */
 public class Block extends Sprite {
@@ -32,6 +31,10 @@ public class Block extends Sprite {
     public Block(int x, int y) {
         super(x, y);
 
+    }
+
+    public Block(int x, int y, int width, int height) {
+        super(x, y, width, height);
     }
 
     public void lowerHealth() {

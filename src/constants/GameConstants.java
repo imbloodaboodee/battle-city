@@ -8,7 +8,7 @@ public final class GameConstants {
     public static final int DELAY = 16;
     public static final int FRAME_HEIGHT = 800;
     public static final int FRAME_WIDTH = 800;
-    public static final int BULLET_SIZE = 5;
+    public static final int BULLET_SIZE = 10;
     public static final int BLOCK_SIZE = 16;
     public static final int INITIAL_LIVES = 2;
     public static final int PLAYER_MAX_HEALTH = 1;

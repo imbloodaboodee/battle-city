@@ -107,7 +107,7 @@ public class PlayerTank extends Tank implements KeyListener {
             int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
 
             // Create the bullet with the current cannon angle
-            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX- GameConstants.BULLET_SIZE / 2, cannonTipY- GameConstants.BULLET_SIZE / 2, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
             getBullets().add(bullet);
 
             // Mechanism for handling firing cooldown

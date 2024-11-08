@@ -1,6 +1,7 @@
 package entities.PowerUps;
 
 import SpriteClasses.Sprite;
+import constants.GameConstants;
 
 public class PowerUp extends Sprite {
     long loadTime;
@@ -9,7 +10,7 @@ public class PowerUp extends Sprite {
     String imagePath;
 
     public PowerUp(int x, int y) {
-        super(x, y);
+        super(x, y, GameConstants.BLOCK_SIZE*2, GameConstants.BLOCK_SIZE*2);
         this.imagePath = imagePath;
         loadImage(imagePath);
         getImageDimensions();

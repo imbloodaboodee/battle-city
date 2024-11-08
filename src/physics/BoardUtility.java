@@ -36,7 +36,7 @@ public class BoardUtility {
         }
     }
 
-    public void clearPowerUps() {
+    public static void clearPowerUps() {
         powerUps.clear();
     }
 

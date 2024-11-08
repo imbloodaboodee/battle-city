@@ -93,25 +93,72 @@ public class CollisionHandling {
         }
         return false; // No collision detected
     }
+    public static boolean isPlayerTankInTree() {
+        Rectangle tankHitbox = GameScreen.getInstance().ptRenderer.getPlayerTank().getHitbox();
+        ArrayList<Block> blocksClone = new ArrayList<>(GameScreen.blocks);
+        // Loop through the list by index instead of using an iterator
+        for (Block block : blocksClone) {
+            if (tankHitbox.intersects(block.getHitbox()) && block.getType() == BlockType.TREE.getValue())
+                return true; // Collision detected
+        }
+        return false; // No collision detected
+    }
+
 
     // Check collision between bullets and blocks
     public static void checkCollisionBulletsBlocks(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
-        for (int x = 0; x < bullets.size(); x++) {
-            Bullet b = bullets.get(x);
-            Rectangle2D.Double bulletHitbox = b.getHitbox();
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+        ArrayList<Block> blocksToRemove = new ArrayList<>();
 
-            for (int i = 0; i < blocks.size(); i++) {
-                Block block = blocks.get(i);
+        for (Bullet b : bullets) {
+            Rectangle2D.Double bulletHitbox = b.getHitbox();
+            boolean bulletShouldBeRemoved = false;
+
+            for (Block block : blocks) {
                 Rectangle blockHitbox = block.getHitbox();
-                BlockType blockType = BlockType.getTypeFromInt(block.getType()); // Convert int to BlockType
+                BlockType blockType = BlockType.getTypeFromInt(block.getType());
 
                 if (bulletHitbox.intersects(blockHitbox)) {
                     System.out.println("Collision detected with block of type: " + blockType);
-                    CollisionBulletsBlocksHelper(bullets, blocks, x, i, blockType);
-                    break;  // Exit loop after handling collision
+
+                    switch (blockType) {
+                        case BRICK:
+                            GameScreen.animations.add(new BlockExplosion(block.getX(), block.getY(), 100, 0.5, false));
+                            blocksToRemove.add(block); // Mark brick block for removal
+                            bulletShouldBeRemoved = true; // Bullet should be removed after colliding with bricks
+                            break;
+
+                        case STEEL:
+                        case EDGE:
+                            bulletShouldBeRemoved = true; // Bullet is removed when hitting steel or edge
+                            break;
+
+                        case RIVER:
+                        case TREE:
+                            // Bullet goes through river or tree; do nothing
+                            break;
+
+                        default:
+                            System.out.println("Unknown block type.");
+                            break;
+                    }
+
+                    if (blockType == BlockType.STEEL || blockType == BlockType.EDGE) {
+                        // Stop further checks for this bullet if it hits STEEL or EDGE
+                        break;
+                    }
                 }
             }
+
+            // Only add the bullet to be removed if it should actually be removed
+            if (bulletShouldBeRemoved) {
+                bulletsToRemove.add(b);
+            }
         }
+
+        // Remove all marked bullets and blocks after looping
+        bullets.removeAll(bulletsToRemove);
+        blocks.removeAll(blocksToRemove);
     }
 
     private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {

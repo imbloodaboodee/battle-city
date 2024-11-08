@@ -44,6 +44,13 @@ public class Sprite {
         vis = true;
         hitbox = new Rectangle(x,y, GameConstants.BLOCK_SIZE, GameConstants.BLOCK_SIZE);
     }
+    public Sprite (int x, int y, int width, int height){
+        this.x = x;
+        this.y = y;
+        vis = true;
+        hitbox = new Rectangle(x,y, width, height);
+
+    }
 
     protected void getImageDimensions() {
         width = image.getWidth(null);

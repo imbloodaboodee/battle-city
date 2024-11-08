@@ -5,6 +5,7 @@ import constants.GameConstants;
 import entities.Bullet;
 import entities.PlayerTank;
 import entities.SmartTank;
+import physics.CollisionHandling;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +49,7 @@ public class SmartTankRender extends JLabel {
 
         // Determine the target coordinates based on the closer distance
         int targetX, targetY;
-        if (distanceToPlayer < distanceToBase) {
+        if (distanceToPlayer < distanceToBase && !CollisionHandling.isPlayerTankInTree()) {
             // Target player if closer
             targetX = playerCenterX;
             targetY = playerCenterY;

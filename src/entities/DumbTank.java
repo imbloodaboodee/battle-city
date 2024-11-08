@@ -217,7 +217,7 @@ public class DumbTank extends Tank {
             int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
             int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), getTankAngle() - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX- GameConstants.BULLET_SIZE / 2, cannonTipY- GameConstants.BULLET_SIZE / 2, defaultBullet.getBulletType(), getTankAngle() - Math.PI / 2);
             getBullets().add(bullet);
 
             canFire = false;

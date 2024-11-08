@@ -215,7 +215,7 @@ public class SmartTank extends Tank {
             int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
             int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(cannonAngle - Math.PI / 2) * cannonImage.getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX, cannonTipY, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX- GameConstants.BULLET_SIZE / 2, cannonTipY- GameConstants.BULLET_SIZE / 2, defaultBullet.getBulletType(), cannonAngle - Math.PI / 2);
             getBullets().add(bullet);
 
             canFire = false;

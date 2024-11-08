@@ -29,11 +29,10 @@ public class GameScreen extends JPanel {
     public static CopyOnWriteArrayList<Tank> enemyTanks = new CopyOnWriteArrayList<>(); // To hold multiple SmartTanks
     public static ArrayList<Animation> animations = new ArrayList<>();
 
-    public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.NORMAL), this);
+    public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.RAPID), this);
     public static int stage = 1;
     private final ImageUtility imageInstance = ImageUtility.getInstance();
     private Timer gameLoopTimer;
-    private Timer powerUpSpawnTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
     private DumbTankRender dumbTankRender;
     private SmartTankRender smartTankRender;
