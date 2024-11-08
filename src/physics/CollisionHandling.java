@@ -1,23 +1,19 @@
 package physics;
 
-import SpriteClasses.Base;
 import SpriteClasses.Block;
 import constants.GameConstants;
-import entities.BlockExplosion;
-import entities.Bullet;
+import entities.*;
 import entities.PowerUps.*;
-import entities.Tank;
 import entities.PowerUps.BombPowerUp;
 import entities.PowerUps.ClockPowerUp;
 import entities.PowerUps.PowerUp;
-import entities.TankExplosion;
 import environment.BlockType;
+import manager.TankSpawner;
 import render.GameScreen;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollisionHandling {
@@ -67,6 +63,7 @@ public class CollisionHandling {
 
                     // Nếu xe tăng đối phương bị tiêu diệt, xóa xe tăng đó khỏi danh sách
                     if (enemy.getHealth() <= 0) {
+                        TankSpawner.onEnemyTankDestroyed();
                         GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 100, 1, false));
                         BoardUtility.spawnRandomPowerUp(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
                         enemyTanks.remove(i); // Loại bỏ enemy khỏi danh sách
@@ -161,42 +158,6 @@ public class CollisionHandling {
         blocks.removeAll(blocksToRemove);
     }
 
-    private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
-        switch (blockType) {
-            case RIVER:
-            case TREE:
-                // Bullet goes through tree; do nothing.
-                System.out.println("Bullet passed through tree.");
-                break;
-
-            case BRICK:
-                // Remove both the bullet and the brick block
-                GameScreen.animations.add(new BlockExplosion(blocks.get(blockIndex).getX(), blocks.get(blockIndex).getY(), 100, 0.5, false));
-                Bullet bulletToRemove = bullets.get(bulletIndex);
-                Block blockToRemove = blocks.get(blockIndex);
-
-                synchronized (bullets) {
-                    bullets.remove(bulletToRemove); // Remove bullet
-                }
-                synchronized (blocks) {
-                    blocks.remove(blockToRemove); // Remove block
-                }
-                System.out.println("Bullet and brick block removed after collision.");
-
-                break;
-            case EDGE:
-            case STEEL:
-                // Only remove the bullet; steel block remains
-                bullets.remove(bulletIndex);
-                System.out.println("Bullet removed after hitting steel block.");
-                break;
-
-            default:
-                System.out.println("Unknown block type.");
-        }
-    }
-
-
 
     public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, CopyOnWriteArrayList<Tank> enemyTanks, CopyOnWriteArrayList<Block> blocks) {
         for (PowerUp powerUp : powerUps) {
@@ -209,6 +170,10 @@ public class CollisionHandling {
                     BoardUtility.activateClockPowerUp(enemyTanks);
                 } else if (powerUp instanceof ShovelPowerUp) {
                     BoardUtility.activateShovelPowerUp(blocks); // Truyền blocks vào đây
+                } else if (powerUp instanceof TankPowerUp) {
+                    BoardUtility.activateTankPowerUp();
+                } else if (powerUp instanceof StarPowerUp) {
+                    BoardUtility.activateStarPowerUp();
                 }
                 powerUp.setVisible(false); // Ẩn PowerUp sau khi được nhặt
                 break;
@@ -216,43 +181,39 @@ public class CollisionHandling {
         }
     }
 
+    public static void checkCollisionTankTankAI(Tank playerTank, CopyOnWriteArrayList<Tank> enemyTanks) {
+        Rectangle playerHitbox = playerTank.getHitbox();
 
+        for (int i = 0; i < enemyTanks.size(); i++) {
+            Tank enemy = enemyTanks.get(i);
+            Rectangle enemyHitbox = enemy.getHitbox();
 
+            if (playerHitbox.intersects(enemyHitbox)) {
+                System.out.println("Collision detected between PlayerTank and an enemy tank!");
 
-//    public static void checkCollisionTankTankAI(Tank playerTank, ArrayList<Tank> enemyTanks) {
-//        Rectangle playerHitbox = playerTank.getHitbox();
-//
-//        for (Tank enemy : enemyTanks) {
-//            Rectangle enemyHitbox = enemy.getHitbox();
-//
-//            if (playerHitbox.intersects(enemyHitbox)) {
-//                System.out.println("Collision detected between PlayerTank and an enemy tank!");
-//
-//                // Reduce health for both tanks on collision, or you can decide on specific logic
-//                playerTank.setHealth(playerTank.getHealth() - 1);
-//                enemy.setHealth(enemy.getHealth() - 1);
-//
-//                System.out.println("Player health: " + playerTank.getHealth());
-//                System.out.println("Enemy health: " + enemy.getHealth());
-//
-//                // Handle player tank destruction if health is zero or below
-//                if (playerTank.getHealth() <= 0) {
-//                    System.out.println("Player tank destroyed!");
-//                    // Optionally, handle player tank removal or game over logic
-//                }
-//
-//                // Handle enemy tank destruction if health is zero or below
-//                if (enemy.getHealth() <= 0) {
-//                    System.out.println("Enemy tank destroyed!");
-////                    enemy.setVisible(false);
-////                    enemyTanks.remove(enemy); // Remove the enemy tank from the game
-//                }
-//
-//                // Exit after handling collision with one enemy tank to avoid ConcurrentModificationException
-//                break;
-//            }
-//        }
-//    }
+                // Reduce health for both tanks on collision, or you can decide on specific logic
+                playerTank.downHealth(1);
+                enemy.downHealth(1);
+
+                System.out.println("Player health: " + playerTank.getHealth());
+                System.out.println("Enemy health: " + enemy.getHealth());
+
+                // Handle player tank destruction if health is zero or below
+                GameScreen.checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
+
+                // Handle enemy tank destruction if health is zero or below
+                if (enemy.getHealth() <= 0) {
+                    TankSpawner.onEnemyTankDestroyed();
+                    GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 100, 1, false));
+                    BoardUtility.spawnRandomPowerUp(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
+                    enemyTanks.remove(i); // Loại bỏ enemy khỏi danh sách
+                }
+
+                // Exit after handling collision with one enemy tank to avoid ConcurrentModificationException
+                break;
+            }
+        }
+    }
 
 
 }

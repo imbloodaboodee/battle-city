@@ -21,6 +21,7 @@ public class TankSpawner {
     private int maxFastTanks;
     private int maxPowerTanks;
     private int maxArmorTanks;
+    private static int totalEnemyTanks;
 
     private Timer spawnTimer;
 
@@ -82,6 +83,7 @@ public class TankSpawner {
         this.maxFastTanks = Math.max(2 * stage - 5, 2);
         this.maxPowerTanks = stage / 2;
         this.maxArmorTanks = stage / 3;
+        this.totalEnemyTanks = maxBasicTanks + maxFastTanks + maxPowerTanks + maxArmorTanks;
     }
 
     private void spawnBasicTank() {
@@ -121,6 +123,18 @@ public class TankSpawner {
     public void setStage(int stage) {
         this.stage = stage;
         updateTankLimits();  // Update tank limits whenever the stage changes
+    }
+
+    public static int getTotalEnemyTanks() {
+        return totalEnemyTanks;
+    }
+
+    public static void onEnemyTankDestroyed() {
+        totalEnemyTanks--;
+        if (totalEnemyTanks < 0) {
+            totalEnemyTanks = 0; // Đảm bảo không xuống dưới 0
+        }
+        GameScreen.getInstance().repaint(); // Cập nhật màn hình để hiển thị số lượng mới
     }
 }
 
