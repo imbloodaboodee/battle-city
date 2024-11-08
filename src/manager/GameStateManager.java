@@ -7,16 +7,10 @@ import javax.swing.*;
 
 public class GameStateManager {
     private static boolean levelTransitioning = false;  // New flag
-
     public static void checkTankDestroyed() {
         if (GameScreen.enemyTanks.size() == 0 && !GameScreen.isSpawning && !levelTransitioning) {
             levelTransitioning = true; // Set flag to prevent re-triggering
-            Timer timer = new Timer(3000, e -> {
                 nextLevel();
-                ((Timer) e.getSource()).stop(); // Stop the timer after execution
-            });
-            timer.setRepeats(false); // Ensure it only fires once
-            timer.start();
         }
     }
 

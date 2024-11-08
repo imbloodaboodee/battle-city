@@ -22,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollisionHandling {
 
-    public static void checkCollisionBulletsTank(ArrayList<Bullet> bullets, Tank playerTank) {
+    public static void checkCollisionBulletsTank(CopyOnWriteArrayList<Bullet> bullets, Tank playerTank) {
         Rectangle playerHitbox = playerTank.getHitbox();
 
         // Duyệt qua từng viên đạn trong danh sách bullets
@@ -49,7 +49,7 @@ public class CollisionHandling {
 
 
     // Check collision between bullets and enemy tanks (Tank)
-    public static void checkCollisionBulletsTankAI(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Tank> enemyTanks) {
+    public static void checkCollisionBulletsTankAI(CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Tank> enemyTanks) {
         for (int i = 0; i < enemyTanks.size(); i++) {
             Tank enemy = enemyTanks.get(i);
             Rectangle enemyHitbox = enemy.getHitbox();
@@ -106,8 +106,8 @@ public class CollisionHandling {
 
 
     // Check collision between bullets and blocks
-    public static void checkCollisionBulletsBlocks(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
-        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+    public static void checkCollisionBulletsBlocks(CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
+        CopyOnWriteArrayList<Bullet> bulletsToRemove = new CopyOnWriteArrayList<>();
         ArrayList<Block> blocksToRemove = new ArrayList<>();
 
         for (Bullet b : bullets) {
@@ -161,7 +161,7 @@ public class CollisionHandling {
         blocks.removeAll(blocksToRemove);
     }
 
-    private static void CollisionBulletsBlocksHelper(ArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
+    private static void CollisionBulletsBlocksHelper(CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks, int bulletIndex, int blockIndex, BlockType blockType) {
         switch (blockType) {
             case RIVER:
             case TREE:

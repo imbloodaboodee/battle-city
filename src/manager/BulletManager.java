@@ -9,13 +9,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static physics.CollisionHandling.checkCollisionBulletsBlocks;
 
 public class BulletManager {
-    private ArrayList<Bullet> bullets;
+    private CopyOnWriteArrayList<Bullet> bullets;
 
-    public BulletManager(ArrayList<Bullet> bullets) {
+    public BulletManager(CopyOnWriteArrayList<Bullet> bullets) {
         this.bullets = bullets;
     }
 
@@ -33,5 +34,8 @@ public class BulletManager {
             }
             checkCollisionBulletsBlocks(bullets, GameScreen.blocks);
         }
+    }
+    public void clearBullets(){
+        bullets.clear();
     }
 }

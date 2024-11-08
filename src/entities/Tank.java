@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Tank {
     private boolean isMovingUp = false;
@@ -24,7 +25,7 @@ public class Tank {
     private int y;
     private int health;
     private int speed;  // Increase speed for visible movement
-    private ArrayList<Bullet> bullets = new ArrayList<>();
+    private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     private boolean isFrozen = false;
     public boolean shield = false;
     private long shieldEndTime = 0;
@@ -355,11 +356,11 @@ public class Tank {
         this.speed = speed;
     }
 
-    public ArrayList<Bullet> getBullets() {
+    public CopyOnWriteArrayList<Bullet> getBullets() {
         return bullets;
     }
 
-    public void setBullets(ArrayList<Bullet> bullets) {
+    public void setBullets(CopyOnWriteArrayList<Bullet> bullets) {
         this.bullets = bullets;
     }
 
