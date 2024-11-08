@@ -31,7 +31,7 @@ public class CollisionHandling {
                 // Nếu có va chạm, xóa viên đạn
                 bullets.remove(i);
                 // Giảm máu cho xe tăng người chơi
-                playerTank.downHealth(3);
+                playerTank.downHealth(1);
                 System.out.println("Bullet hit the player tank! Player health: " + playerTank.getHealth());
 
                 // Nếu máu của người chơi <= 0, xử lý việc tiêu diệt người chơi (game over)
@@ -60,7 +60,7 @@ public class CollisionHandling {
                     // Nếu có va chạm, xóa viên đạn
                     bullets.remove(j);
                     // Giảm máu cho xe tăng đối phương
-                    enemy.downHealth(3);
+                    enemy.downHealth(1);
                     System.out.println("Bullet hit an enemy tank! Enemy health: " + enemy.getHealth());
 
                     // Nếu xe tăng đối phương bị tiêu diệt, xóa xe tăng đó khỏi danh sách

@@ -29,7 +29,7 @@ public class Tank {
     public Tank() {
         x = 176;
         y = 400;
-        health = 3;
+        health = 1;
         speed = 1;
     }
 
