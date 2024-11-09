@@ -18,6 +18,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollisionHandling {
 
+    private static int[] enemyTankNum = {0, 0, 0, 0};
+    public static void resetScore() {
+        enemyTankNum = new int[]{0, 0, 0, 0};
+    }
+
     public static void checkCollisionBulletsTank(CopyOnWriteArrayList<Bullet> bullets, Tank playerTank) {
         Rectangle playerHitbox = playerTank.getHitbox();
 
@@ -32,10 +37,7 @@ public class CollisionHandling {
                 playerTank.downHealth(1);
                 System.out.println("Bullet hit the player tank! Player health: " + playerTank.getHealth());
 
-                // Nếu máu của người chơi <= 0, xử lý việc tiêu diệt người chơi (game over)
-                if (playerTank.getHealth() <= 0) {
-                    System.out.println("Player tank destroyed!");
-                }
+                GameScreen.checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
 
                 // Đảm bảo thoát khỏi vòng lặp đạn sau khi xử lý va chạm
                 break;
@@ -63,6 +65,7 @@ public class CollisionHandling {
                     SoundUtility.BulletHitTank();
                     // Nếu xe tăng đối phương bị tiêu diệt, xóa xe tăng đó khỏi danh sách
                     if (enemy.getHealth() <= 0) {
+                        incrementNum(enemy);
                         TankSpawner.onEnemyTankDestroyed();
                         GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 50, 1, false));
                         BoardUtility.spawnRandomPowerUp(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
@@ -208,6 +211,7 @@ public class CollisionHandling {
                 // Handle enemy tank destruction if health is zero or below
                 if (enemy.getHealth() <= 0) {
                     TankSpawner.onEnemyTankDestroyed();
+                    incrementNum(enemy);
                     GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 100, 1, false));
                     BoardUtility.spawnRandomPowerUp(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
                     enemyTanks.remove(i); // Loại bỏ enemy khỏi danh sách
@@ -219,5 +223,27 @@ public class CollisionHandling {
         }
     }
 
+    public static void incrementNum(Tank enemyTank) {
+        TankType tankType = enemyTank.getTankType();
+        switch (tankType) {
+            case BASIC:
+                enemyTankNum[0] += 1;
+                break;
+            case FAST:
+                enemyTankNum[1] += 1;
+                break;
+            case POWER:
+                enemyTankNum[2] += 1;
+                break;
+            case ARMOR:
+                enemyTankNum[3] += 1;
+                break;
+            default:
+                break;
+        }
+    }
 
+    public static int[] getEnemyTankNum() {
+        return enemyTankNum;
+    }
 }

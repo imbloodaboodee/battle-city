@@ -41,6 +41,7 @@ public class Tank {
     private double cannonAngle = 0;
     private boolean canFire = true;
     private BulletManager bulletManager;
+    private TankType tankType;
 
     public Tank() {
         x = 176;
@@ -418,5 +419,13 @@ public class Tank {
 
     public BulletManager getBulletManager() {
         return bulletManager;
+    }
+
+    public TankType getTankType() {
+        return tankType;
+    }
+
+    public void setTankType(TankType tankType) {
+        this.tankType = tankType;
     }
 }

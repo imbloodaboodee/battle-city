@@ -10,6 +10,8 @@ public class MapLoader {
     private static final int ROW_SHIFT = 1;
     private static final int COL_SHIFT = 2;
     private static final int BASE_POS = 14;
+    public static final int BOARD_WIDTH = 16 * 33;
+    public static final int BOARD_HEIGHT = 16 * 28;
 
     private static final Map<Character, Integer> CHAR_TO_BLOCK_MAP = new HashMap<>();
     static {

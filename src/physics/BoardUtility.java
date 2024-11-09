@@ -24,7 +24,7 @@ public class BoardUtility {
     public static void spawnRandomPowerUp(int x, int y, int percentageChance) {
         powerUpExpireTimer.stop();
         if (returnTrueAtPercentage(percentageChance)) {
-            int randomIndex = random.nextInt(4); // Randomly pick a number between 0 and 3
+            int randomIndex = random.nextInt(6); // Randomly pick a number between 0 and 3
             if (powerUps.size() > 0)
                 powerUps.clear();
             switch (randomIndex) {
@@ -63,7 +63,7 @@ public class BoardUtility {
         for (Tank enemyTank : enemyTanks) {
             GameScreen.animations.add(new TankExplosion(enemyTank.getX(), enemyTank.getY(), 100, 1, false));
             BoardUtility.spawnRandomPowerUp(enemyTank.getX(), enemyTank.getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
-
+            CollisionHandling.incrementNum(enemyTank);
             tanksToRemove.add(enemyTank);  // Thêm enemyTank vào danh sách tạm thời
             destroyedCount++;  // Tăng số lượng enemy bị tiêu diệt
         }

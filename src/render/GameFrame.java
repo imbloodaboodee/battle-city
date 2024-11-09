@@ -7,6 +7,7 @@ public class GameFrame extends JFrame {
     private JPanel gamePanel;
     private GameGuideScreen gameGuideScreen;
     private GameMenuScreen gameMenuScreen;
+    private GameOverScreen gameOverScreen;
 
     public GameFrame() {
         initComponents();
@@ -16,7 +17,6 @@ public class GameFrame extends JFrame {
     }
 
     private void initComponents() {
-
         gamePanel = new JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -61,6 +61,16 @@ public class GameFrame extends JFrame {
         GameScreen.getInstance().requestFocusInWindow();
     }
 
+    private void switchToGameOverScreen() {
+        if (gameOverScreen == null) { // Chỉ khởi tạo nếu chưa có
+            gameOverScreen = new GameOverScreen(this::switchToGuideScreen); // Truyền callback để quay lại màn hình hướng dẫn nếu cần
+        }
+        gamePanel.add(gameOverScreen, "GameOverScreen");
+        ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GameOverScreen");
+        gameOverScreen.requestFocusInWindow(); // Đảm bảo key listener hoạt động
+    }
+
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -72,5 +82,4 @@ public class GameFrame extends JFrame {
     public JPanel getGamePanel() {
         return gamePanel;
     }
-
 }
