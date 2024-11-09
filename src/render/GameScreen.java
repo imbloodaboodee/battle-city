@@ -47,6 +47,9 @@ public class GameScreen extends JPanel {
     public static ShieldAnimation shieldAnimation;
     public static boolean isSpawning = false;
     private boolean isPaused = false;  // Variable to track pause state
+    private Runnable onGameOver; // Callback for game over transition
+    private static Timer gameOverTimer;
+    private Timer transitionTimer;
 
     // Private constructor to prevent external instantiations
     private GameScreen() {
@@ -58,6 +61,7 @@ public class GameScreen extends JPanel {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (gameOver) return; // Ignore key presses if game over
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     SoundUtility.pause();
                     togglePause();  // Toggle the pause state when Escape is pressed
@@ -76,13 +80,16 @@ public class GameScreen extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (!isPaused)
-                ptRenderer.getPlayerTank().mousePressed(e);
+                if (!isPaused && !gameOver) { // Ignore mouse presses if game over
+                    ptRenderer.getPlayerTank().mousePressed(e);
+                }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (!gameOver) {  // Ignore mouse releases if game over
                     ptRenderer.getPlayerTank().mouseReleased(e);
+                }
             }
         });
 
@@ -91,6 +98,7 @@ public class GameScreen extends JPanel {
         initBlocks();
         initGameLoop();
     }
+
     public void togglePause() {
         if (isPaused) {
             gameLoopTimer.start();  // Resume the game timer
@@ -107,6 +115,9 @@ public class GameScreen extends JPanel {
             instance = new GameScreen();
         }
         return instance;
+    }
+    public void setOnGameOver(Runnable onGameOver) {
+        this.onGameOver = onGameOver;
     }
 
     public void initBlocks() {
@@ -146,7 +157,6 @@ public class GameScreen extends JPanel {
 
     private void initGameLoop() {
         // Giả sử bạn đã có danh sách blocks từ nơi khác trong game (ví dụ từ lớp Board)
-        CopyOnWriteArrayList<Block> blocks = getBlocks(); // Phương thức này lấy danh sách các Block
 
         // Game loop to update the game state
         gameLoopTimer = new Timer(20, e -> {
@@ -261,18 +271,24 @@ public class GameScreen extends JPanel {
 
         // Hiển thị số lượng enemy tanks còn lại
         g.setFont(largeBoldFont);
-        g.drawString(String.valueOf(totalEnemyTanks < 0 ? 0 : totalEnemyTanks), (initX +1) * 16, 6 * 16);
+        g.drawString(String.valueOf(totalEnemyTanks < 0 ? 0 : totalEnemyTanks), (initX + 1) * 16, 6 * 16);
         g.setFont(originalFont);
+        if (gameOver) {
+            Font font = loadFont();
+            g.setFont(font);
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", MapLoader.BOARD_WIDTH / 2 - 85, yPos);
+        }
 
         // Sync the graphics
         Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
     }
 
-    public static void checkHealth(PlayerTank playerTank) {
+    public void checkHealth(PlayerTank playerTank) {
         // Kiểm tra nếu sức khỏe của tank <= 0
         if (playerTank.getHealth() <= 0) {
-            PlayerTank.lives--;  // Giảm mạng của người chơi
+            PlayerTank.lives-=6;  // Giảm mạng của người chơi
             if (PlayerTank.lives > 0) {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 SoundUtility.explosion2();
@@ -280,79 +296,74 @@ public class GameScreen extends JPanel {
                 playerTank.resetPosition(); // Đặt lại vị trí của tank
                 playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH); // Đặt lại sức khỏe
             } else {
+                GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
+                playerTank.setX(-300);
+                playerTank.setY(0);
+                gameOver();
                 System.out.println("Game Over");
                 // Dừng vòng lặp game nếu game over
                 // gameLoopTimer.stop(); // Cần tham chiếu đến gameLoopTimer hoặc dừng game theo cách khác
             }
         }
     }
-//
-//    public static Font loadFont() {
-//        Font font = null;
-//        try {
-//            font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
-//                    new File("src/assets/font/prstart.ttf"));
-//            font = font.deriveFont(java.awt.Font.PLAIN, 15);
-//            GraphicsEnvironment ge
-//                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//            ge.registerFont(font);
-//
-//        } catch (FontFormatException | IOException ex) {
-//            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return font;
-//    }
-//
-//    public void endGame(Graphics g) {
-//        if (gameOver) {
-//            Timer gameOverTimer = new Timer(80, new ActionListener() {
-//                @Override
-//                public void actionPerformed(
-//                        ActionEvent e) {
-//                    yPos += direction;
-//                    if (yPos == stopYPos) {
-//                        direction = 0;
-//                    } else if (yPos > getHeight()) {
-//                        yPos = getHeight();
-//                    } else if (yPos < 0) {
-//                        yPos = 0;
-//                        direction *= -1;
-//                    }
-//                    repaint();
-//                }
-//            });
-//            gameOverTimer.setRepeats(true);
-//            gameOverTimer.setCoalesce(true);
-//            gameOverTimer.start();
-//            Font font = loadFont();
-//            g.setFont(font);
-//            g.setColor(Color.RED);
-//            g.drawString("GAME OVER", MapLoader.BOARD_WIDTH / 2 - 85, yPos);
-//
-//            if (yPos == stopYPos) {
-//                gameOverTimer.stop();
-//                Timer scoreBoardTimer = new Timer(3000, new ActionListener() {
-//                    @Override
-//                    public void actionPerformed(
-//                            ActionEvent e) {
-//                        loadGameOverScreen(theView);
-//                    }
-//                });
-//                scoreBoardTimer.setRepeats(false);
-//                scoreBoardTimer.start();
-//            }
-//        }
-//    }
-//
-//    public void loadGameOverScreen(GameFrame theView) {
-//        theView.getGamePanel().removeAll();
-//        GameOverScreen gameOverScreen = new GameOverScreen(theView);
-//        gameOverScreen.setBackground(Color.BLACK);
-//        theView.getGamePanel().add(gameOverScreen);
-//        gameOverScreen.requestFocusInWindow();
-////        SoundUtility.statistics();
-//        theView.setVisible(true);
-//    }
+
+    public static Font loadFont() {
+        Font font = null;
+        try {
+            font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+                    new File("src/assets/font/prstart.ttf"));
+            font = font.deriveFont(java.awt.Font.PLAIN, 15);
+            GraphicsEnvironment ge
+                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(font);
+
+        } catch (FontFormatException | IOException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return font;
+    }
+
+    public void gameOver() {
+        if (gameOver) {
+            return; // Prevent restarting the game over process if already active
+        }
+
+        gameOver = true; // Set game over state
+
+        // Start the "Game Over" animation timer
+        gameOverTimer = new Timer(80, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                yPos += direction;
+                if (yPos == stopYPos) {
+                    direction = 0; // Stop the vertical movement when reaching stopYPos
+                    gameOverTimer.stop(); // Stop the gameOver animation timer
+
+                    // Start the transition timer after animation completes
+                    transitionTimer = new Timer(3000, new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            if (onGameOver != null) {
+                                onGameOver.run(); // Trigger the game over transition
+                            }
+                        }
+                    });
+                    transitionTimer.setRepeats(false);
+                    transitionTimer.start();
+                } else if (yPos > getHeight()) {
+                    yPos = getHeight();
+                } else if (yPos < 0) {
+                    yPos = 0;
+                    direction *= -1;
+                }
+                repaint(); // Repaint to update the "GAME OVER" text position
+            }
+        });
+        gameOverTimer.setRepeats(true);
+        gameOverTimer.setCoalesce(true);
+        gameOverTimer.start();
+        gameLoopTimer.stop();
+    }
 
     public CopyOnWriteArrayList<Block> getBlocks() {
         return blocks;

@@ -37,7 +37,7 @@ public class CollisionHandling {
                 playerTank.downHealth(1);
                 System.out.println("Bullet hit the player tank! Player health: " + playerTank.getHealth());
 
-                GameScreen.checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
+                GameScreen.getInstance().checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
 
                 // Đảm bảo thoát khỏi vòng lặp đạn sau khi xử lý va chạm
                 break;
@@ -206,7 +206,7 @@ public class CollisionHandling {
                 System.out.println("Enemy health: " + enemy.getHealth());
 
                 // Handle player tank destruction if health is zero or below
-                GameScreen.checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
+                GameScreen.getInstance().checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
 
                 // Handle enemy tank destruction if health is zero or below
                 if (enemy.getHealth() <= 0) {

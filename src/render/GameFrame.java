@@ -5,8 +5,10 @@ import java.awt.*;
 
 public class GameFrame extends JFrame {
     private JPanel gamePanel;
-    private GameGuideScreen gameGuideScreen;
+
     private GameMenuScreen gameMenuScreen;
+    private GameGuideScreen gameGuideScreen;
+    private GameScreen gameScreen;
     private GameOverScreen gameOverScreen;
 
     public GameFrame() {
@@ -56,19 +58,19 @@ public class GameFrame extends JFrame {
     }
 
     private void switchToGameScreen() {
-        gamePanel.add(GameScreen.getInstance(), "GameScreen");
+        gameScreen = GameScreen.getInstance();
+        gameScreen.setOnGameOver(this::switchToGameOverScreen); // Set the game over callback
+        gamePanel.add(gameScreen, "GameScreen");
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GameScreen");
-        GameScreen.getInstance().requestFocusInWindow();
+        gameScreen.requestFocusInWindow(); // Ensure focus for game screen key events
     }
-
     private void switchToGameOverScreen() {
-        if (gameOverScreen == null) { // Chỉ khởi tạo nếu chưa có
-            gameOverScreen = new GameOverScreen(this::switchToGuideScreen); // Truyền callback để quay lại màn hình hướng dẫn nếu cần
-        }
+        gameOverScreen = new GameOverScreen(this::switchToGameScreen); // Callback to restart game
         gamePanel.add(gameOverScreen, "GameOverScreen");
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GameOverScreen");
-        gameOverScreen.requestFocusInWindow(); // Đảm bảo key listener hoạt động
+        gameOverScreen.requestFocusInWindow(); // Ensure focus for game over screen key events
     }
+
 
 
     public static void main(String args[]) {
