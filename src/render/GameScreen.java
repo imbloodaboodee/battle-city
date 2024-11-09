@@ -17,12 +17,13 @@ import physics.ImageUtility;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GameScreen extends JPanel {
     private static GameScreen instance;  // Static instance for Singleton
@@ -32,6 +33,11 @@ public class GameScreen extends JPanel {
 
     public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.RAPID), this);
     public static int stage = 1;
+    public static boolean gameOver = false;
+    private int yPos = MapLoader.BOARD_HEIGHT;
+    private int direction = -1;
+    private final int stopYPos = 250;
+    private GameFrame gameFrame;
     private final ImageUtility imageInstance = ImageUtility.getInstance();
     private Timer gameLoopTimer;
     private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
@@ -221,6 +227,9 @@ public class GameScreen extends JPanel {
         Font largeBoldFont = new Font("Arial", Font.BOLD, 20);
         g.setFont(largeBoldFont);
         g.drawString(String.valueOf(lives < 0 ? 0 : lives), (initX + 1) * 16, 18 * 16);
+        Image flagIcon = imageInstance.getFlagIcon();
+        g.drawImage(flagIcon, initX * 16, 22 * 16, this);
+        g.drawString(String.valueOf(stage), (initX + 1) * 16, 25 * 16);
         g.setFont(originalFont);
 
         // draw the enemyIcon
@@ -246,6 +255,7 @@ public class GameScreen extends JPanel {
         if (playerTank.getHealth() <= 0) {
             PlayerTank.lives--;  // Giảm mạng của người chơi
             if (PlayerTank.lives > 0) {
+                playerTank.activateShield(3000); // Kích hoạt shield nếu còn mạng
                 playerTank.resetPosition(); // Đặt lại vị trí của tank
                 playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH); // Đặt lại sức khỏe
             } else {
@@ -255,6 +265,74 @@ public class GameScreen extends JPanel {
             }
         }
     }
+//
+//    public static Font loadFont() {
+//        Font font = null;
+//        try {
+//            font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT,
+//                    new File("src/assets/font/prstart.ttf"));
+//            font = font.deriveFont(java.awt.Font.PLAIN, 15);
+//            GraphicsEnvironment ge
+//                    = GraphicsEnvironment.getLocalGraphicsEnvironment();
+//            ge.registerFont(font);
+//
+//        } catch (FontFormatException | IOException ex) {
+//            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return font;
+//    }
+//
+//    public void endGame(Graphics g) {
+//        if (gameOver) {
+//            Timer gameOverTimer = new Timer(80, new ActionListener() {
+//                @Override
+//                public void actionPerformed(
+//                        ActionEvent e) {
+//                    yPos += direction;
+//                    if (yPos == stopYPos) {
+//                        direction = 0;
+//                    } else if (yPos > getHeight()) {
+//                        yPos = getHeight();
+//                    } else if (yPos < 0) {
+//                        yPos = 0;
+//                        direction *= -1;
+//                    }
+//                    repaint();
+//                }
+//            });
+//            gameOverTimer.setRepeats(true);
+//            gameOverTimer.setCoalesce(true);
+//            gameOverTimer.start();
+//            Font font = loadFont();
+//            g.setFont(font);
+//            g.setColor(Color.RED);
+//            g.drawString("GAME OVER", MapLoader.BOARD_WIDTH / 2 - 85, yPos);
+//
+//            if (yPos == stopYPos) {
+//                gameOverTimer.stop();
+//                Timer scoreBoardTimer = new Timer(3000, new ActionListener() {
+//                    @Override
+//                    public void actionPerformed(
+//                            ActionEvent e) {
+//                        loadGameOverScreen(theView);
+//                    }
+//                });
+//                scoreBoardTimer.setRepeats(false);
+//                scoreBoardTimer.start();
+//            }
+//        }
+//    }
+//
+//    public void loadGameOverScreen(GameFrame theView) {
+//        theView.getGamePanel().removeAll();
+//        GameOverScreen gameOverScreen = new GameOverScreen(theView);
+//        gameOverScreen.setBackground(Color.BLACK);
+//        theView.getGamePanel().add(gameOverScreen);
+//        gameOverScreen.requestFocusInWindow();
+////        SoundUtility.statistics();
+//        theView.setVisible(true);
+//    }
+
     public CopyOnWriteArrayList<Block> getBlocks() {
         return blocks;
     }

@@ -90,6 +90,7 @@ public class TankSpawner {
         Point spawnPoint = findSpawnPoint();
         DumbTank basicTank = new DumbTank(spawnPoint.x, spawnPoint.y, 3, 1, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_basic.png"));
         GameScreen.animations.add(new SpawnAnimation(spawnPoint.x,spawnPoint.y, 200, 1,false));
+        basicTank.setTankType(TankType.BASIC);
         enemyTanks.add(basicTank);
     }
 
@@ -97,6 +98,7 @@ public class TankSpawner {
         Point spawnPoint = findSpawnPoint();
         DumbTank fastTank = new DumbTank(spawnPoint.x, spawnPoint.y, 3, 3, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_fast.png"));
         GameScreen.animations.add(new SpawnAnimation(spawnPoint.x,spawnPoint.y, 200, 1,false));
+        fastTank.setTankType(TankType.FAST);
         enemyTanks.add(fastTank);
     }
 
@@ -104,6 +106,7 @@ public class TankSpawner {
         Point spawnPoint = findSpawnPoint();
         SmartTank powerTank = new SmartTank(spawnPoint.x, spawnPoint.y, 3, 1, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_power_base.png"), new ImageIcon("./src/assets/image/tank_power_cannon.png"));
         GameScreen.animations.add(new SpawnAnimation(spawnPoint.x,spawnPoint.y, 200, 1,false));
+        powerTank.setTankType(TankType.POWER);
         enemyTanks.add(powerTank);
     }
 
@@ -111,6 +114,7 @@ public class TankSpawner {
         Point spawnPoint = findSpawnPoint();
         SmartTank armorTank = new SmartTank(spawnPoint.x, spawnPoint.y, 3, 1, BulletType.NORMAL, new ImageIcon("./src/assets/image/tank_armor_base.png"), new ImageIcon("./src/assets/image/tank_armor_cannon.png"));
         GameScreen.animations.add(new SpawnAnimation(spawnPoint.x,spawnPoint.y, 200, 1,false));
+        armorTank.setTankType(TankType.ARMOR);
         enemyTanks.add(armorTank);
     }
 
