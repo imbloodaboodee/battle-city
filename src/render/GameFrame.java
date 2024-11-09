@@ -5,13 +5,13 @@ import java.awt.*;
 
 public class GameFrame extends JFrame {
     private JPanel gamePanel;
-    private GameScreen gameScreen;
-    private GameGuideRender gameGuideRender;
+    private GameGuideScreen gameGuideScreen;
+    private GameMenuScreen gameMenuScreen;
 
     public GameFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        switchToGuideScreen(); // Start with the guide screen
+        switchToMenuScreen(); // Start with the guide screen
 
     }
 
@@ -41,12 +41,18 @@ public class GameFrame extends JFrame {
 
         pack();
     }
+    private void switchToMenuScreen() {
+        gameMenuScreen = new GameMenuScreen(this::switchToGuideScreen); // Callback to switch to Guide screen
+        gamePanel.add(gameMenuScreen, "MenuScreen");
+        ((CardLayout) gamePanel.getLayout()).show(gamePanel, "MenuScreen");
+        gameMenuScreen.requestFocusInWindow(); // Ensure the menu screen gets focus for key events
+    }
 
     private void switchToGuideScreen() {
-        gameGuideRender = new GameGuideRender(this::switchToGameScreen); // Transition callback
-        gamePanel.add(gameGuideRender, "GuideScreen");
+        gameGuideScreen = new GameGuideScreen(this::switchToGameScreen); // Transition callback
+        gamePanel.add(gameGuideScreen, "GuideScreen");
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GuideScreen");
-        gameGuideRender.requestFocusInWindow(); // Ensure key listener works
+        gameGuideScreen.requestFocusInWindow(); // Ensure key listener works
     }
 
     private void switchToGameScreen() {
@@ -62,7 +68,6 @@ public class GameFrame extends JFrame {
             }
         });
     }
-
 
     public JPanel getGamePanel() {
         return gamePanel;

@@ -10,6 +10,7 @@ public class ImageUtility {
     // Instance variable for the lives image
     private final Image lives, enemyIcon;
     private static ImageUtility instance;
+    private final Image background, tank;
 
     /**
      * Get the instance of the ImageUtility
@@ -29,6 +30,9 @@ public class ImageUtility {
     private ImageUtility() {
         lives = loadImage("src/assets/image/lives.png");
         enemyIcon = loadImage("src/assets/image/enemy.png");
+        background = loadImage("src/assets/image/battle_city.png");
+        tank = loadImage("src/assets/image/playerTank_right.png");
+
     }
 
     /**
@@ -49,4 +53,13 @@ public class ImageUtility {
     public Image getEnemyIcon() {
         return enemyIcon;
     }
+
+    public Image getBackground() {
+        return background;
+    }
+
+    public Image getTank() {
+        return tank;
+    }
+
 }

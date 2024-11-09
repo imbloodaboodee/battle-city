@@ -92,7 +92,7 @@ public class PlayerTank extends Tank implements KeyListener {
             int cannonTipX = (int) (getX() + getBaseImage().getIconWidth() / 2 + Math.cos(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
             int cannonTipY = (int) (getY() + getBaseImage().getIconHeight() / 2 + Math.sin(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX - GameConstants.BULLET_SIZE / 2, cannonTipY - GameConstants.BULLET_SIZE / 2, getDefaultBullet().getBulletType(), getCannonAngle() - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX - getDefaultBullet().getBulletImage().getIconWidth()/2, cannonTipY - getDefaultBullet().getBulletImage().getIconHeight()/2, getDefaultBullet().getBulletType(), getCannonAngle() - Math.PI / 2);
             getBullets().add(bullet);
 
             setCanFire(false);

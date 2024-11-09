@@ -2,6 +2,7 @@ package entities;
 
 import constants.GameConstants;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
@@ -15,6 +16,7 @@ public class Bullet {
     private boolean isExplosive = false;
     private int ricochetLeft = 0;
     private Rectangle2D.Double hitbox;
+    private ImageIcon bulletImage;
 
     public Bullet(double x, double y, BulletType bulletType, double angle) {
         this.x = x;
@@ -22,7 +24,7 @@ public class Bullet {
         this.angle = angle;
         this.bulletType = bulletType;
         bulletAttributeSetter(bulletType);
-        this.setHitbox(new Rectangle2D.Double(x, y, GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE));
+        this.setHitbox(new Rectangle2D.Double(x, y, getBulletImage().getIconHeight(), getBulletImage().getIconWidth()));
 
     }
 
@@ -38,6 +40,7 @@ public class Bullet {
                 this.damage = 3;
                 this.cooldown = 1000;  //1  100
                 this.speed = 10;    //10 1
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/assets/image/bullet.png"), 1.2));
                 break;
             case EXPLOSIVE:
                 this.damage = 5;
@@ -55,6 +58,7 @@ public class Bullet {
                 this.damage = 1;
                 this.cooldown = 1;
                 this.speed = 10;
+                setBulletImage(new ImageIcon("./src/assets/image/bullet.png"));
                 break;
         }
     }
@@ -63,6 +67,21 @@ public class Bullet {
         x += speed * Math.cos(angle);
         y += speed * Math.sin(angle);
         hitbox.setRect(x, y, hitbox.getWidth(), hitbox.getHeight());
+    }
+    private ImageIcon resizeImageIcon(ImageIcon icon, double ratio) {
+        // Get the original width and height of the image
+        int originalWidth = icon.getIconWidth();
+        int originalHeight = icon.getIconHeight();
+
+        // Calculate the new width and height based on the ratio
+        int newWidth = (int) (originalWidth * ratio);
+        int newHeight = (int) (originalHeight * ratio);
+
+        // Scale the image to the new dimensions
+        Image resizedImage = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+        // Return a new ImageIcon from the scaled image
+        return new ImageIcon(resizedImage);
     }
 
     public BulletType getBulletType() {
@@ -148,4 +167,11 @@ public class Bullet {
         return x < 0 || x > width || y < 0 || y > height;
     }
 
+    public ImageIcon getBulletImage() {
+        return bulletImage;
+    }
+
+    public void setBulletImage(ImageIcon bulletImage) {
+        this.bulletImage = bulletImage;
+    }
 }

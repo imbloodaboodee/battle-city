@@ -60,13 +60,14 @@ public class CollisionHandling {
                     // Giảm máu cho xe tăng đối phương
                     enemy.downHealth(1);
                     System.out.println("Bullet hit an enemy tank! Enemy health: " + enemy.getHealth());
-
+                    SoundUtility.BulletHitTank();
                     // Nếu xe tăng đối phương bị tiêu diệt, xóa xe tăng đó khỏi danh sách
                     if (enemy.getHealth() <= 0) {
                         TankSpawner.onEnemyTankDestroyed();
-                        GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 100, 1, false));
+                        GameScreen.animations.add(new TankExplosion(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), 50, 1, false));
                         BoardUtility.spawnRandomPowerUp(enemyTanks.get(i).getX(), enemyTanks.get(i).getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
                         enemyTanks.remove(i); // Loại bỏ enemy khỏi danh sách
+                        SoundUtility.explosion1();
                     }
                     // Đảm bảo thoát khỏi vòng lặp đạn sau khi xử lý va chạm
                     break;
@@ -90,6 +91,7 @@ public class CollisionHandling {
         }
         return false; // No collision detected
     }
+
     public static boolean isPlayerTankInTree() {
         Rectangle tankHitbox = GameScreen.getInstance().ptRenderer.getPlayerTank().getHitbox();
         ArrayList<Block> blocksClone = new ArrayList<>(GameScreen.blocks);
@@ -123,6 +125,7 @@ public class CollisionHandling {
                             GameScreen.animations.add(new BlockExplosion(block.getX(), block.getY(), 100, 0.5, false));
                             blocksToRemove.add(block); // Mark brick block for removal
                             bulletShouldBeRemoved = true; // Bullet should be removed after colliding with bricks
+                            SoundUtility.BulletHitBrick();
                             break;
 
                         case STEEL:
@@ -162,6 +165,7 @@ public class CollisionHandling {
     public static void checkTankPowerUpCollision(Tank playerTank, ArrayList<PowerUp> powerUps, CopyOnWriteArrayList<Tank> enemyTanks, CopyOnWriteArrayList<Block> blocks) {
         for (PowerUp powerUp : powerUps) {
             if (playerTank.getHitbox().intersects(powerUp.getHitbox()) && powerUp.isVisible()) {
+                SoundUtility.powerupPick();
                 if (powerUp instanceof BombPowerUp) {
                     BoardUtility.activateBombPowerUp(enemyTanks);
                 } else if (powerUp instanceof ShieldPowerUp) {

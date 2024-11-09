@@ -9,6 +9,7 @@ import entities.TankExplosion;
 import manager.TankSpawner;
 import render.GameScreen;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,12 +17,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BoardUtility {
 
-    private static final int POWER_UP_SPAWN_INTERVAL = 10000; // 10 seconds
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
     private static Random random = new Random();
-    private static final int SHOVEL_POWER_UP_DURATION = 10000; // 10 seconds
+    public static Timer powerUpExpireTimer = new Timer(5000, e -> {clearPowerUps();});
 
     public static void spawnRandomPowerUp(int x, int y, int percentageChance) {
+        powerUpExpireTimer.stop();
         if (returnTrueAtPercentage(percentageChance)) {
             int randomIndex = random.nextInt(4); // Randomly pick a number between 0 and 3
             if (powerUps.size() > 0)
@@ -34,6 +35,8 @@ public class BoardUtility {
                 case 4 -> powerUps.add(new TankPowerUp(x, y));
                 case 5 -> powerUps.add(new StarPowerUp(x, y));
             }
+            powerUpExpireTimer.start();
+            SoundUtility.powerupAppear();
         }
     }
 

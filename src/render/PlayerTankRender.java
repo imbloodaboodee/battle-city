@@ -89,11 +89,22 @@ public class PlayerTankRender extends JLabel {
 
         // Reset opacity
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-
+        g2d.setColor(Color.red);
         // Draw bullets
-        g2d.setColor(Color.WHITE);
         for (Bullet bullet : playerTank.getBullets()) {
-            g2d.fillOval((int) bullet.getX(), (int) bullet.getY(), GameConstants.BULLET_SIZE, GameConstants.BULLET_SIZE);
+            ImageIcon bulletImage = bullet.getBulletImage();
+            int bulletX = (int) bullet.getX();
+            int bulletY = (int) bullet.getY();
+
+            // Calculate bullet rotation angle based on its direction
+            double bulletAngle = bullet.getAngle() + Math.PI / 2;
+
+            // Center bullet at its current position and apply rotation
+            AffineTransform atBullet = AffineTransform.getRotateInstance(bulletAngle, bulletX + bulletImage.getImage().getWidth(null) / 2, bulletY + bulletImage.getImage().getHeight(null) / 2);
+            atBullet.translate(bulletX, bulletY);
+
+            // Draw the rotated bullet image
+            g2d.drawImage(bulletImage.getImage(), atBullet, this);
         }
 
         g2d.dispose();

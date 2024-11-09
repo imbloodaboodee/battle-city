@@ -14,6 +14,7 @@ import manager.TankSpawner;
 import physics.BoardUtility;
 import physics.CollisionHandling;
 import physics.ImageUtility;
+import physics.SoundUtility;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,6 +40,7 @@ public class GameScreen extends JPanel {
     private SmartTankRender smartTankRender;
     public static ShieldAnimation shieldAnimation;
     public static boolean isSpawning = false;
+    private boolean isPaused = false;  // Variable to track pause state
 
     // Private constructor to prevent external instantiations
     private GameScreen() {
@@ -50,8 +52,14 @@ public class GameScreen extends JPanel {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                ptRenderer.getPlayerTank().keyPressed(e);
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    SoundUtility.pause();
+                    togglePause();  // Toggle the pause state when Escape is pressed
+                } else {
+                    ptRenderer.getPlayerTank().keyPressed(e);
+                }
             }
+
 
             @Override
             public void keyReleased(KeyEvent e) {
@@ -62,12 +70,13 @@ public class GameScreen extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (!isPaused)
                 ptRenderer.getPlayerTank().mousePressed(e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                ptRenderer.getPlayerTank().mouseReleased(e);
+                    ptRenderer.getPlayerTank().mouseReleased(e);
             }
         });
 
@@ -75,6 +84,15 @@ public class GameScreen extends JPanel {
         tankSpawner.startSpawning();
         initBlocks();
         initGameLoop();
+    }
+    public void togglePause() {
+        if (isPaused) {
+            gameLoopTimer.start();  // Resume the game timer
+            isPaused = false;
+        } else {
+            gameLoopTimer.stop();  // Pause the game timer
+            isPaused = true;
+        }
     }
 
     // Public method to get the single instance
@@ -87,6 +105,7 @@ public class GameScreen extends JPanel {
 
     public void initBlocks() {
         int[][] map = MapLoader.getMap(stage);
+        SoundUtility.startStage();
         int type;
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[0].length; y++) {
@@ -246,6 +265,8 @@ public class GameScreen extends JPanel {
         if (playerTank.getHealth() <= 0) {
             PlayerTank.lives--;  // Giảm mạng của người chơi
             if (PlayerTank.lives > 0) {
+                GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
+                SoundUtility.explosion2();
                 playerTank.resetPosition(); // Đặt lại vị trí của tank
                 playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH); // Đặt lại sức khỏe
             } else {
