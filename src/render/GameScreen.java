@@ -28,31 +28,49 @@ import java.util.logging.Logger;
 
 public class GameScreen extends JPanel {
     private static GameScreen instance;  // Static instance for Singleton
-    public static CopyOnWriteArrayList<Block> blocks = new CopyOnWriteArrayList<>();
-    public static CopyOnWriteArrayList<Tank> enemyTanks = new CopyOnWriteArrayList<>(); // To hold multiple SmartTanks
-    public static ArrayList<Animation> animations = new ArrayList<>();
 
-    public PlayerTankRender ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.RAPID), this);
-    public static int stage = 1;
-    public static boolean gameOver = false;
-    private int yPos = MapLoader.BOARD_HEIGHT;
-    private int direction = -1;
-    private final int stopYPos = 250;
-    private GameFrame gameFrame;
-    private final ImageUtility imageInstance = ImageUtility.getInstance();
-    private Timer gameLoopTimer;
-    private TankSpawner tankSpawner = new TankSpawner(enemyTanks, stage);
+    public static CopyOnWriteArrayList<Block> blocks;
+    public static CopyOnWriteArrayList<Tank> enemyTanks; // To hold multiple SmartTanks
+    public static ArrayList<Animation> animations;
+
+    public static int stage;
+    public static boolean gameOver;
+    private int yPos;
+    private int direction;
+    private final int stopYPos;
+    private ImageUtility imageInstance = ImageUtility.getInstance();
+    private TankSpawner tankSpawner;
+
+    public PlayerTankRender ptRenderer;
     private DumbTankRender dumbTankRender;
     private SmartTankRender smartTankRender;
     public static ShieldAnimation shieldAnimation;
-    public static boolean isSpawning = false;
-    private boolean isPaused = false;  // Variable to track pause state
+
+    public static boolean isSpawning;
+    private boolean isPaused;  // Variable to track pause state
     private Runnable onGameOver; // Callback for game over transition
-    private static Timer gameOverTimer;
+
+    private Timer gameOverTimer;
     private Timer transitionTimer;
+    private Timer gameLoopTimer;
+
 
     // Private constructor to prevent external instantiations
     private GameScreen() {
+        blocks = new CopyOnWriteArrayList<>();
+        enemyTanks = new CopyOnWriteArrayList<>();
+        animations = new ArrayList<>();
+        ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.RAPID), this);
+        stage = 1;
+        gameOver = false;
+        yPos = MapLoader.BOARD_HEIGHT;
+        direction = -1;
+        stopYPos = 250;
+        tankSpawner = new TankSpawner(enemyTanks, stage);
+        isSpawning = false;
+        isPaused = false;  // Variable to track pause state
+        imageInstance = ImageUtility.getInstance();
+
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
@@ -116,6 +134,11 @@ public class GameScreen extends JPanel {
         }
         return instance;
     }
+
+    public static void resetInstance() {
+        instance = null; // Reset the singleton instance
+    }
+
     public void setOnGameOver(Runnable onGameOver) {
         this.onGameOver = onGameOver;
     }
@@ -182,7 +205,8 @@ public class GameScreen extends JPanel {
                 enemyTank.shoot(enemyTank.getBaseImage());
                 enemyTank.getBulletManager().updateBullets();
                 CollisionHandling.checkCollisionTankTankAI(ptRenderer.getPlayerTank(), enemyTanks);
-
+                if (CollisionHandling.isBulletTouchingBase(enemyTank.getBullets(), blocks))
+                    gameOver();
             }
             CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
 
@@ -288,7 +312,7 @@ public class GameScreen extends JPanel {
     public void checkHealth(PlayerTank playerTank) {
         // Kiểm tra nếu sức khỏe của tank <= 0
         if (playerTank.getHealth() <= 0) {
-            PlayerTank.lives-=6;  // Giảm mạng của người chơi
+            PlayerTank.lives -= 6;  // Giảm mạng của người chơi
             if (PlayerTank.lives > 0) {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 SoundUtility.explosion2();

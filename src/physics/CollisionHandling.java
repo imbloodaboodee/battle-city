@@ -19,6 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class CollisionHandling {
 
     private static int[] enemyTankNum = {0, 0, 0, 0};
+
     public static void resetScore() {
         enemyTankNum = new int[]{0, 0, 0, 0};
     }
@@ -130,7 +131,6 @@ public class CollisionHandling {
                             bulletShouldBeRemoved = true; // Bullet should be removed after colliding with bricks
                             SoundUtility.BulletHitBrick();
                             break;
-
                         case STEEL:
                         case EDGE:
                             bulletShouldBeRemoved = true; // Bullet is removed when hitting steel or edge
@@ -162,6 +162,27 @@ public class CollisionHandling {
         // Remove all marked bullets and blocks after looping
         bullets.removeAll(bulletsToRemove);
         blocks.removeAll(blocksToRemove);
+    }
+
+    public static boolean isBulletTouchingBase(CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
+        for (Bullet bullet : bullets) {
+            Rectangle2D.Double bulletHitbox = bullet.getHitbox();
+
+            for (Block block : blocks) {
+                // Check if the block is of type BASE
+                if (block.getType() == BlockType.BASE.getValue()) {
+                    Rectangle baseHitbox = block.getHitbox();
+
+                    // Check if the bullet intersects with the base block
+                    if (bulletHitbox.intersects(baseHitbox)) {
+                        GameScreen.animations.add(new BlockExplosion(block.getX(), block.getY(), 100, 0.5, false));
+                        SoundUtility.explosion2();
+                        return true; // Collision detected with base
+                    }
+                }
+            }
+        }
+        return false; // No collision with base detected
     }
 
 

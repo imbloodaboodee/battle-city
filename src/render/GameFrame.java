@@ -14,8 +14,7 @@ public class GameFrame extends JFrame {
     public GameFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        switchToMenuScreen(); // Start with the guide screen
-
+        switchToMenuScreen(); // Start with the menu screen
     }
 
     private void initComponents() {
@@ -23,12 +22,12 @@ public class GameFrame extends JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Battle City");
-        setName("mainFrame"); // NOI18N
+        setName("mainFrame");
         setPreferredSize(new java.awt.Dimension(512, 470));
 
         gamePanel.setMinimumSize(new java.awt.Dimension(500, 500));
         gamePanel.setSize(new java.awt.Dimension(528, 448));
-        gamePanel.setLayout(new CardLayout()); // Use CardLayout here
+        gamePanel.setLayout(new CardLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -43,6 +42,7 @@ public class GameFrame extends JFrame {
 
         pack();
     }
+
     private void switchToMenuScreen() {
         gameMenuScreen = new GameMenuScreen(this::switchToGuideScreen); // Callback to switch to Guide screen
         gamePanel.add(gameMenuScreen, "MenuScreen");
@@ -64,21 +64,34 @@ public class GameFrame extends JFrame {
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GameScreen");
         gameScreen.requestFocusInWindow(); // Ensure focus for game screen key events
     }
+
     private void switchToGameOverScreen() {
-        gameOverScreen = new GameOverScreen(this::switchToGameScreen); // Callback to restart game
+        gameOverScreen = new GameOverScreen(this::resetGame); // Callback to reset the game
         gamePanel.add(gameOverScreen, "GameOverScreen");
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GameOverScreen");
         gameOverScreen.requestFocusInWindow(); // Ensure focus for game over screen key events
     }
 
+    // Reset the entire GameFrame to restart the game
+    private void resetGame() {
+        // Clear all screens from the game panel
+        gamePanel.removeAll();
 
+        // Reinitialize game state
+        gameMenuScreen = null;
+        gameGuideScreen = null;
+        gameScreen = null;
+        gameOverScreen = null;
 
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GameFrame().setVisible(true);
-            }
-        });
+        // Reset the singleton instance of GameScreen if necessary
+        GameScreen.resetInstance();
+
+        // Restart from the menu screen
+        switchToMenuScreen();
+    }
+
+    public static void main(String[] args) {
+        java.awt.EventQueue.invokeLater(() -> new GameFrame().setVisible(true));
     }
 
     public JPanel getGamePanel() {
