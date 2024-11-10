@@ -105,7 +105,6 @@ public class CollisionHandling {
     }
 
 
-    // Check collision between bullets and blocks
     public static void checkCollisionBulletsBlocks(CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
         CopyOnWriteArrayList<Bullet> bulletsToRemove = new CopyOnWriteArrayList<>();
         ArrayList<Block> blocksToRemove = new ArrayList<>();
@@ -121,30 +120,44 @@ public class CollisionHandling {
                 if (bulletHitbox.intersects(blockHitbox)) {
                     System.out.println("Collision detected with block of type: " + blockType);
 
-                    switch (blockType) {
-                        case BRICK:
+                    if (b.getBulletType() == BulletType.TIER_3) {
+                        // TIER_3 bullets can destroy any block except EDGE and RIVER
+                        if (blockType == BlockType.EDGE) {
+                            bulletShouldBeRemoved = true; // Remove the bullet when it hits EDGE
+                            break;
+                        } else if (blockType != BlockType.RIVER) {
                             GameScreen.animations.add(new BlockExplosion(block.getX(), block.getY(), 100, 0.5, false));
-                            blocksToRemove.add(block); // Mark brick block for removal
-                            bulletShouldBeRemoved = true; // Bullet should be removed after colliding with bricks
-                            SoundUtility.BulletHitBrick();
-                            break;
-                        case STEEL:
-                        case EDGE:
-                            bulletShouldBeRemoved = true; // Bullet is removed when hitting steel or edge
-                            break;
-
-                        case RIVER:
-                        case TREE:
-                            // Bullet goes through river or tree; do nothing
-                            break;
-
-                        default:
-                            System.out.println("Unknown block type.");
-                            break;
+                            blocksToRemove.add(block); // Mark block for removal
+                            bulletShouldBeRemoved = true;
+                            SoundUtility.BulletHitBrick(); // Use appropriate sound effect
+                        }
+                    } else {
+                        // Handle other bullet types as before
+                        switch (blockType) {
+                            case BRICK:
+                                GameScreen.animations.add(new BlockExplosion(block.getX(), block.getY(), 100, 0.5, false));
+                                blocksToRemove.add(block); // Mark brick block for removal
+                                bulletShouldBeRemoved = true; // Bullet should be removed after colliding with bricks
+                                SoundUtility.BulletHitBrick();
+                                break;
+                            case STEEL:
+                                bulletShouldBeRemoved = true; // Bullet is removed when hitting steel
+                                break;
+                            case EDGE:
+                                bulletShouldBeRemoved = true; // Bullet is removed when hitting edge
+                                break;
+                            case RIVER:
+                            case TREE:
+                                // Bullet goes through river or tree; do nothing
+                                break;
+                            default:
+                                System.out.println("Unknown block type.");
+                                break;
+                        }
                     }
 
-                    if (blockType == BlockType.STEEL || blockType == BlockType.EDGE) {
-                        // Stop further checks for this bullet if it hits STEEL or EDGE
+                    // Stop further checks for this bullet if it hits a block that stops it
+                    if (bulletShouldBeRemoved) {
                         break;
                     }
                 }
@@ -160,6 +173,8 @@ public class CollisionHandling {
         bullets.removeAll(bulletsToRemove);
         blocks.removeAll(blocksToRemove);
     }
+
+
 
     public static boolean isBulletTouchingBase(CopyOnWriteArrayList<Bullet> bullets, CopyOnWriteArrayList<Block> blocks) {
         for (Bullet bullet : bullets) {

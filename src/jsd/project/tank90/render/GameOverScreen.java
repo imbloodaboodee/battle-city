@@ -122,6 +122,11 @@ public class GameOverScreen extends JPanel {
 
         g.drawString("TOTAL", 85 + SHIFT, 355);
         g.drawString(String.valueOf(totalTankNum), 180 + SHIFT, 355);
+
+        g.setColor(Color.ORANGE); // Set color to yellow
+        g.drawString("PRESS ENTER TO RESTART", getWidth() / 2 - 170, getHeight() * 4 / 5);
+
+
     }
 
     /**

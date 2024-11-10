@@ -2,10 +2,8 @@ package jsd.project.tank90.physics;
 
 import jsd.project.tank90.SpriteClasses.Block;
 import jsd.project.tank90.constants.GameConstants;
-import jsd.project.tank90.entities.PlayerTank;
+import jsd.project.tank90.entities.*;
 import jsd.project.tank90.SpriteClasses.PowerUps.*;
-import jsd.project.tank90.entities.Tank;
-import jsd.project.tank90.entities.TankExplosion;
 import jsd.project.tank90.manager.TankSpawner;
 import jsd.project.tank90.render.GameScreen;
 
@@ -20,6 +18,7 @@ public class BoardUtility {
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
     private static Random random = new Random();
     public static Timer powerUpExpireTimer = new Timer(5000, e -> {clearPowerUps();});
+    private static int starLevel = 1;
 
     public static void spawnRandomPowerUp(int x, int y, int percentageChance) {
         powerUpExpireTimer.stop();
@@ -27,6 +26,7 @@ public class BoardUtility {
             int randomIndex = random.nextInt(6); // Randomly pick a number between 0 and 3
             if (powerUps.size() > 0)
                 powerUps.clear();
+            randomIndex = 5;
             switch (randomIndex) {
                 case 0 -> powerUps.add(new BombPowerUp(x, y));
                 case 1 -> powerUps.add(new ClockPowerUp(x, y));
@@ -99,10 +99,39 @@ public class BoardUtility {
         PlayerTank.lives++;
     }
 
-    public static void activateStarPowerUp() {
-        return;
+    public static void increaseStarLevel() {
+        if (starLevel < 4) {
+            starLevel++;
+        }
     }
 
+    public static void resetPowerLevel() {
+        starLevel = 1;
+    }
+
+    public static void activateStarPowerUp() {
+        increaseStarLevel();
+        switch (starLevel) {
+            case 1:
+                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.RAPID));
+                break;
+            case 2:
+                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.TIER_1));
+                break;
+            case 3:
+                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.TIER_2));
+                break;
+            case 4:
+                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.TIER_3));
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static int getStarLevel() {
+        return starLevel;
+    }
 
     public static ArrayList<PowerUp> getPowerUps() {
         return powerUps;

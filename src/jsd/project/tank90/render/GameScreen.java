@@ -120,6 +120,7 @@ public class GameScreen extends JPanel {
         } else {
             gameLoopTimer.stop();  // Pause the game timer
             isPaused = true;
+            repaint();
         }
     }
 
@@ -298,17 +299,68 @@ public class GameScreen extends JPanel {
 
         // Vẽ enemyIcon
         g.drawImage(enemyIcon, initX * 16, 5 * 16, this);
-
-        // Hiển thị số lượng enemy tanks còn lại
         g.setFont(largeBoldFont);
         g.drawString(String.valueOf(totalEnemyTanks < 0 ? 0 : totalEnemyTanks), (initX + 1) * 16, 6 * 16);
         g.setFont(originalFont);
+
+
+        // Draw the starIcon
+        Image starIcon = imageInstance.getStarIcon();
+        int starIconX = initX * 16;
+        int starIconY = 11 * 16;
+        g.drawImage(starIcon, starIconX, starIconY, this);
+
+        // Retrieve the current star level from BoardUtility
+        int currentStarLevel = BoardUtility.getStarLevel();
+
+        // Draw the star level next to the icon
+        // Shadow effect
+        g.setColor(Color.BLACK);
+        g.drawString("TIER: " + currentStarLevel, starIconX - 4, starIconY + 3 * 16 + 4); // Shadow position
+
+        // Main text
+        g.setColor(Color.WHITE);
+        g.drawString("TIER: " + currentStarLevel, starIconX - 6, starIconY + 3 * 16); // Original position
+
         if (gameOver) {
             Font font = loadFont();
             g.setFont(font);
             g.setColor(Color.RED);
             g.drawString("GAME OVER", MapLoader.BOARD_WIDTH / 2 - 85, yPos);
         }
+
+        if (isPaused) {
+            // Semi-transparent overlay
+            g2d.setColor(new Color(0, 0, 0, 180)); // Black with increased transparency
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+
+            // Retro-styled font with smaller size
+            Font font = loadFont().deriveFont(Font.BOLD, 36); // Reduced font size for "Game Paused" text
+            g2d.setFont(font);
+            g2d.setColor(Color.YELLOW);
+            String pauseText = "GAME PAUSED";
+            FontMetrics fm = g2d.getFontMetrics(font);
+            int x = (getWidth() - fm.stringWidth(pauseText)) / 2;
+            int y = getHeight() / 2 - 30; // Moved up by 30 pixels
+
+            // Draw text with a retro border effect
+            g2d.setColor(Color.RED);
+            g2d.drawString(pauseText, x - 2, y - 2); // Offset for shadow effect
+            g2d.drawString(pauseText, x + 2, y + 2);
+            g2d.setColor(Color.YELLOW);
+            g2d.drawString(pauseText, x, y);
+
+            // Additional instructions for resuming the game with a smaller font size
+            Font instructionFont = loadFont().deriveFont(Font.PLAIN, 16); // Smaller font for instructions
+            g2d.setFont(instructionFont);
+            g2d.setColor(Color.CYAN);
+            String resumeText = "Press ESC to Resume";
+            int resumeX = (getWidth() - g2d.getFontMetrics(instructionFont).stringWidth(resumeText)) / 2;
+            g2d.drawString(resumeText, resumeX, y + 40); // Adjusted position for smaller text
+        }
+
+
+
 
         // Sync the graphics
         Toolkit.getDefaultToolkit().sync();
@@ -318,7 +370,8 @@ public class GameScreen extends JPanel {
     public void checkHealth(PlayerTank playerTank) {
         // Kiểm tra nếu sức khỏe của tank <= 0
         if (playerTank.getHealth() <= 0) {
-            PlayerTank.lives -= 6;  // Giảm mạng của người chơi
+            PlayerTank.lives -= 10;  // Giảm mạng của người chơi
+            BoardUtility.resetPowerLevel();
             if (PlayerTank.lives > 0) {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 SoundUtility.explosion2();
@@ -361,7 +414,7 @@ public class GameScreen extends JPanel {
         gameOver = true; // Set game over state
         SoundUtility.gameOver();
         // Start the "Game Over" animation timer
-        gameOverTimer = new Timer(80, new ActionListener() {
+        gameOverTimer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 yPos += direction;
