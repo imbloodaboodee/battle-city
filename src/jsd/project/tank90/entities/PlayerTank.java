@@ -1,6 +1,6 @@
 package jsd.project.tank90.entities;
 
-import constants.GameConstants;
+import jsd.project.tank90.constants.GameConstants;
 import jsd.project.tank90.physics.SoundUtility;
 
 import javax.swing.*;

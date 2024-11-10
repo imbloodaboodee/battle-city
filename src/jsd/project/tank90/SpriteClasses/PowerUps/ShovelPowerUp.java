@@ -1,8 +1,8 @@
 package jsd.project.tank90.SpriteClasses.PowerUps;
 
-import SpriteClasses.Brick;
-import SpriteClasses.Steel;
-import SpriteClasses.Block;
+import jsd.project.tank90.SpriteClasses.Brick;
+import jsd.project.tank90.SpriteClasses.Steel;
+import jsd.project.tank90.SpriteClasses.Block;
 
 import java.util.TimerTask;
 import java.util.Timer;

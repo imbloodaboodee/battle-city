@@ -21,7 +21,7 @@
  */
 package jsd.project.tank90.SpriteClasses;
 
-import constants.GameConstants;
+import jsd.project.tank90.constants.GameConstants;
 
 public class Base extends Block {
     public boolean gameOver = false;
