@@ -120,7 +120,7 @@ public class CollisionHandling {
                 if (bulletHitbox.intersects(blockHitbox)) {
                     System.out.println("Collision detected with block of type: " + blockType);
 
-                    if (b.getBulletType() == BulletType.TIER_3) {
+                    if (b.getBulletType() == BulletType.STANDARD_TIER_4) {
                         // TIER_3 bullets can destroy any block except EDGE and RIVER
                         if (blockType == BlockType.EDGE) {
                             bulletShouldBeRemoved = true; // Remove the bullet when it hits EDGE

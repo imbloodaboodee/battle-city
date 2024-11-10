@@ -51,6 +51,7 @@ public class GameScreen extends JPanel {
     private Timer gameOverTimer;
     private Timer transitionTimer;
     private Timer gameLoopTimer;
+    private boolean gameCompleted; // New flag for game completion
 
 
     // Private constructor to prevent external instantiations
@@ -67,7 +68,7 @@ public class GameScreen extends JPanel {
         isSpawning = false;
         isPaused = false;  // Variable to track pause state
         imageInstance = ImageUtility.getInstance();
-
+        gameCompleted = false;
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
@@ -148,6 +149,10 @@ public class GameScreen extends JPanel {
 
     public static void setDefaultBulletType(BulletType defaultBulletType) {
         GameScreen.defaultBulletType = defaultBulletType;
+    }
+    public void completeGame() {
+        gameCompleted = true;
+        gameOver(); // Trigger the game over mechanism
     }
 
     public void initBlocks() {
@@ -326,7 +331,12 @@ public class GameScreen extends JPanel {
             Font font = loadFont();
             g.setFont(font);
             g.setColor(Color.RED);
-            g.drawString("GAME OVER", MapLoader.BOARD_WIDTH / 2 - 85, yPos);
+            if (gameCompleted) {
+                g.setColor(Color.YELLOW);
+                g.drawString("GAME COMPLETED", MapLoader.BOARD_WIDTH / 2 - 120, yPos);
+            } else {
+                g.drawString("GAME OVER", MapLoader.BOARD_WIDTH / 2 - 85, yPos);
+            }
         }
 
         if (isPaused) {
@@ -358,8 +368,6 @@ public class GameScreen extends JPanel {
             int resumeX = (getWidth() - g2d.getFontMetrics(instructionFont).stringWidth(resumeText)) / 2;
             g2d.drawString(resumeText, resumeX, y + 40); // Adjusted position for smaller text
         }
-
-
 
 
         // Sync the graphics

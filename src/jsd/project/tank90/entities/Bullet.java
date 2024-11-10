@@ -11,8 +11,6 @@ public class Bullet {
     private int damage;
     private int speed;
     private int cooldown;
-    private boolean isExplosive = false;
-    private int ricochetLeft = 0;
     private Rectangle2D.Double hitbox;
     private ImageIcon bulletImage;
 
@@ -32,36 +30,74 @@ public class Bullet {
 
     private void bulletAttributeSetter(BulletType bulletType) {
         switch (bulletType) {
-            case NORMAL:
+            case STANDARD:
                 this.damage = 3;
                 this.cooldown = 1000;
                 this.speed = 10;
                 setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
                 break;
-            case EXPLOSIVE:
-                this.damage = 5;
-                this.cooldown = 1000;
-                this.speed = 2;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
-                break;
-            case RAPID:
-                this.damage = 1;
-                this.cooldown = 1;
-                this.speed = 10;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
-                break;
-            case TIER_1:
+            case STANDARD_TIER_2:
                 this.damage = 1;
                 this.cooldown = 500;
                 this.speed = 10;
                 setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
                 break;
-            case TIER_2, TIER_3:
+            case STANDARD_TIER_3, STANDARD_TIER_4:
                 this.damage = 2;
                 this.cooldown = 500;
                 this.speed = 15;
                 setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
                 break;
+            case RAPID:
+                this.damage = 1;
+                this.cooldown = 1;
+                this.speed = 10;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                break;
+            case RAPID_TIER_2:
+                this.damage = 2;
+                this.cooldown=1;
+                this.speed=10;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                break;
+            case RAPID_TIER_3:
+                this.damage = 2;
+                this.cooldown=1;
+                this.speed=10;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                break;
+            case RAPID_TIER_4:
+                this.damage = 2;
+                this.cooldown=1;
+                this.speed=10;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                break;
+
+            case EXPLOSIVE:
+                this.damage = 5;
+                this.cooldown = 1000;
+                this.speed = 2;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+                break;
+            case EXPLOSIVE_TIER_2:
+                this.damage = 5;
+                this.cooldown = 1000;
+                this.speed = 2;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+                break;
+            case EXPLOSIVE_TIER_3:
+                this.damage = 5;
+                this.cooldown = 1000;
+                this.speed = 2;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+                break;
+            case EXPLOSIVE_TIER_4:
+                this.damage = 5;
+                this.cooldown = 1000;
+                this.speed = 2;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+                break;
+
         }
     }
 
@@ -97,22 +133,6 @@ public class Bullet {
 
     public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
-    }
-
-    public boolean isExplosive() {
-        return isExplosive;
-    }
-
-    public void setExplosive(boolean explosive) {
-        isExplosive = explosive;
-    }
-
-    public int getRicochetLeft() {
-        return ricochetLeft;
-    }
-
-    public void setRicochetLeft(int ricochetLeft) {
-        this.ricochetLeft = ricochetLeft;
     }
 
     public double getX() {

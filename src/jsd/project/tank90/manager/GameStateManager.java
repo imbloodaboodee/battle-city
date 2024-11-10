@@ -9,8 +9,13 @@ public class GameStateManager {
     private static boolean levelTransitioning = false;  // New flag
     public static void checkTankDestroyed() {
         if (GameScreen.enemyTanks.size() == 0 && !GameScreen.isSpawning && !levelTransitioning) {
-            levelTransitioning = true; // Set flag to prevent re-triggering
+            if (GameScreen.getStage() < 20) {
+                levelTransitioning = true; // Set flag to prevent re-triggering
                 nextLevel();
+            } else {
+                // Call the Game Over function with the completion flag
+                GameScreen.getInstance().completeGame();
+            }
         }
     }
 

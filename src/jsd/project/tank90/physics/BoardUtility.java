@@ -111,22 +111,42 @@ public class BoardUtility {
 
     public static void activateStarPowerUp() {
         increaseStarLevel();
-        switch (starLevel) {
-            case 1:
-                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.RAPID));
+        BulletType currentBulletType = GameScreen.getInstance().ptRenderer.getPlayerTank().getDefaultBullet().getBulletType();
+        BulletType upgradedBulletType = currentBulletType;
+
+        switch (currentBulletType) {
+            case STANDARD:
+                upgradedBulletType = switch (starLevel) {
+                    case 1 -> BulletType.STANDARD;
+                    case 2 -> BulletType.STANDARD_TIER_2;
+                    case 3 -> BulletType.STANDARD_TIER_3;
+                    case 4 -> BulletType.STANDARD_TIER_4;
+                    default -> BulletType.STANDARD;
+                };
                 break;
-            case 2:
-                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.TIER_1));
+            case EXPLOSIVE:
+                upgradedBulletType = switch (starLevel) {
+                    case 1 -> BulletType.EXPLOSIVE;
+                    case 2 -> BulletType.EXPLOSIVE_TIER_2;
+                    case 3 -> BulletType.EXPLOSIVE_TIER_3;
+                    case 4 -> BulletType.EXPLOSIVE_TIER_4;
+                    default -> BulletType.EXPLOSIVE;
+                };
                 break;
-            case 3:
-                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.TIER_2));
-                break;
-            case 4:
-                GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(BulletType.TIER_3));
+            case RAPID:
+                upgradedBulletType = switch (starLevel) {
+                    case 1 -> BulletType.RAPID;
+                    case 2 -> BulletType.RAPID_TIER_2;
+                    case 3 -> BulletType.RAPID_TIER_3;
+                    case 4 -> BulletType.RAPID_TIER_4;
+                    default -> BulletType.RAPID;
+                };
                 break;
             default:
                 break;
         }
+
+        GameScreen.getInstance().ptRenderer.getPlayerTank().setDefaultBullet(new Bullet(upgradedBulletType));
     }
 
     public static int getStarLevel() {

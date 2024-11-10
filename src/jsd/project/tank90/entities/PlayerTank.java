@@ -122,7 +122,7 @@ public class PlayerTank extends Tank implements KeyListener {
             getBullets().add(firstBullet);
 
             // If the bullet type is DUAL, fire the second bullet after a short delay
-            if (getDefaultBullet().getBulletType() == BulletType.TIER_2 || getDefaultBullet().getBulletType() == BulletType.TIER_3) {
+            if (getDefaultBullet().getBulletType() == BulletType.STANDARD_TIER_3 || getDefaultBullet().getBulletType() == BulletType.STANDARD_TIER_4) {
                 Timer dualBulletTimer = new Timer(100, e -> { // 100 ms delay
                     Bullet secondBullet = new Bullet(
                             cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2,

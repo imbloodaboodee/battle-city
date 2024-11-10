@@ -3,7 +3,6 @@ package jsd.project.tank90.render;
 import jsd.project.tank90.entities.BulletType;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -79,16 +78,16 @@ public class AssignStatsScreen extends JPanel {
 
             switch (i) {
                 case 0 -> {
-                    bulletType = BulletType.NORMAL;
-                    description = "Standard bullet with balanced damage.";
+                    bulletType = BulletType.STANDARD;
+                    description = "Standard bullet.";
                 }
                 case 1 -> {
                     bulletType = BulletType.RAPID;
-                    description = "Rapid-fire bullet with lower damage.";
+                    description = "High fire rate, low damage.";
                 }
                 case 2 -> {
                     bulletType = BulletType.EXPLOSIVE;
-                    description = "Explosive bullet with splash damage.";
+                    description = "High damage, low fire rate.";
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + i);
             }
@@ -100,10 +99,10 @@ public class AssignStatsScreen extends JPanel {
 
         // Confirm button to pass selected values (initially hidden)
         confirmButton = new JButton("Confirm");
-        confirmButton.setForeground(Color.WHITE); // White text
-        confirmButton.setBackground(Color.BLACK); // Black background
+        confirmButton.setForeground(Color.BLACK); // White text
+        confirmButton.setBackground(Color.WHITE); // Black background
         confirmButton.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // White border
-        confirmButton.setBounds(200, 380, 120, 30);
+        confirmButton.setBounds(200, 390, 120, 30);
         confirmButton.addActionListener(e -> onConfirm.run());
         confirmButton.setVisible(false); // Hide the button initially
         add(confirmButton);
@@ -136,23 +135,35 @@ public class AssignStatsScreen extends JPanel {
         return statLabel;
     }
 
-    private JButton createBulletCardButton(BulletType bulletType, String imagePath, String description, int xPosition, int cardWidth, int cardHeight) {
+    private JButton createBulletCardButton(BulletType bulletType, String defaultImagePath, String description, int xPosition, int cardWidth, int cardHeight) {
+        String imagePath;
+
+        // Choose the image based on the bullet type
+        switch (bulletType) {
+            case EXPLOSIVE -> imagePath = "./src/jsd/project/tank90/assets/image/bullet_explosive.png";
+            case RAPID -> imagePath = "./src/jsd/project/tank90/assets/image/bullet_rapid.png";
+            default -> imagePath = defaultImagePath; // Use default for STANDARD
+        }
+
         JButton bulletCard = new JButton();
         bulletCard.setLayout(null);
         bulletCard.setBackground(Color.BLACK);
-        bulletCard.setBounds(xPosition, 0, cardWidth, cardHeight); // Set width dynamically for smaller card size
-        bulletCard.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // Default white border around the card
+        bulletCard.setBounds(xPosition, 0, cardWidth, cardHeight);
+        bulletCard.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
-        // Add bullet image
-        JLabel bulletImage = new JLabel(new ImageIcon(imagePath));
-        bulletImage.setBounds((cardWidth - 40) / 2, 10, 40, 40); // Smaller image to fit within the card
+        // Add bullet image with larger dimensions
+        JLabel bulletImage = new JLabel(resizeImageIcon(new ImageIcon(imagePath),4));
+        bulletImage.setBounds((cardWidth - 60) / 2, 20, 60, 60); // Set image to 60x60 pixels
         bulletCard.add(bulletImage);
 
         // Add bullet description with smaller font
-        JLabel bulletDescription = new JLabel("<html><center>" + bulletType + "<br>" + description + "</center></html>", SwingConstants.CENTER);
+        JLabel bulletDescription = new JLabel(
+                "<html><center><b style='color:red;'>" + bulletType + "</b><br><span style='font-size:6px;'>" + description + "</span></center></html>",
+                SwingConstants.CENTER
+        );
         bulletDescription.setForeground(Color.WHITE);
-        bulletDescription.setFont(new Font("Arial", Font.PLAIN, 10)); // Smaller font for description
-        bulletDescription.setBounds(0, 55, cardWidth, 70); // Center within the card
+        bulletDescription.setFont(new Font("Arial", Font.PLAIN, 10)); // Base font size, description will appear smaller
+        bulletDescription.setBounds(0, 75, cardWidth-3, 70); // Adjust position to fit below larger image
         bulletCard.add(bulletDescription);
 
         // Set the action for selecting the bullet type and highlighting the card
@@ -236,6 +247,14 @@ public class AssignStatsScreen extends JPanel {
         setComponentZOrder(confirmButton, 0); // Bring the confirm button to the front
         revalidate();
         repaint();
+    }
+    private ImageIcon resizeImageIcon(ImageIcon icon, double ratio) {
+        int originalWidth = icon.getIconWidth();
+        int originalHeight = icon.getIconHeight();
+        int newWidth = (int) (originalWidth * ratio);
+        int newHeight = (int) (originalHeight * ratio);
+        Image resizedImage = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImage);
     }
 
     public int getSpeed() {
