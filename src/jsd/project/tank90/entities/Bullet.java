@@ -31,71 +31,65 @@ public class Bullet {
     private void bulletAttributeSetter(BulletType bulletType) {
         switch (bulletType) {
             case STANDARD:
-                this.damage = 3;
-                this.cooldown = 1000;
-                this.speed = 10;
+                this.damage = 100;
+                this.cooldown = 500;
+                this.speed = 7;
                 setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
                 break;
             case STANDARD_TIER_2:
-                this.damage = 1;
+                this.damage = 100;
                 this.cooldown = 500;
-                this.speed = 10;
+                this.speed = 9;
                 setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
                 break;
             case STANDARD_TIER_3, STANDARD_TIER_4:
-                this.damage = 2;
+                this.damage = 100;
                 this.cooldown = 500;
-                this.speed = 15;
+                this.speed = 9;
                 setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
                 break;
             case RAPID:
-                this.damage = 1;
-                this.cooldown = 1;
+                this.damage = 50;
+                this.cooldown = 100;
                 this.speed = 10;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 0.7));
                 break;
             case RAPID_TIER_2:
-                this.damage = 2;
-                this.cooldown=1;
-                this.speed=10;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                this.damage = 50;
+                this.cooldown = 90;
+                this.speed = 10;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 0.7));
                 break;
             case RAPID_TIER_3:
-                this.damage = 2;
-                this.cooldown=1;
-                this.speed=10;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                this.damage = 50;
+                this.cooldown = 90;
+                this.speed = 11;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 0.7));
                 break;
             case RAPID_TIER_4:
-                this.damage = 2;
-                this.cooldown=1;
-                this.speed=10;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 1.2));
+                this.damage = 75;
+                this.cooldown = 90;
+                this.speed = 11;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_rapid.png"), 0.7));
                 break;
 
             case EXPLOSIVE:
-                this.damage = 5;
-                this.cooldown = 1000;
-                this.speed = 2;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+                this.damage = 500;
+                this.cooldown = 2000;
+                this.speed = 5;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.5));
                 break;
             case EXPLOSIVE_TIER_2:
-                this.damage = 5;
-                this.cooldown = 1000;
-                this.speed = 2;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+                this.damage = 500;
+                this.cooldown = 1700;
+                this.speed = 5;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.5));
                 break;
-            case EXPLOSIVE_TIER_3:
-                this.damage = 5;
-                this.cooldown = 1000;
-                this.speed = 2;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
-                break;
-            case EXPLOSIVE_TIER_4:
-                this.damage = 5;
-                this.cooldown = 1000;
-                this.speed = 2;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.2));
+            case EXPLOSIVE_TIER_3, EXPLOSIVE_TIER_4:
+                this.damage = 500;
+                this.cooldown = 1700;
+                this.speed = 5;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.7));
                 break;
 
         }
@@ -106,6 +100,7 @@ public class Bullet {
         y += speed * Math.sin(angle);
         hitbox.setRect(x, y, hitbox.getWidth(), hitbox.getHeight());
     }
+
     private ImageIcon resizeImageIcon(ImageIcon icon, double ratio) {
         int originalWidth = icon.getIconWidth();
         int originalHeight = icon.getIconHeight();

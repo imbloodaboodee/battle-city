@@ -1,9 +1,9 @@
 package jsd.project.tank90.physics;
 
-import jsd.project.tank90.SpriteClasses.Block;
+import jsd.project.tank90.sprite.Block;
 import jsd.project.tank90.constants.GameConstants;
 import jsd.project.tank90.entities.*;
-import jsd.project.tank90.SpriteClasses.PowerUps.*;
+import jsd.project.tank90.sprite.PowerUps.*;
 import jsd.project.tank90.environment.BlockType;
 import jsd.project.tank90.manager.TankSpawner;
 import jsd.project.tank90.render.GameScreen;
@@ -24,7 +24,7 @@ public class CollisionHandling {
             Bullet bullet = bullets.get(i);
             if (bullet.getHitbox().intersects(playerHitbox)) {
                 bullets.remove(i);
-                playerTank.downHealth(1);
+                playerTank.downHealth(bullet.getDamage());
                 GameScreen.getInstance().checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
                 break;
             }
@@ -40,7 +40,7 @@ public class CollisionHandling {
                 Bullet bullet = bullets.get(j);
                 if (bullet.getHitbox().intersects(enemyHitbox)) {
                     bullets.remove(j);
-                    enemy.downHealth(1);
+                    enemy.downHealth(bullet.getDamage());
                     SoundUtility.BulletHitTank();
                     if (enemy.getHealth() <= 0) {
                         incrementNum(enemy);
@@ -191,8 +191,8 @@ public class CollisionHandling {
             Rectangle enemyHitbox = enemy.getHitbox();
 
             if (playerHitbox.intersects(enemyHitbox)) {
-                playerTank.downHealth(1);
-                enemy.downHealth(1);
+                playerTank.downHealth(enemy.getHealth());
+                enemy.downHealth(playerTank.getHealth());
                 GameScreen.getInstance().checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
 
                 if (enemy.getHealth() <= 0) {

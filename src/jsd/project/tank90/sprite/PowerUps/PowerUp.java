@@ -1,6 +1,6 @@
-package jsd.project.tank90.SpriteClasses.PowerUps;
+package jsd.project.tank90.sprite.PowerUps;
 
-import jsd.project.tank90.SpriteClasses.Sprite;
+import jsd.project.tank90.sprite.Sprite;
 import jsd.project.tank90.constants.GameConstants;
 
 public class PowerUp extends Sprite {

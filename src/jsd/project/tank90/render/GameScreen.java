@@ -1,7 +1,7 @@
 package jsd.project.tank90.render;
 
-import jsd.project.tank90.SpriteClasses.*;
-import jsd.project.tank90.SpriteClasses.PowerUps.PowerUp;
+import jsd.project.tank90.sprite.*;
+import jsd.project.tank90.sprite.PowerUps.PowerUp;
 import jsd.project.tank90.constants.GameConstants;
 import jsd.project.tank90.entities.*;
 import jsd.project.tank90.environment.BlockType;
@@ -146,6 +146,7 @@ public class GameScreen extends JPanel {
     public static void setDefaultBulletType(BulletType defaultBulletType) {
         GameScreen.defaultBulletType = defaultBulletType;
     }
+
     public void completeGame() {
         gameCompleted = true;
         gameOver();
@@ -361,7 +362,7 @@ public class GameScreen extends JPanel {
                 SoundUtility.explosion2();
                 playerTank.activateShield(3000);
                 playerTank.resetPosition();
-                playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH);
+                playerTank.setHealth(100 + playerTank.getAssignedHealth() * 100);
             } else {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 playerTank.setX(-300);

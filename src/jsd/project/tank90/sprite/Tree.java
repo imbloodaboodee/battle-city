@@ -1,4 +1,4 @@
-package jsd.project.tank90.SpriteClasses;
+package jsd.project.tank90.sprite;
 
 public class Tree extends Block {
     public Tree(int x, int y) {

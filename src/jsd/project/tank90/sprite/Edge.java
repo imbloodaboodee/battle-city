@@ -1,4 +1,4 @@
-package jsd.project.tank90.SpriteClasses;
+package jsd.project.tank90.sprite;
 
 public class Edge extends Block {
     public Edge(int x, int y) {

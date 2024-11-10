@@ -1,9 +1,9 @@
 package jsd.project.tank90.physics;
 
-import jsd.project.tank90.SpriteClasses.Block;
+import jsd.project.tank90.sprite.Block;
 import jsd.project.tank90.constants.GameConstants;
 import jsd.project.tank90.entities.*;
-import jsd.project.tank90.SpriteClasses.PowerUps.*;
+import jsd.project.tank90.sprite.PowerUps.*;
 import jsd.project.tank90.manager.TankSpawner;
 import jsd.project.tank90.render.GameScreen;
 
@@ -17,7 +17,7 @@ public class BoardUtility {
 
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
     private static Random random = new Random();
-    public static Timer powerUpExpireTimer = new Timer(5000, e -> {clearPowerUps();});
+    public static Timer powerUpExpireTimer = new Timer(7000, e -> {clearPowerUps();});
     private static int starLevel = 1;
 
     public static void spawnRandomPowerUp(int x, int y, int percentageChance) {

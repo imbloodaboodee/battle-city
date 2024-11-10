@@ -17,7 +17,7 @@ public final class GameConstants {
     public static final double ENEMY_TANK_ROTATION_SPEED = 0.02;
     public static final double BASE_COORDINATE_X = 240;
     public static final double BASE_COORDINATE_Y = 416;
-    public static final int POWER_UP_SPAWN_CHANCE = 100;
+    public static final int POWER_UP_SPAWN_CHANCE = 60;
 
 
 }

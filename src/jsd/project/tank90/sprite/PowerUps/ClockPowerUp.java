@@ -1,4 +1,4 @@
-package jsd.project.tank90.SpriteClasses.PowerUps;
+package jsd.project.tank90.sprite.PowerUps;
 
 public class ClockPowerUp extends PowerUp {
     public ClockPowerUp(int x, int y) {

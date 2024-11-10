@@ -45,7 +45,7 @@ public class Tank {
     public Tank() {
         x = 176;
         y = 400;
-        health = 1;
+        health = 100;
         speed = 1;
         bulletManager = new BulletManager(getBullets());
 

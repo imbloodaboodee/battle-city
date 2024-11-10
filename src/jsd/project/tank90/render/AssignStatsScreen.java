@@ -19,6 +19,7 @@ public class AssignStatsScreen extends JPanel {
 
     private JButton selectedCard;
     private JButton confirmButton;
+    private JButton autoAssignButton; // New button for auto-assign
 
     public AssignStatsScreen(Runnable onConfirm) {
         setLayout(null);
@@ -97,6 +98,24 @@ public class AssignStatsScreen extends JPanel {
         confirmButton.addActionListener(e -> onConfirm.run());
         confirmButton.setVisible(false); //
         add(confirmButton);
+
+        // Auto-assign button setup
+        JButton autoAssignButton = new JButton("Auto-Assign");
+        autoAssignButton.setForeground(Color.WHITE);
+        autoAssignButton.setBackground(Color.BLACK);
+        autoAssignButton.setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+        autoAssignButton.setBounds(0, 390, 120, 30);
+        autoAssignButton.addActionListener(e -> autoAssignStats(remainingPointsLabel));
+        JPanel autoAssignButtonContainer = new JPanel();
+        autoAssignButtonContainer.setBackground(Color.BLACK);
+        autoAssignButtonContainer.setBounds(0, 390, 130, 40);
+        autoAssignButtonContainer.add(autoAssignButton);
+        setComponentZOrder(autoAssignButton, 0);
+        setComponentZOrder(bulletPanel, 1);
+        revalidate();
+        repaint();
+        add(autoAssignButtonContainer);
+
     }
 
 
@@ -222,6 +241,43 @@ public class AssignStatsScreen extends JPanel {
         selectedCard = bulletCard;
 
         checkConditionsForConfirmButton();
+    }
+    private void autoAssignStats(JLabel remainingPointsLabel) {
+        // Calculate points to distribute evenly across stats
+        int pointsPerStat = remainingPoints / 3;
+        int extraPoints = remainingPoints % 3;
+
+        // Assign points to each stat
+        speed += pointsPerStat;
+        health += pointsPerStat;
+        rotationSpeed += pointsPerStat;
+
+        // Distribute any extra points (starting from speed, then health, then rotationSpeed)
+        if (extraPoints > 0) speed++;
+        if (extraPoints > 1) health++;
+
+        // Update remaining points and stats
+        remainingPoints = 0;
+        speedLabel.setText("Speed: " + speed);
+        healthLabel.setText("Health: " + health);
+        rotationLabel.setText("Rotation: " + rotationSpeed);
+        updateRemainingPointsLabel(remainingPointsLabel);
+
+        // Select "Standard" bullet type
+        selectedBulletType = BulletType.STANDARD;
+
+        // Update the confirm button visibility and border of the standard bullet card
+        checkConditionsForConfirmButton();
+    }
+    private JButton getBulletCardForType(BulletType bulletType) {
+        for (Component component : getComponents()) {
+            if (component instanceof JButton button && button.getActionCommand() != null) {
+                if (BulletType.valueOf(button.getActionCommand()).equals(bulletType)) {
+                    return button;
+                }
+            }
+        }
+        return null;
     }
 
     private void checkConditionsForConfirmButton() {

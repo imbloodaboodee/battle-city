@@ -1,4 +1,4 @@
-package jsd.project.tank90.SpriteClasses.PowerUps;
+package jsd.project.tank90.sprite.PowerUps;
 
 public class ShieldPowerUp extends PowerUp {
     public ShieldPowerUp(int x, int y) {
