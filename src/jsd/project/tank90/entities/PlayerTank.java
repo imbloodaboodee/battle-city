@@ -19,7 +19,7 @@ public class PlayerTank extends Tank implements KeyListener {
 
     public PlayerTank(int assignedHealth, int assignedSpeed, int assignedRotationSpeed, BulletType assignedBulletType) {
         super();
-        setHealth(getHealth() + assignedHealth * 100);
+        setHealth(getHealth() + assignedHealth * 50);
         setAssignedHealth(assignedHealth);
         setSpeed(getSpeed() + assignedSpeed);
         setRotationSpeed(GameConstants.PLAYER_ROTATION_SPEED);

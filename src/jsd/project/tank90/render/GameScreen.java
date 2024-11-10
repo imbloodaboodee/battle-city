@@ -58,7 +58,7 @@ public class GameScreen extends JPanel {
         blocks = new CopyOnWriteArrayList<>();
         enemyTanks = new CopyOnWriteArrayList<>();
         animations = new ArrayList<>();
-        stage = 1;
+        stage = 2;
         gameOver = false;
         yPos = MapLoader.BOARD_HEIGHT;
         direction = -1;
@@ -362,7 +362,7 @@ public class GameScreen extends JPanel {
                 SoundUtility.explosion2();
                 playerTank.activateShield(3000);
                 playerTank.resetPosition();
-                playerTank.setHealth(100 + playerTank.getAssignedHealth() * 100);
+                playerTank.setHealth(100 + playerTank.getAssignedHealth() * 50);
             } else {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 playerTank.setX(-300);

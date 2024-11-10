@@ -77,19 +77,19 @@ public class Bullet {
                 this.damage = 500;
                 this.cooldown = 2000;
                 this.speed = 5;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.5));
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 2));
                 break;
             case EXPLOSIVE_TIER_2:
                 this.damage = 500;
                 this.cooldown = 1700;
                 this.speed = 5;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.5));
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 2));
                 break;
             case EXPLOSIVE_TIER_3, EXPLOSIVE_TIER_4:
                 this.damage = 500;
                 this.cooldown = 1700;
                 this.speed = 5;
-                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 1.7));
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet_explosive.png"), 2.5));
                 break;
 
         }

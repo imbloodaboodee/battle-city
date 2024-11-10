@@ -100,7 +100,7 @@ public class CollisionHandling {
                         if (blockType == BlockType.EDGE) {
                             bulletShouldBeRemoved = true;
                             break;
-                        } else if (blockType != BlockType.RIVER) {
+                        } else if (blockType != BlockType.RIVER&& blockType!=BlockType.TREE) {
                             GameScreen.animations.add(new BlockExplosion(block.getX(), block.getY(), 100, 0.5, false));
                             blocksToRemove.add(block);
                             bulletShouldBeRemoved = true;
