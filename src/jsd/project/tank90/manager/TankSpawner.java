@@ -26,17 +26,17 @@ public class TankSpawner {
 
     public TankSpawner(CopyOnWriteArrayList<Tank> enemyTanks, int stage) {
         this.enemyTanks = enemyTanks;
-        setStage(stage); // Use the setter to initialize tank limits
+        setStage(stage);
     }
 
     public void startSpawning() {
         if (spawnTimer != null) {
-            spawnTimer.stop(); // Stop any running timer
+            spawnTimer.stop();
         }
 
         GameScreen.isSpawning = true;
         resetSpawner();
-        updateTankLimits();  // Update tank limits based on current stage
+        updateTankLimits();
         spawnTimer = new Timer(10000, e -> spawnCycle());
         spawnCycle();
         spawnTimer.start();
@@ -125,7 +125,7 @@ public class TankSpawner {
 
     public void setStage(int stage) {
         this.stage = stage;
-        updateTankLimits();  // Update tank limits whenever the stage changes
+        updateTankLimits();
     }
 
     public static int getTotalEnemyTanks() {
@@ -135,9 +135,9 @@ public class TankSpawner {
     public static void onEnemyTankDestroyed() {
         totalEnemyTanks--;
         if (totalEnemyTanks < 0) {
-            totalEnemyTanks = 0; // Đảm bảo không xuống dưới 0
+            totalEnemyTanks = 0;
         }
-        GameScreen.getInstance().repaint(); // Cập nhật màn hình để hiển thị số lượng mới
+        GameScreen.getInstance().repaint();
     }
 }
 

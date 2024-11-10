@@ -7,30 +7,30 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class AssignStatsScreen extends JPanel {
-    private int remainingPoints = 5; // Points available for assigning
+    private int remainingPoints = 5;
     private int speed = 0;
     private int health = 0;
     private int rotationSpeed = 0;
-    private BulletType selectedBulletType = null; // Initially no bullet type selected
+    private BulletType selectedBulletType = null;
 
     private JLabel speedLabel;
     private JLabel healthLabel;
     private JLabel rotationLabel;
 
-    private JButton selectedCard; // Track the selected bullet card
-    private JButton confirmButton; // Confirm button to be shown only after conditions are met
+    private JButton selectedCard;
+    private JButton confirmButton;
 
     public AssignStatsScreen(Runnable onConfirm) {
-        setLayout(null); // Use absolute layout for fixed positioning
-        setBackground(Color.BLACK); // Set background to black
-        setPreferredSize(new Dimension(512, 500)); // Set fixed size for the panel
+        setLayout(null);
+        setBackground(Color.BLACK);
+        setPreferredSize(new Dimension(512, 500));
 
         // Title label
         JLabel titleLabel = new JLabel("Create Your Tank!");
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24)); // Large bold font
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setBounds(0, 10, 512, 30); // Position at the top, centered
+        titleLabel.setBounds(0, 10, 512, 30);
         add(titleLabel);
 
         // Tank image positioned next to stat rows

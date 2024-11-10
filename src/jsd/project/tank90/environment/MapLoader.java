@@ -15,11 +15,11 @@ public class MapLoader {
 
     private static final Map<Character, Integer> CHAR_TO_BLOCK_MAP = new HashMap<>();
     static {
-        CHAR_TO_BLOCK_MAP.put('#', 1);  // Brick
-        CHAR_TO_BLOCK_MAP.put('@', 2);  // Steel
-        CHAR_TO_BLOCK_MAP.put('%', 5);  // Base
-        CHAR_TO_BLOCK_MAP.put('~', 4);  // River
-        CHAR_TO_BLOCK_MAP.put('.', 0);  // Blank
+        CHAR_TO_BLOCK_MAP.put('#', 1);
+        CHAR_TO_BLOCK_MAP.put('@', 2);
+        CHAR_TO_BLOCK_MAP.put('%', 5);
+        CHAR_TO_BLOCK_MAP.put('~', 4);
+        CHAR_TO_BLOCK_MAP.put('.', 0);
     }
 
     public static int[][] getMap(int stage) {
@@ -66,13 +66,13 @@ public class MapLoader {
         } catch (IOException e) {
             System.err.println("Error reading map file: " + e.getMessage());
             e.printStackTrace();
-            return level0; // Fallback to default map if there's an error
+            return level0;
         }
     }
 
     private static int[] parseLineToRow(String line) {
         return line.trim().chars()
-                .map(c -> CHAR_TO_BLOCK_MAP.getOrDefault((char) c, 0)) // Map each character to its block type
+                .map(c -> CHAR_TO_BLOCK_MAP.getOrDefault((char) c, 0))
                 .toArray();
     }
 

@@ -179,10 +179,6 @@ public class Bullet {
         this.hitbox = hitbox;
     }
 
-    public boolean isOutOfBounds(int width, int height) {
-        return x < 0 || x > width || y < 0 || y > height;
-    }
-
     public ImageIcon getBulletImage() {
         return bulletImage;
     }

@@ -8,35 +8,27 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class PlayerTank extends Tank implements KeyListener {
-    // Image variables
     private ImageIcon aimImage;
 
-    // Timers
     private Timer bulletCreationTimer;
     private Timer bulletTimerCountdown;
 
-    // Attributes
-    public static int lives = GameConstants.INITIAL_LIVES; // Số mạng của tank
-    private double targetCannonAngle = 0; // The target angle to rotate to
+    public static int lives = GameConstants.INITIAL_LIVES;
+    private double targetCannonAngle = 0;
 
 
     public PlayerTank(BulletType bulletType) {
-        super();  // Call Tank's constructor
+        super();
         setDefaultBullet(new Bullet(bulletType));
-        // Initialize tank images
         setBaseImage(new ImageIcon(GameConstants.BASE_IMAGE));
         setCannonImage(new ImageIcon(GameConstants.CANNON_IMAGE));
         aimImage = new ImageIcon(GameConstants.AIM_IMAGE);
 
 
-        // Initialize the hitbox (using inherited x and y coordinates)
         setHitbox(new Rectangle(getX(), getY(), getBaseImage().getIconWidth(), getBaseImage().getIconHeight()));
 
-        // Timer for creating bullets, starts when firing
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
-
-        // Timer for updating entities that need constant updating
     }
 
     public PlayerTank(int assignedHealth, int assignedSpeed, int assignedRotationSpeed, BulletType assignedBulletType) {
@@ -50,11 +42,8 @@ public class PlayerTank extends Tank implements KeyListener {
         setCannonImage(new ImageIcon(GameConstants.CANNON_IMAGE));
         aimImage = new ImageIcon(GameConstants.AIM_IMAGE);
 
-
-        // Initialize the hitbox (using inherited x and y coordinates)
         setHitbox(new Rectangle(getX(), getY(), getBaseImage().getIconWidth(), getBaseImage().getIconHeight()));
 
-        // Timer for creating bullets, starts when firing
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
 
@@ -63,12 +52,12 @@ public class PlayerTank extends Tank implements KeyListener {
 
     public void mousePressed(MouseEvent e) {
         System.out.println("start");
-        bulletCreationTimer.start(); // Start firing bullets
+        bulletCreationTimer.start();
     }
 
     public void mouseReleased(MouseEvent e) {
         System.out.println("stop");
-        bulletCreationTimer.stop(); // Stop firing bullets
+        bulletCreationTimer.stop();
     }
 
     @Override
@@ -106,13 +95,12 @@ public class PlayerTank extends Tank implements KeyListener {
     public void shoot() {
         if (isFrozen()) {
             System.out.println("SmartTank is frozen, skipping bullet creation.");
-            return; // Stop shooting if frozen
+            return;
         }
         if (isCanFire()) {
             int cannonTipX = (int) (getX() + getBaseImage().getIconWidth() / 2 + Math.cos(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
             int cannonTipY = (int) (getY() + getBaseImage().getIconHeight() / 2 + Math.sin(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
 
-            // First bullet
             Bullet firstBullet = new Bullet(
                     cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2,
                     cannonTipY - getDefaultBullet().getBulletImage().getIconHeight() / 2,
@@ -121,8 +109,9 @@ public class PlayerTank extends Tank implements KeyListener {
             );
             getBullets().add(firstBullet);
 
-            // If the bullet type is DUAL, fire the second bullet after a short delay
-            if (getDefaultBullet().getBulletType() == BulletType.STANDARD_TIER_3 || getDefaultBullet().getBulletType() == BulletType.STANDARD_TIER_4) {
+            if (getDefaultBullet().getBulletType() == BulletType.STANDARD_TIER_3 ||
+                    getDefaultBullet().getBulletType() == BulletType.STANDARD_TIER_4||
+                    getDefaultBullet().getBulletType() == BulletType.EXPLOSIVE_TIER_4) {
                 Timer dualBulletTimer = new Timer(100, e -> { // 100 ms delay
                     Bullet secondBullet = new Bullet(
                             cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2,
@@ -136,7 +125,6 @@ public class PlayerTank extends Tank implements KeyListener {
                 dualBulletTimer.start();
             }
 
-            // Set canFire to false and start cooldown timer
             setCanFire(false);
             bulletTimerCountdown = new Timer(getDefaultBullet().getCooldown(), e -> {
                 setCanFire(true);

@@ -23,10 +23,9 @@ public class BoardUtility {
     public static void spawnRandomPowerUp(int x, int y, int percentageChance) {
         powerUpExpireTimer.stop();
         if (returnTrueAtPercentage(percentageChance)) {
-            int randomIndex = random.nextInt(6); // Randomly pick a number between 0 and 3
+            int randomIndex = random.nextInt(6);
             if (powerUps.size() > 0)
                 powerUps.clear();
-            randomIndex = 5;
             switch (randomIndex) {
                 case 0 -> powerUps.add(new BombPowerUp(x, y));
                 case 1 -> powerUps.add(new ClockPowerUp(x, y));
@@ -64,35 +63,32 @@ public class BoardUtility {
             GameScreen.animations.add(new TankExplosion(enemyTank.getX(), enemyTank.getY(), 100, 1, false));
             BoardUtility.spawnRandomPowerUp(enemyTank.getX(), enemyTank.getY(), GameConstants.POWER_UP_SPAWN_CHANCE);
             CollisionHandling.incrementNum(enemyTank);
-            tanksToRemove.add(enemyTank);  // Thêm enemyTank vào danh sách tạm thời
-            destroyedCount++;  // Tăng số lượng enemy bị tiêu diệt
+            tanksToRemove.add(enemyTank);
+            destroyedCount++;
         }
 
-        // Sau khi vòng lặp kết thúc, xóa tất cả enemyTanks từ danh sách tạm
         enemyTanks.removeAll(tanksToRemove);
         for (int i = 0; i < destroyedCount; i++) {
             TankSpawner.onEnemyTankDestroyed();
         }
 
-        return destroyedCount;  // Trả về số lượng enemy bị tiêu diệt
+        return destroyedCount;
 
     }
 
     public static void activateClockPowerUp(CopyOnWriteArrayList<Tank> enemyTanks) {
         for (Tank enemy : enemyTanks) {
-            enemy.freeze(10000); // Freeze each enemy tank for 10 seconds
+            enemy.freeze(10000);
         }
     }
 
     public static void activateShieldPowerUp(Tank playerTank) {
-        playerTank.activateShield(10000); // Bảo vệ trong 10 giây
+        playerTank.activateShield(10000);
     }
 
     public static void activateShovelPowerUp(CopyOnWriteArrayList<Block> blocks) {
-        // Tạo instance của ShovelPowerUp
-        ShovelPowerUp shovelPowerUp = new ShovelPowerUp(0, 0); // Tọa độ có thể không cần thiết nếu chỉ sử dụng logic kích hoạt
-        // Kích hoạt powerup
-        shovelPowerUp.activate(blocks); // Truyền danh sách các block vào để powerup kích hoạt
+        ShovelPowerUp shovelPowerUp = new ShovelPowerUp(0, 0);
+        shovelPowerUp.activate(blocks);
     }
 
     public static void activateTankPowerUp() {

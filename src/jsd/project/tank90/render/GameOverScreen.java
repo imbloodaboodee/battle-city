@@ -2,6 +2,7 @@ package jsd.project.tank90.render;
 
 import jsd.project.tank90.physics.CollisionHandling;
 import jsd.project.tank90.physics.ImageUtility;
+import jsd.project.tank90.physics.SoundUtility;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -21,11 +22,9 @@ import java.util.logging.Logger;
 
 public class GameOverScreen extends JPanel {
 
-    private GameFrame theView;
     private int stage, totalTankNum;
     private int totalScore = 0;
     private final int SHIFT = 80;
-    private JButton restartButton;
     private final ImageUtility imageInstance = ImageUtility.getInstance();
     private int[] tankScoreList = {0, 0, 0, 0};
     private int[] tankNumList = {0, 0, 0, 0};
@@ -47,38 +46,24 @@ public class GameOverScreen extends JPanel {
     }
 
     public GameOverScreen(Runnable onEnterPress) {
-        // Add key listener for Enter key to switch to game screen
+        SoundUtility.statistics();
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    onEnterPress.run(); // Trigger the transition to the game screen
+                    onEnterPress.run();
                 }
             }
         });
 
-        setFocusable(true); // To ensure the panel can receive key events
+        setFocusable(true);
         requestFocusInWindow();
 
         setBackground(Color.BLACK);
         setForeground(Color.BLACK);
         setLayout(null);
-
-//        restartButton = new JButton();
-//        restartButton.setText("Restart");
-//        this.add(restartButton);
-//        restartButton.setBounds(400, 400, 100, 30);
-//        restartButton.addActionListener(this);
-//
-//        addKeyListener(this); // Add the KeyListener for Enter key
     }
 
-
-    /**
-     * Draw the Game Over screen with the score and restart option.
-     *
-     * @param g Graphics
-     */
     @Override
     public void paintComponent(Graphics g) {
         loadScore();
@@ -91,7 +76,6 @@ public class GameOverScreen extends JPanel {
                         imageInstance.getTankPower(),
                         imageInstance.getTankArmor()));
 
-        // Display Game Over and score
         g.setFont(font);
         g.setColor(Color.WHITE);
         g.drawString("GAME OVER", 100 + SHIFT, 60);
@@ -117,21 +101,16 @@ public class GameOverScreen extends JPanel {
             g.drawString(String.valueOf(tankNumList[i]), 180 + SHIFT, 180 + (i * 45));
         }
 
-        // Total underline
         g.drawLine(170, 330, 307, 330);
 
         g.drawString("TOTAL", 85 + SHIFT, 355);
         g.drawString(String.valueOf(totalTankNum), 180 + SHIFT, 355);
 
-        g.setColor(Color.ORANGE); // Set color to yellow
+        g.setColor(Color.ORANGE);
         g.drawString("PRESS ENTER TO RESTART", getWidth() / 2 - 170, getHeight() * 4 / 5);
 
 
     }
-
-    /**
-     * Load the totalScore of the player from the CollisionUtility class.
-     */
     public void loadScore() {
         for (int i = 0; i < 4; i++) {
             int[] enemyTankNum = CollisionHandling.getEnemyTankNum();
@@ -149,56 +128,5 @@ public class GameOverScreen extends JPanel {
             totalTankNum += num;
         }
     }
-
-    /**
-     * Restart the game, load the menu and reset player's totalScore.
-     */
-//    public void restart() {
-//        Board.gameOver = false;
-//        CollisionUtility.resetScore();
-//        loadMenu();
-//    }
-
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        if (e.getSource() == restartButton) {
-//            restart();
-//        }
-//    }
-
-    /**
-     * Load the menu to the game panel if the player chooses to restart the
-     * game.
-     */
-//    private void loadMenu() {
-//        theView.getGamePanel().removeAll();
-//        Menu menu = new Menu(theView);
-//        menu.revalidate();
-//        menu.repaint();
-//        theView.getGamePanel().add(menu);
-//        menu.requestFocusInWindow();
-//        theView.setVisible(true);
-//    }
-
-//    @Override
-//    public void keyTyped(KeyEvent e) {
-//        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//            loadMenu();
-//        }
-//    }
-//
-//    @Override
-//    public void keyPressed(KeyEvent e) {
-//        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//            loadMenu();
-//        }
-//    }
-//
-//    @Override
-//    public void keyReleased(KeyEvent e) {
-//        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//            loadMenu();
-//        }
-//    }
 
 }

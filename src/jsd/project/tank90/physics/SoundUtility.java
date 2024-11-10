@@ -11,10 +11,6 @@ import java.util.logging.Logger;
 public class SoundUtility {
     private static final Map<String, Clip> soundClips = new HashMap<>();
     private static boolean initialized = false;
-
-    /**
-     * Load different sound files
-     */
     public static void initialize() {
         System.out.println("INITIALIZE");
         String[] soundNames = {
@@ -56,7 +52,7 @@ public class SoundUtility {
         }
         Clip clip = soundClips.get(soundName);
         if (clip != null) {
-            clip.setFramePosition(0); // Reset to the start
+            clip.setFramePosition(0);
             clip.start();
         }
     }

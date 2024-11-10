@@ -3,21 +3,11 @@ package jsd.project.tank90.physics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
-/**
- * A class that loads the lives image.
- */
 public class ImageUtility {
-    // Instance variable for the lives image
     private final Image lives, flagIcon, enemyIcon, starIcon;
     private final Image arrow, tankBasic, tankFast, tankPower, tankArmor;
     private static ImageUtility instance;
     private final Image background, tank;
-
-    /**
-     * Get the instance of the ImageUtility
-     *
-     * @return instance
-     */
     public static ImageUtility getInstance() {
         if (instance == null) {
             instance = new ImageUtility();
@@ -25,9 +15,6 @@ public class ImageUtility {
         return instance;
     }
 
-    /**
-     * Private constructor to initialize the lives image
-     */
     private ImageUtility() {
         lives = loadImage("src/jsd/project/tank90/assets/image/lives.png");
         enemyIcon = loadImage("src/jsd/project/tank90/assets/image/enemy.png");
@@ -42,12 +29,6 @@ public class ImageUtility {
         flagIcon = loadImage("src/jsd/project/tank90/assets/image/flag.png");
     }
 
-    /**
-     * Load image given the image address
-     *
-     * @param imageAddress image address to the required image
-     * @return image
-     */
     private Image loadImage(String imageAddress) {
         ImageIcon icon = new ImageIcon(imageAddress);
         return icon.getImage();

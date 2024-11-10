@@ -11,18 +11,14 @@ public abstract class Animation {
     protected BufferedImage[] frames;
     protected int currentFrame = 0;
     protected boolean finished = false;
-    private boolean loop;  // Determines if the animation should loop continuously
+    private boolean loop;
 
-    /**
-     * Constructor for Animation, which initializes position, frame delay, and looping behavior.
-     */
     public Animation(int x, int y, BufferedImage[] frames, int frameDelay, double resizeRatio, boolean loop) {
         this.x = x;
         this.y = y;
         this.frames = resizeFrames(frames, resizeRatio);
         this.loop = loop;
 
-        // Timer to progress frames every frameDelay milliseconds
         new Timer(frameDelay, e -> updateFrame()).start();
     }
 
@@ -30,9 +26,9 @@ public abstract class Animation {
         currentFrame++;
         if (currentFrame >= frames.length) {
             if (isLoop()) {
-                currentFrame = 0;  // Reset to the first frame if looping
+                currentFrame = 0;
             } else {
-                finished = true;  // Mark animation as finished if not looping
+                finished = true;
             }
         }
     }

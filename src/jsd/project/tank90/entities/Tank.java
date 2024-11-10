@@ -16,21 +16,21 @@ public class Tank {
     private boolean isMovingDown = false;
     private boolean isMovingLeft = false;
     private boolean isMovingRight = false;
-    private double tankAngle = 0; // Default angle when the tank is stationary
+    private double tankAngle = 0;
     private Rectangle hitbox;
 
     private int x;
     private int y;
     private int health;
-    private int speed;  // Increase speed for visible movement
+    private int speed;
     private CopyOnWriteArrayList<Bullet> bullets = new CopyOnWriteArrayList<>();
     private boolean isFrozen = false;
     public boolean shield = false;
     private long shieldEndTime = 0;
     private Timer freezeTimer;
     private int movementDirection = 1;
-    private int moveCounter = 0; // Counter to track steps in the current direction
-    private final int MAX_STEPS = 100; // Maximum steps before direction change
+    private int moveCounter = 0;
+    private final int MAX_STEPS = 100;
     private Bullet defaultBullet;
     private ImageIcon cannonImage;
     private ImageIcon baseImage;
@@ -72,63 +72,55 @@ public class Tank {
         int oldY = y;
 
 
-        // Move horizontally first and update angle if necessary
         if (isMovingLeft && isMovingRight) {
-            // Do nothing if both left and right are pressed
         } else if (isMovingLeft) {
             x -= speed;
-            tankAngle = Math.toRadians(-90); // Moving left
+            tankAngle = Math.toRadians(-90);
         } else if (isMovingRight) {
             x += speed;
-            tankAngle = Math.toRadians(90); // Moving right
+            tankAngle = Math.toRadians(90);
         }
 
-        // Handle x-axis movement and collision
-        updateHitbox(); // Update hitbox for the new x position
+        updateHitbox();
         boolean xCollision = CollisionHandling.checkMovingCollisions(this, GameScreen.blocks);
         if (xCollision) {
-            x = oldX; // Revert x position if a collision occurs
+            x = oldX;
         }
 
-        // Now move vertically and update angle if necessary
         if (isMovingUp && isMovingDown) {
-            // Do nothing if both up and down are pressed
         } else if (isMovingUp) {
             y -= speed;
-            tankAngle = Math.toRadians(0); // Moving up
+            tankAngle = Math.toRadians(0);
         } else if (isMovingDown) {
             y += speed;
-            tankAngle = Math.toRadians(180); // Moving down
+            tankAngle = Math.toRadians(180);
         }
 
-        // Handle y-axis movement and collision
-        updateHitbox(); // Update hitbox for the new y position
+        updateHitbox();
         boolean yCollision = CollisionHandling.checkMovingCollisions(this, GameScreen.blocks);
         if (yCollision) {
-            y = oldY; // Revert y position if a collision occurs
+            y = oldY;
         }
 
-        // Handle diagonal movement and update angle
         if (isMovingUp && isMovingRight) {
-            tankAngle = Math.toRadians(45); // Moving top-right
+            tankAngle = Math.toRadians(45);
         } else if (isMovingUp && isMovingLeft) {
-            tankAngle = Math.toRadians(-45); // Moving top-left
+            tankAngle = Math.toRadians(-45);
         } else if (isMovingDown && isMovingRight) {
-            tankAngle = Math.toRadians(135); // Moving bottom-right
+            tankAngle = Math.toRadians(135);
         } else if (isMovingDown && isMovingLeft) {
-            tankAngle = Math.toRadians(-135); // Moving bottom-left
+            tankAngle = Math.toRadians(-135);
         }
 
-        // Final hitbox update
         updateHitbox();
     }
 
     public void freeze(int duration) {
-        isFrozen = true; // Đặt trạng thái đóng băng
+        isFrozen = true;
         System.out.println("SmartTank is now frozen for " + duration + " milliseconds.");
 
         if (freezeTimer != null && freezeTimer.isRunning()) {
-            freezeTimer.stop();  // Dừng timer hiện có để tránh xung đột
+            freezeTimer.stop();
         }
 
         freezeTimer = new Timer(duration, e -> {
@@ -159,55 +151,46 @@ public class Tank {
         int originalX = getX();
         int originalY = getY();
 
-        // Try moving in the current direction
         switch (movementDirection) {
-            case 0: // Move up
+            case 0:
                 setY(getY() - getSpeed());
                 setTankAngle(Math.toRadians(0));
 
                 break;
-            case 1: // Move down
+            case 1:
                 setY(getY() + getSpeed());
                 setTankAngle(Math.toRadians(180));
                 break;
-            case 2: // Move left
+            case 2:
 
                 setX(getX() - getSpeed());
                 setTankAngle(Math.toRadians(-90));
                 break;
-            case 3: // Move right
+            case 3:
                 setX(getX() + getSpeed());
                 setTankAngle(Math.toRadians(90));
                 break;
         }
 
-        // Update the hitbox after moving
         updateHitbox();
 
-        // Check if the movement results in a collision
         if (CollisionHandling.checkMovingCollisions(this, GameScreen.blocks) || moveCounter >= MAX_STEPS) {
-            // Revert to original position if collision or boundary violation occurs
             setX(originalX);
             setY(originalY);
 
-            // Reset the counter and find a new random direction
             moveCounter = 0;
             int newDirection = findValidDirection();
             if (newDirection != -1) {
                 movementDirection = newDirection;
             }
         } else {
-            moveCounter++; // Increment counter if no collision occurs and maximum steps are not reached
+            moveCounter++;
         }
     }
 
-    // Helper method to check if the tank is within bounds
-
-    // Helper method to find a valid direction
     private int findValidDirection() {
-        // Array of directions with an extra 'down' (1) to increase downward likelihood
         ArrayList<Integer> directions = new ArrayList<>(Arrays.asList(0, 1, 1, 2, 3));
-        Collections.shuffle(directions); // Shuffle to randomize direction order
+        Collections.shuffle(directions);
 
         int originalX = getX();
         int originalY = getY();
@@ -216,50 +199,44 @@ public class Tank {
             int testX = originalX;
             int testY = originalY;
 
-            // Test the movement based on the shuffled direction
             switch (direction) {
-                case 0: // Test up
+                case 0:
                     testY -= getSpeed();
                     break;
-                case 1: // Test down
+                case 1:
                     testY += getSpeed();
                     break;
-                case 2: // Test left
+                case 2:
                     testX -= getSpeed();
                     break;
-                case 3: // Test right
+                case 3:
                     testX += getSpeed();
                     break;
             }
 
-            // Temporarily set the test position and update hitbox
             setX(testX);
             setY(testY);
             updateHitbox();
 
-            // Check if this direction is free of collisions and within bounds
             if (!CollisionHandling.checkMovingCollisions(this, GameScreen.blocks)) {
-                // Restore the tank's position if a valid direction is found
                 setX(originalX);
                 setY(originalY);
-                return direction; // Found a valid direction
+                return direction;
             }
         }
 
-        // Restore the original position if no valid direction is found
         setX(originalX);
         setY(originalY);
-        return -1; // Return -1 if no valid direction is found
+        return -1;
     }
 
     public void shoot(ImageIcon baseImage) {
         if (isFrozen()) {
             System.out.println("SmartTank is frozen, skipping movement.");
-            return; // Stop movement if frozen
+            return;
         }
 
         if (canFire) {
-            // Random firing logic or based on some condition
             int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
             int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
 
