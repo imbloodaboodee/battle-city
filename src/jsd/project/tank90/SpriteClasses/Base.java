@@ -1,0 +1,46 @@
+/* *****************************************
+ * CSCI205 - Software Engineering and Design
+ * Spring 2016
+ *
+ * Name: Tongyu Yang, Peter Unrein, Hung Giang
+ * Date: Apr 18, 2016
+ * Time: 10:32:51 PM
+ *
+ * Project: csci205FinalProject
+ * Package: SpriteClasses
+ * File: Base
+ * Description: Base class
+ *
+ * ****************************************
+ */
+/**
+ * The Base class is a block which represents the player's base. It has an
+ * updateAnimation method inorder to show the base when it is destroyed.
+ *
+ * @Author Adrian Berg
+ */
+package jsd.project.tank90.SpriteClasses;
+
+import constants.GameConstants;
+
+public class Base extends Block {
+    public boolean gameOver = false;
+
+    public Base(int x, int y) {
+        super(x, y, GameConstants.BLOCK_SIZE*2, GameConstants.BLOCK_SIZE*2);
+        loadImage("src/jsd/project/tank90/assets/image/base.png");
+        getImageDimensions();
+        setHealth(1);
+        setType(3);
+
+    }
+
+    public void updateAnimation() {
+        if (gameOver == true) {
+            loadImage("src/jsd/project/tank90/assets/image/base_destroyed.png");
+            getImageDimensions();
+
+        }
+    }
+
+}
