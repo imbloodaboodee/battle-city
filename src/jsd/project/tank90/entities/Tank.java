@@ -1,8 +1,8 @@
 package jsd.project.tank90.entities;
 
-import manager.BulletManager;
-import physics.CollisionHandling;
-import render.GameScreen;
+import jsd.project.tank90.manager.BulletManager;
+import jsd.project.tank90.physics.CollisionHandling;
+import jsd.project.tank90.render.GameScreen;
 
 import javax.swing.*;
 import java.awt.*;

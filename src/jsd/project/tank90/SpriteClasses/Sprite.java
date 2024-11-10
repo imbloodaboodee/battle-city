@@ -23,7 +23,7 @@ package jsd.project.tank90.SpriteClasses;
  * @author Adrian Berg
  */
 
-import constants.GameConstants;
+import jsd.project.tank90.constants.GameConstants;
 
 import javax.swing.*;
 import java.awt.*;

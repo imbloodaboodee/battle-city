@@ -1,7 +1,7 @@
 package jsd.project.tank90.SpriteClasses.PowerUps;
 
-import SpriteClasses.Sprite;
-import constants.GameConstants;
+import jsd.project.tank90.SpriteClasses.Sprite;
+import jsd.project.tank90.constants.GameConstants;
 
 public class PowerUp extends Sprite {
     long loadTime;

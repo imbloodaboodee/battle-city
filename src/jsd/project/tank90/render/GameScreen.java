@@ -1,6 +1,7 @@
 package jsd.project.tank90.render;
 
 import jsd.project.tank90.SpriteClasses.*;
+import jsd.project.tank90.SpriteClasses.PowerUps.PowerUp;
 import jsd.project.tank90.constants.GameConstants;
 import jsd.project.tank90.entities.*;
 import jsd.project.tank90.environment.BlockType;

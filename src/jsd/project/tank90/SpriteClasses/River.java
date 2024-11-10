@@ -15,14 +15,6 @@
  */
 package jsd.project.tank90.SpriteClasses;
 
-/**
- * River is a block which represents the river blocks
- *
- * @param int x represents the starting x location in pixels
- * @param int y represents the starting y location in pixels
- *
- * @author Adrian Berg
- */
 public class River extends Block {
 
     long lastImage = 0;
