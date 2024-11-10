@@ -104,9 +104,6 @@ public class SmartTankRender extends JLabel {
             g2d.drawImage(bulletImage.getImage(), atBullet, this);
         }
 
-        g2d.setColor(Color.RED);
-        g2d.draw(smartTank.getHitbox());
-
         g2d.dispose();
     }
 

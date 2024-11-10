@@ -58,7 +58,7 @@ public class GameScreen extends JPanel {
         blocks = new CopyOnWriteArrayList<>();
         enemyTanks = new CopyOnWriteArrayList<>();
         animations = new ArrayList<>();
-        stage = 2;
+        stage = 1;
         gameOver = false;
         yPos = MapLoader.BOARD_HEIGHT;
         direction = -1;
@@ -269,7 +269,6 @@ public class GameScreen extends JPanel {
         for (PowerUp powerUp : BoardUtility.getPowerUps()) {
             if (powerUp.isVisible()) {
                 g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
-                g2d.setColor(Color.YELLOW);
                 g2d.draw(powerUp.getHitbox());
             }
         }

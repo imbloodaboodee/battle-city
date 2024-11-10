@@ -46,9 +46,6 @@ public class DumbTankRender extends JComponent {
             g2d.drawImage(bulletImage.getImage(), atBullet, this);
         }
 
-        g2d.setColor(Color.RED);
-        g2d.draw(dumbTank.getHitbox());
-
         g2d.dispose();
     }
 

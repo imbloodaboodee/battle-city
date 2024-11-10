@@ -103,7 +103,7 @@ public class TankSpawner {
 
     private void spawnPowerTank() {
         Point spawnPoint = findSpawnPoint();
-        SmartTank powerTank = new SmartTank(spawnPoint.x, spawnPoint.y, 200, 1, BulletType.RAPID, new ImageIcon("./src/jsd/project/tank90/assets/image/tank_power_base.png"), new ImageIcon("./src/jsd/project/tank90/assets/image/tank_power_cannon.png"));
+        SmartTank powerTank = new SmartTank(spawnPoint.x, spawnPoint.y, 200, 1, BulletType.EXPLOSIVE, new ImageIcon("./src/jsd/project/tank90/assets/image/tank_power_base.png"), new ImageIcon("./src/jsd/project/tank90/assets/image/tank_power_cannon.png"));
         GameScreen.animations.add(new SpawnAnimation(spawnPoint.x,spawnPoint.y, 200, 1,false));
         powerTank.setTankType(TankType.POWER);
         enemyTanks.add(powerTank);
