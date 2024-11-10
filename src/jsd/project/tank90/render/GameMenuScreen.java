@@ -1,6 +1,6 @@
 package jsd.project.tank90.render;
 
-import physics.ImageUtility;
+import jsd.project.tank90.physics.ImageUtility;
 
 import javax.swing.*;
 import java.awt.*;

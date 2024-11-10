@@ -1,13 +1,13 @@
 package jsd.project.tank90.physics;
 
-import SpriteClasses.Block;
-import constants.GameConstants;
-import entities.PlayerTank;
-import entities.PowerUps.*;
-import entities.Tank;
-import entities.TankExplosion;
-import manager.TankSpawner;
-import render.GameScreen;
+import jsd.project.tank90.SpriteClasses.Block;
+import jsd.project.tank90.constants.GameConstants;
+import jsd.project.tank90.entities.PlayerTank;
+import jsd.project.tank90.SpriteClasses.PowerUps.*;
+import jsd.project.tank90.entities.Tank;
+import jsd.project.tank90.entities.TankExplosion;
+import jsd.project.tank90.manager.TankSpawner;
+import jsd.project.tank90.render.GameScreen;
 
 import javax.swing.*;
 import java.util.ArrayList;

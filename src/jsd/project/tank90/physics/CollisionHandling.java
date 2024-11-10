@@ -1,15 +1,12 @@
 package jsd.project.tank90.physics;
 
-import SpriteClasses.Block;
-import constants.GameConstants;
-import entities.*;
-import entities.PowerUps.*;
-import entities.PowerUps.BombPowerUp;
-import entities.PowerUps.ClockPowerUp;
-import entities.PowerUps.PowerUp;
-import environment.BlockType;
-import manager.TankSpawner;
-import render.GameScreen;
+import jsd.project.tank90.SpriteClasses.Block;
+import jsd.project.tank90.constants.GameConstants;
+import jsd.project.tank90.entities.*;
+import jsd.project.tank90.SpriteClasses.PowerUps.*;
+import jsd.project.tank90.environment.BlockType;
+import jsd.project.tank90.manager.TankSpawner;
+import jsd.project.tank90.render.GameScreen;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

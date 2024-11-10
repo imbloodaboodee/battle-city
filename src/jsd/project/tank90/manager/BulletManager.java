@@ -1,12 +1,12 @@
 package jsd.project.tank90.manager;
 
-import constants.GameConstants;
-import entities.Bullet;
-import render.GameScreen;
+import jsd.project.tank90.constants.GameConstants;
+import jsd.project.tank90.entities.Bullet;
+import jsd.project.tank90.render.GameScreen;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static physics.CollisionHandling.checkCollisionBulletsBlocks;
+import static jsd.project.tank90.physics.CollisionHandling.checkCollisionBulletsBlocks;
 
 public class BulletManager {
     private CopyOnWriteArrayList<Bullet> bullets;

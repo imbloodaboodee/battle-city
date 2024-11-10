@@ -1,9 +1,9 @@
 
 package jsd.project.tank90.render;
 
-import constants.GameConstants;
-import entities.Bullet;
-import entities.PlayerTank;
+import jsd.project.tank90.constants.GameConstants;
+import jsd.project.tank90.entities.Bullet;
+import jsd.project.tank90.entities.PlayerTank;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,20 +1,16 @@
 package jsd.project.tank90.render;
 
-import SpriteClasses.*;
-import constants.GameConstants;
-import entities.*;
-import entities.BulletType;
-import entities.PlayerTank;
-import entities.Tank;
-import entities.PowerUps.PowerUp;
-import environment.BlockType;
-import environment.MapLoader;
-import manager.GameStateManager;
-import manager.TankSpawner;
-import physics.BoardUtility;
-import physics.CollisionHandling;
-import physics.ImageUtility;
-import physics.SoundUtility;
+import jsd.project.tank90.SpriteClasses.*;
+import jsd.project.tank90.constants.GameConstants;
+import jsd.project.tank90.entities.*;
+import jsd.project.tank90.environment.BlockType;
+import jsd.project.tank90.environment.MapLoader;
+import jsd.project.tank90.manager.GameStateManager;
+import jsd.project.tank90.manager.TankSpawner;
+import jsd.project.tank90.physics.BoardUtility;
+import jsd.project.tank90.physics.CollisionHandling;
+import jsd.project.tank90.physics.ImageUtility;
+import jsd.project.tank90.physics.SoundUtility;
 
 import javax.swing.*;
 import java.awt.*;

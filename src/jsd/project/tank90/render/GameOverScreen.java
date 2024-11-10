@@ -1,7 +1,7 @@
 package jsd.project.tank90.render;
 
-import physics.CollisionHandling;
-import physics.ImageUtility;
+import jsd.project.tank90.physics.CollisionHandling;
+import jsd.project.tank90.physics.ImageUtility;
 
 import java.awt.Color;
 import java.awt.Font;

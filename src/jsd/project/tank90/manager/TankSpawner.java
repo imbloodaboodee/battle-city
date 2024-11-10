@@ -1,7 +1,7 @@
 package jsd.project.tank90.manager;
 
-import entities.*;
-import render.GameScreen;
+import jsd.project.tank90.entities.*;
+import jsd.project.tank90.render.GameScreen;
 
 import javax.swing.*;
 import java.awt.*;

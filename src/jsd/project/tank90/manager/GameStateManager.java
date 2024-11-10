@@ -1,7 +1,7 @@
 package jsd.project.tank90.manager;
 
-import render.GameScreen;
-import physics.BoardUtility;
+import jsd.project.tank90.render.GameScreen;
+import jsd.project.tank90.physics.BoardUtility;
 
 import javax.swing.*;
 

@@ -1,8 +1,8 @@
 
 package jsd.project.tank90.render;
 
-import entities.Bullet;
-import entities.DumbTank;
+import jsd.project.tank90.entities.Bullet;
+import jsd.project.tank90.entities.DumbTank;
 
 import javax.swing.*;
 import java.awt.*;
