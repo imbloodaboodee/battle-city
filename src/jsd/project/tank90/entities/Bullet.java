@@ -44,19 +44,13 @@ public class Bullet {
                 this.damage = 5;
                 this.cooldown = 1000;
                 this.speed = 2;
-                this.isExplosive = true;
-                break;
-            case RICOCHET:
-                this.damage = 2;
-                this.cooldown = 350;
-                this.speed = 3;
-                this.ricochetLeft = 2;
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
                 break;
             case RAPID:
                 this.damage = 1;
                 this.cooldown = 1;
                 this.speed = 10;
-                setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
+                setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
                 break;
         }
     }

@@ -1,5 +1,7 @@
 package jsd.project.tank90.entities;
 
+import jsd.project.tank90.constants.GameConstants;
+
 import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
@@ -9,6 +11,7 @@ public class SmartTank extends Tank {
 
     public SmartTank(int x, int y, int health, int speed, BulletType bulletType, ImageIcon baseImage, ImageIcon cannonImage) {
         super(x, y, health, speed);
+        setRotationSpeed(GameConstants.ENEMY_TANK_ROTATION_SPEED);
         setBaseImage(resizeImageIcon(baseImage, 0.9));
         setCannonImage(resizeImageIcon(cannonImage, 0.9));
         setDefaultBullet(new Bullet(bulletType));

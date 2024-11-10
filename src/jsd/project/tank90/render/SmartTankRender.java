@@ -67,11 +67,11 @@ public class SmartTankRender extends JLabel {
         angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI;
 
         // Rotate the cannon towards the target angle gradually
-        if (Math.abs(angleDifference) > GameConstants.ENEMY_TANK_ROTATION_SPEED) {
+        if (Math.abs(angleDifference) > smartTank.getRotationSpeed()) {
             if (angleDifference > 0) {
-                smartTank.setCannonAngle(smartTank.getCannonAngle() + GameConstants.ENEMY_TANK_ROTATION_SPEED);
+                smartTank.setCannonAngle(smartTank.getCannonAngle() + smartTank.getRotationSpeed());
             } else {
-                smartTank.setCannonAngle(smartTank.getCannonAngle() - GameConstants.ENEMY_TANK_ROTATION_SPEED);
+                smartTank.setCannonAngle(smartTank.getCannonAngle() - smartTank.getRotationSpeed());
             }
         } else {
             smartTank.setCannonAngle(targetAngle);

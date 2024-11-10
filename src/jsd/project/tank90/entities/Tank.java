@@ -40,6 +40,7 @@ public class Tank {
     private boolean canFire = true;
     private BulletManager bulletManager;
     private TankType tankType;
+    private double rotationSpeed;
 
     public Tank() {
         x = 176;
@@ -148,6 +149,7 @@ public class Tank {
             shield = false;
         }
     }
+
     public void bumpMove() {
         if (isFrozen()) {
             System.out.println("SmartTank is frozen, skipping movement.");
@@ -160,22 +162,22 @@ public class Tank {
         // Try moving in the current direction
         switch (movementDirection) {
             case 0: // Move up
-                    setY(getY() - getSpeed());
-                    setTankAngle(Math.toRadians(0));
+                setY(getY() - getSpeed());
+                setTankAngle(Math.toRadians(0));
 
                 break;
             case 1: // Move down
-                    setY(getY() + getSpeed());
-                    setTankAngle(Math.toRadians(180));
+                setY(getY() + getSpeed());
+                setTankAngle(Math.toRadians(180));
                 break;
             case 2: // Move left
 
-                    setX(getX() - getSpeed());
-                    setTankAngle(Math.toRadians(-90));
+                setX(getX() - getSpeed());
+                setTankAngle(Math.toRadians(-90));
                 break;
             case 3: // Move right
-                    setX(getX() + getSpeed());
-                    setTankAngle(Math.toRadians(90));
+                setX(getX() + getSpeed());
+                setTankAngle(Math.toRadians(90));
                 break;
         }
 
@@ -249,6 +251,7 @@ public class Tank {
         setY(originalY);
         return -1; // Return -1 if no valid direction is found
     }
+
     public void shoot(ImageIcon baseImage) {
         if (isFrozen()) {
             System.out.println("SmartTank is frozen, skipping movement.");
@@ -260,7 +263,7 @@ public class Tank {
             int cannonTipX = (int) (getX() + baseImage.getIconWidth() / 2 + Math.cos(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
             int cannonTipY = (int) (getY() + baseImage.getIconHeight() / 2 + Math.sin(getTankAngle() - Math.PI / 2) * baseImage.getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX- getDefaultBullet().getBulletImage().getIconWidth()/2, cannonTipY- getDefaultBullet().getBulletImage().getIconHeight()/2, defaultBullet.getBulletType(), getTankAngle() - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2, cannonTipY - getDefaultBullet().getBulletImage().getIconHeight() / 2, defaultBullet.getBulletType(), getTankAngle() - Math.PI / 2);
             getBullets().add(bullet);
 
             canFire = false;
@@ -425,5 +428,13 @@ public class Tank {
 
     public void setTankType(TankType tankType) {
         this.tankType = tankType;
+    }
+
+    public double getRotationSpeed() {
+        return rotationSpeed;
+    }
+
+    public void setRotationSpeed(double rotationSpeed) {
+        this.rotationSpeed = rotationSpeed;
     }
 }

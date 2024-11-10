@@ -1,7 +1,6 @@
 
 package jsd.project.tank90.render;
 
-import jsd.project.tank90.constants.GameConstants;
 import jsd.project.tank90.entities.Bullet;
 import jsd.project.tank90.entities.PlayerTank;
 
@@ -44,11 +43,11 @@ public class PlayerTankRender extends JLabel {
         angleDifference = (angleDifference + Math.PI) % (2 * Math.PI) - Math.PI;
 
         // If the angle difference is greater than the rotation speed, rotate towards the target angle
-        if (Math.abs(angleDifference) > GameConstants.PLAYER_ROTATION_SPEED) {
+        if (Math.abs(angleDifference) > playerTank.getRotationSpeed()) {
             if (angleDifference > 0) {
-                playerTank.setCannonAngle(playerTank.getCannonAngle() + GameConstants.PLAYER_ROTATION_SPEED);
+                playerTank.setCannonAngle(playerTank.getCannonAngle() + playerTank.getRotationSpeed());
             } else {
-                playerTank.setCannonAngle(playerTank.getCannonAngle() - GameConstants.PLAYER_ROTATION_SPEED);
+                playerTank.setCannonAngle(playerTank.getCannonAngle() - playerTank.getRotationSpeed());
             }
 
             // Keep the angle within the range of -PI to PI for consistency

@@ -1,5 +1,7 @@
 package jsd.project.tank90.entities;
 
+import jsd.project.tank90.constants.GameConstants;
+
 import javax.swing.*;
 import java.awt.*;
 

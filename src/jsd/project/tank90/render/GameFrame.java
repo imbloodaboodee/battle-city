@@ -8,13 +8,18 @@ public class GameFrame extends JFrame {
 
     private GameMenuScreen gameMenuScreen;
     private GameGuideScreen gameGuideScreen;
+    private AssignStatsScreen assignStatsScreen;
     private GameScreen gameScreen;
     private GameOverScreen gameOverScreen;
+    private int speed;
+    private int health;
+    private int rotationSpeed;
+    private String bulletType;
 
     public GameFrame() {
         initComponents();
         setLocationRelativeTo(null);
-        switchToMenuScreen(); // Start with the menu screen
+        switchToMenuScreen();
     }
 
     private void initComponents() {
@@ -43,6 +48,8 @@ public class GameFrame extends JFrame {
         pack();
     }
 
+
+
     private void switchToMenuScreen() {
         gameMenuScreen = new GameMenuScreen(this::switchToGuideScreen); // Callback to switch to Guide screen
         gamePanel.add(gameMenuScreen, "MenuScreen");
@@ -51,15 +58,25 @@ public class GameFrame extends JFrame {
     }
 
     private void switchToGuideScreen() {
-        gameGuideScreen = new GameGuideScreen(this::switchToGameScreen); // Transition callback
+        gameGuideScreen = new GameGuideScreen(this::switchToAssignStatsScreen); // Transition callback
         gamePanel.add(gameGuideScreen, "GuideScreen");
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GuideScreen");
         gameGuideScreen.requestFocusInWindow(); // Ensure key listener works
     }
 
+    private void switchToAssignStatsScreen() {
+        // Initialize AssignStatsScreen with a callback to start the game
+        assignStatsScreen = new AssignStatsScreen(this::switchToGameScreen);
+        gamePanel.add(assignStatsScreen, "AssignStatsScreen");
+        ((CardLayout) gamePanel.getLayout()).show(gamePanel, "AssignStatsScreen");
+        assignStatsScreen.requestFocusInWindow(); // Ensure the assign stats screen gets focus for key events
+    }
+
+
     private void switchToGameScreen() {
         gameScreen = GameScreen.getInstance();
         gameScreen.setOnGameOver(this::switchToGameOverScreen); // Set the game over callback
+        gameScreen.setPlayerTankRender(assignStatsScreen.getHealth(), assignStatsScreen.getSpeed(), assignStatsScreen.getRotationSpeed(), assignStatsScreen.getSelectedBulletType());
         gamePanel.add(gameScreen, "GameScreen");
         ((CardLayout) gamePanel.getLayout()).show(gamePanel, "GameScreen");
         gameScreen.requestFocusInWindow(); // Ensure focus for game screen key events
@@ -79,6 +96,7 @@ public class GameFrame extends JFrame {
 
         // Reinitialize game state
         gameMenuScreen = null;
+        assignStatsScreen = null;
         gameGuideScreen = null;
         gameScreen = null;
         gameOverScreen = null;

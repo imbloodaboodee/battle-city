@@ -39,6 +39,28 @@ public class PlayerTank extends Tank implements KeyListener {
         // Timer for updating entities that need constant updating
     }
 
+    public PlayerTank(int assignedHealth, int assignedSpeed, int assignedRotationSpeed, BulletType assignedBulletType) {
+        super();
+        setHealth(getHealth() + assignedHealth);
+        setSpeed(getSpeed() + assignedSpeed);
+        setRotationSpeed(GameConstants.PLAYER_ROTATION_SPEED);
+        setRotationSpeed(getRotationSpeed() + (assignedRotationSpeed/200));
+        setDefaultBullet(new Bullet(assignedBulletType));
+        setBaseImage(new ImageIcon(GameConstants.BASE_IMAGE));
+        setCannonImage(new ImageIcon(GameConstants.CANNON_IMAGE));
+        aimImage = new ImageIcon(GameConstants.AIM_IMAGE);
+
+
+        // Initialize the hitbox (using inherited x and y coordinates)
+        setHitbox(new Rectangle(getX(), getY(), getBaseImage().getIconWidth(), getBaseImage().getIconHeight()));
+
+        // Timer for creating bullets, starts when firing
+        bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
+        bulletCreationTimer.setRepeats(true);
+
+
+    }
+
     public void mousePressed(MouseEvent e) {
         System.out.println("start");
         bulletCreationTimer.start(); // Start firing bullets
@@ -91,7 +113,7 @@ public class PlayerTank extends Tank implements KeyListener {
             int cannonTipX = (int) (getX() + getBaseImage().getIconWidth() / 2 + Math.cos(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
             int cannonTipY = (int) (getY() + getBaseImage().getIconHeight() / 2 + Math.sin(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX - getDefaultBullet().getBulletImage().getIconWidth()/2, cannonTipY - getDefaultBullet().getBulletImage().getIconHeight()/2, getDefaultBullet().getBulletType(), getCannonAngle() - Math.PI / 2);
+            Bullet bullet = new Bullet(cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2, cannonTipY - getDefaultBullet().getBulletImage().getIconHeight() / 2, getDefaultBullet().getBulletType(), getCannonAngle() - Math.PI / 2);
             getBullets().add(bullet);
 
             setCanFire(false);

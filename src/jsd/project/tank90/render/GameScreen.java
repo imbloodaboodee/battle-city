@@ -32,6 +32,7 @@ public class GameScreen extends JPanel {
 
     public static int stage;
     public static boolean gameOver;
+    public static BulletType defaultBulletType;
     private int yPos;
     private int direction;
     private final int stopYPos;
@@ -57,7 +58,6 @@ public class GameScreen extends JPanel {
         blocks = new CopyOnWriteArrayList<>();
         enemyTanks = new CopyOnWriteArrayList<>();
         animations = new ArrayList<>();
-        ptRenderer = new PlayerTankRender(new PlayerTank(BulletType.RAPID), this);
         stage = 1;
         gameOver = false;
         yPos = MapLoader.BOARD_HEIGHT;
@@ -102,9 +102,8 @@ public class GameScreen extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (!gameOver) {  // Ignore mouse releases if game over
-                    ptRenderer.getPlayerTank().mouseReleased(e);
-                }
+                ptRenderer.getPlayerTank().mouseReleased(e);
+
             }
         });
 
@@ -138,6 +137,16 @@ public class GameScreen extends JPanel {
 
     public void setOnGameOver(Runnable onGameOver) {
         this.onGameOver = onGameOver;
+    }
+
+
+    public void setPlayerTankRender(int assignedHealth, int assignedSpeed, int assignedRotationSpeed, BulletType assignedBulletType) {
+        ptRenderer = new PlayerTankRender(new PlayerTank(assignedHealth, assignedSpeed, assignedRotationSpeed, assignedBulletType), this);
+        setDefaultBulletType(assignedBulletType);
+    }
+
+    public static void setDefaultBulletType(BulletType defaultBulletType) {
+        GameScreen.defaultBulletType = defaultBulletType;
     }
 
     public void initBlocks() {
@@ -350,7 +359,7 @@ public class GameScreen extends JPanel {
         }
 
         gameOver = true; // Set game over state
-
+        SoundUtility.gameOver();
         // Start the "Game Over" animation timer
         gameOverTimer = new Timer(80, new ActionListener() {
             @Override
