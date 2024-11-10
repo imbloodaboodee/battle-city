@@ -289,11 +289,25 @@ public class GameScreen extends JPanel {
 
         // Vẽ enemyIcon
         g.drawImage(enemyIcon, initX * 16, 5 * 16, this);
-
-        // Hiển thị số lượng enemy tanks còn lại
         g.setFont(largeBoldFont);
         g.drawString(String.valueOf(totalEnemyTanks < 0 ? 0 : totalEnemyTanks), (initX + 1) * 16, 6 * 16);
         g.setFont(originalFont);
+
+
+        // Draw the starIcon
+        Image starIcon = imageInstance.getStarIcon();
+        int starIconX = initX * 16;
+        int starIconY = 11 * 16;
+        g.drawImage(starIcon, starIconX, starIconY, this);
+
+        // Retrieve the current star level from BoardUtility
+        int currentStarLevel = BoardUtility.getStarLevel();
+
+        // Draw the star level next to the icon
+        g.setFont(originalFont);
+        g.setColor(Color.WHITE);  // Set the color for the tier level text
+        g.drawString("TIER: " + currentStarLevel, starIconX - 6, starIconY + 3*16); // Adjust position as needed
+
         if (gameOver) {
             Font font = loadFont();
             g.setFont(font);
@@ -309,7 +323,8 @@ public class GameScreen extends JPanel {
     public void checkHealth(PlayerTank playerTank) {
         // Kiểm tra nếu sức khỏe của tank <= 0
         if (playerTank.getHealth() <= 0) {
-            PlayerTank.lives -= 6;  // Giảm mạng của người chơi
+            PlayerTank.lives -= 10;  // Giảm mạng của người chơi
+            BoardUtility.resetPowerLevel();
             if (PlayerTank.lives > 0) {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 SoundUtility.explosion2();
@@ -352,7 +367,7 @@ public class GameScreen extends JPanel {
         gameOver = true; // Set game over state
 
         // Start the "Game Over" animation timer
-        gameOverTimer = new Timer(80, new ActionListener() {
+        gameOverTimer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 yPos += direction;

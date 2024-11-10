@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
  */
 public class ImageUtility {
     // Instance variable for the lives image
-    private final Image lives, flagIcon, enemyIcon;
+    private final Image lives, flagIcon, enemyIcon, starIcon;
     private final Image arrow, tankBasic, tankFast, tankPower, tankArmor;
     private static ImageUtility instance;
     private final Image background, tank;
@@ -33,7 +33,7 @@ public class ImageUtility {
         enemyIcon = loadImage("src/jsd/project/tank90/assets/image/enemy.png");
         background = loadImage("src/jsd/project/tank90/assets/image/battle_city.png");
         tank = loadImage("src/jsd/project/tank90/assets/image/playerTank_right.png");
-
+        starIcon = loadImage("src/jsd/project/tank90/assets/image/powerup_star.png");
         tankBasic = loadImage("src/jsd/project/tank90/assets/image/tank_basic.png");
         tankFast = loadImage("src/jsd/project/tank90/assets/image/tank_fast.png");
         tankPower = loadImage("src/jsd/project/tank90/assets/image/tank_power.png");
@@ -93,6 +93,10 @@ public class ImageUtility {
 
     public Image getFlagIcon() {
         return flagIcon;
+    }
+
+    public Image getStarIcon() {
+        return starIcon;
     }
 
 }

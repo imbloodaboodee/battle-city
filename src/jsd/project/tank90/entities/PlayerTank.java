@@ -84,16 +84,37 @@ public class PlayerTank extends Tank implements KeyListener {
     public void shoot() {
         if (isFrozen()) {
             System.out.println("SmartTank is frozen, skipping bullet creation.");
-            return; // Dừng bắn nếu bị đóng băng
+            return; // Stop shooting if frozen
         }
         if (isCanFire()) {
-            // Random firing logic or based on some condition
             int cannonTipX = (int) (getX() + getBaseImage().getIconWidth() / 2 + Math.cos(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
             int cannonTipY = (int) (getY() + getBaseImage().getIconHeight() / 2 + Math.sin(getCannonAngle() - Math.PI / 2) * getCannonImage().getIconHeight() / 2);
 
-            Bullet bullet = new Bullet(cannonTipX - getDefaultBullet().getBulletImage().getIconWidth()/2, cannonTipY - getDefaultBullet().getBulletImage().getIconHeight()/2, getDefaultBullet().getBulletType(), getCannonAngle() - Math.PI / 2);
-            getBullets().add(bullet);
+            // First bullet
+            Bullet firstBullet = new Bullet(
+                    cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2,
+                    cannonTipY - getDefaultBullet().getBulletImage().getIconHeight() / 2,
+                    getDefaultBullet().getBulletType(),
+                    getCannonAngle() - Math.PI / 2
+            );
+            getBullets().add(firstBullet);
 
+            // If the bullet type is DUAL, fire the second bullet after a short delay
+            if (getDefaultBullet().getBulletType() == BulletType.TIER_2 || getDefaultBullet().getBulletType() == BulletType.TIER_3) {
+                Timer dualBulletTimer = new Timer(100, e -> { // 100 ms delay
+                    Bullet secondBullet = new Bullet(
+                            cannonTipX - getDefaultBullet().getBulletImage().getIconWidth() / 2,
+                            cannonTipY - getDefaultBullet().getBulletImage().getIconHeight() / 2,
+                            getDefaultBullet().getBulletType(),
+                            getCannonAngle() - Math.PI / 2
+                    );
+                    getBullets().add(secondBullet);
+                });
+                dualBulletTimer.setRepeats(false);
+                dualBulletTimer.start();
+            }
+
+            // Set canFire to false and start cooldown timer
             setCanFire(false);
             bulletTimerCountdown = new Timer(getDefaultBullet().getCooldown(), e -> {
                 setCanFire(true);
@@ -103,6 +124,7 @@ public class PlayerTank extends Tank implements KeyListener {
             SoundUtility.fireSound();
         }
     }
+
 
     public double getTargetCannonAngle() {
         return targetCannonAngle;

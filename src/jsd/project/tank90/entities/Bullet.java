@@ -23,21 +23,19 @@ public class Bullet {
         this.bulletType = bulletType;
         bulletAttributeSetter(bulletType);
         this.setHitbox(new Rectangle2D.Double(x, y, getBulletImage().getIconHeight(), getBulletImage().getIconWidth()));
-
     }
 
     public Bullet(BulletType bulletType) {
         this.bulletType = bulletType;
         bulletAttributeSetter(bulletType);
-
     }
 
     private void bulletAttributeSetter(BulletType bulletType) {
         switch (bulletType) {
             case NORMAL:
                 this.damage = 3;
-                this.cooldown = 1000;  //1  100
-                this.speed = 10;    //10 1
+                this.cooldown = 1000;
+                this.speed = 10;
                 setBulletImage(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"), 1.2));
                 break;
             case EXPLOSIVE:
@@ -58,6 +56,18 @@ public class Bullet {
                 this.speed = 10;
                 setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
                 break;
+            case TIER_1:
+                this.damage = 1;
+                this.cooldown = 500;
+                this.speed = 10;
+                setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
+                break;
+            case TIER_2, TIER_3:
+                this.damage = 2;
+                this.cooldown = 500;
+                this.speed = 15;
+                setBulletImage(new ImageIcon("./src/jsd/project/tank90/assets/image/bullet.png"));
+                break;
         }
     }
 
@@ -67,18 +77,11 @@ public class Bullet {
         hitbox.setRect(x, y, hitbox.getWidth(), hitbox.getHeight());
     }
     private ImageIcon resizeImageIcon(ImageIcon icon, double ratio) {
-        // Get the original width and height of the image
         int originalWidth = icon.getIconWidth();
         int originalHeight = icon.getIconHeight();
-
-        // Calculate the new width and height based on the ratio
         int newWidth = (int) (originalWidth * ratio);
         int newHeight = (int) (originalHeight * ratio);
-
-        // Scale the image to the new dimensions
         Image resizedImage = icon.getImage().getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-
-        // Return a new ImageIcon from the scaled image
         return new ImageIcon(resizedImage);
     }
 
@@ -161,6 +164,7 @@ public class Bullet {
     public void setHitbox(Rectangle2D.Double hitbox) {
         this.hitbox = hitbox;
     }
+
     public boolean isOutOfBounds(int width, int height) {
         return x < 0 || x > width || y < 0 || y > height;
     }
