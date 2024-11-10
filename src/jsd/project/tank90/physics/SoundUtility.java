@@ -12,7 +12,6 @@ public class SoundUtility {
     private static final Map<String, Clip> soundClips = new HashMap<>();
     private static boolean initialized = false;
     public static void initialize() {
-        System.out.println("INITIALIZE");
         String[] soundNames = {
                 "bulletBrick", "bulletTank", "fire", "explosion1", "explosion2",
                 "startStage", "pause", "powerupAppear", "powerupPick", "gameover", "statistics"

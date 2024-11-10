@@ -1,18 +1,3 @@
-/* *****************************************
- * CSCI205 - Software Engineering and Design
- * Spring 2016
- *
- * Name: Tongyu Yang, Peter Unrein, Hung Giang
- * Date: Apr 18, 2016
- * Time: 6:32:12 PM
- *
- * Project: csci205FinalProject
- * Package: SpriteClasses
- * File: River
- * Description: River class
- *
- * ****************************************
- */
 package jsd.project.tank90.SpriteClasses;
 
 public class River extends Block {

@@ -1,29 +1,5 @@
-/* *****************************************
- * CSCI205 - Software Engineering and Design
- * Spring 2016
- *
- * Name: Tongyu Yang, Peter Unrein, Hung Giang
- * Date: Apr 16, 2016
- * Time: 10:59:46 PM
- *
- * Project: csci205FinalProject
- * Package: scratch
- * File: Block
- * Description: Block class
- *
- * ****************************************
- */
 package jsd.project.tank90.SpriteClasses;
 
-/**
- * Block is extended from the Sprite class. It adds health and type to the
- * Sprite allowing for different types of blocks and ways to manipulate block
- * health
- *
- * @param int x represents the starting x location in pixels
- * @param int y represents the starting y location in pixels
- * @author Adrian Berg
- */
 public class Block extends Sprite {
     public int health = 1;
     private int type;

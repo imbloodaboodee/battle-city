@@ -24,10 +24,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GameScreen extends JPanel {
-    private static GameScreen instance;  // Static instance for Singleton
+    private static GameScreen instance;
 
     public static CopyOnWriteArrayList<Block> blocks;
-    public static CopyOnWriteArrayList<Tank> enemyTanks; // To hold multiple SmartTanks
+    public static CopyOnWriteArrayList<Tank> enemyTanks;
     public static ArrayList<Animation> animations;
 
     public static int stage;
@@ -45,16 +45,15 @@ public class GameScreen extends JPanel {
     public static ShieldAnimation shieldAnimation;
 
     public static boolean isSpawning;
-    private boolean isPaused;  // Variable to track pause state
-    private Runnable onGameOver; // Callback for game over transition
+    private boolean isPaused;
+    private Runnable onGameOver;
 
     private Timer gameOverTimer;
     private Timer transitionTimer;
     private Timer gameLoopTimer;
-    private boolean gameCompleted; // New flag for game completion
+    private boolean gameCompleted;
 
 
-    // Private constructor to prevent external instantiations
     private GameScreen() {
         blocks = new CopyOnWriteArrayList<>();
         enemyTanks = new CopyOnWriteArrayList<>();
@@ -66,21 +65,20 @@ public class GameScreen extends JPanel {
         stopYPos = 250;
         tankSpawner = new TankSpawner(enemyTanks, stage);
         isSpawning = false;
-        isPaused = false;  // Variable to track pause state
+        isPaused = false;
         imageInstance = ImageUtility.getInstance();
         gameCompleted = false;
         this.setVisible(true);
         this.setBackground(Color.BLACK);
         this.setFocusable(true);
         this.setLayout(null);
-        // Add key listener for player tank control
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (gameOver) return; // Ignore key presses if game over
+                if (gameOver) return;
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     SoundUtility.pause();
-                    togglePause();  // Toggle the pause state when Escape is pressed
+                    togglePause();
                 } else {
                     ptRenderer.getPlayerTank().keyPressed(e);
                 }
@@ -96,7 +94,7 @@ public class GameScreen extends JPanel {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (!isPaused && !gameOver) { // Ignore mouse presses if game over
+                if (!isPaused && !gameOver) {
                     ptRenderer.getPlayerTank().mousePressed(e);
                 }
             }
@@ -108,7 +106,6 @@ public class GameScreen extends JPanel {
             }
         });
 
-        // Initialize blocks, start the game loop, and power-up spawner
         tankSpawner.startSpawning();
         initBlocks();
         initGameLoop();
@@ -116,16 +113,15 @@ public class GameScreen extends JPanel {
 
     public void togglePause() {
         if (isPaused) {
-            gameLoopTimer.start();  // Resume the game timer
+            gameLoopTimer.start();
             isPaused = false;
         } else {
-            gameLoopTimer.stop();  // Pause the game timer
+            gameLoopTimer.stop();
             isPaused = true;
             repaint();
         }
     }
 
-    // Public method to get the single instance
     public static GameScreen getInstance() {
         if (instance == null) {
             instance = new GameScreen();
@@ -134,7 +130,7 @@ public class GameScreen extends JPanel {
     }
 
     public static void resetInstance() {
-        instance = null; // Reset the singleton instance
+        instance = null;
     }
 
     public void setOnGameOver(Runnable onGameOver) {
@@ -152,7 +148,7 @@ public class GameScreen extends JPanel {
     }
     public void completeGame() {
         gameCompleted = true;
-        gameOver(); // Trigger the game over mechanism
+        gameOver();
     }
 
     public void initBlocks() {
@@ -191,9 +187,6 @@ public class GameScreen extends JPanel {
 
 
     private void initGameLoop() {
-        // Giả sử bạn đã có danh sách blocks từ nơi khác trong game (ví dụ từ lớp Board)
-
-        // Game loop to update the game state
         gameLoopTimer = new Timer(20, e -> {
             if (ptRenderer.getPlayerTank().isShield()) {
                 if (shieldAnimation == null || shieldAnimation.isFinished()) {
@@ -203,13 +196,12 @@ public class GameScreen extends JPanel {
                 shieldAnimation.setLoop(true);
             } else {
                 if (shieldAnimation != null) {
-                    shieldAnimation.setLoop(false);  // Stop the animation when shield is inactive
+                    shieldAnimation.setLoop(false);
                     shieldAnimation = null;
                 }
             }
 
-            // Check for collisions with PowerUps
-            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks, blocks);  // Truyền blocks vào đây
+            BoardUtility.checkTankPowerUpCollision(ptRenderer.getPlayerTank(), enemyTanks, blocks);
 
             for (Tank enemyTank : enemyTanks) {
                 CollisionHandling.checkCollisionBulletsTank(enemyTank.getBullets(), ptRenderer.getPlayerTank());
@@ -222,7 +214,6 @@ public class GameScreen extends JPanel {
             }
             CollisionHandling.checkCollisionBulletsTankAI(ptRenderer.getPlayerTank().getBullets(), enemyTanks);
 
-            // Ensure the panel is repainted to reflect changes in SmartTank and PowerUp states
             ptRenderer.getPlayerTank().updateTankPosition();
             ptRenderer.getPlayerTank().getBulletManager().updateBullets();
             ptRenderer.getPlayerTank().checkShieldStatus();
@@ -248,7 +239,7 @@ public class GameScreen extends JPanel {
         ptRenderer.paintComponent(g2d);
         if (ptRenderer.getPlayerTank().isShield() && shieldAnimation != null) {
             shieldAnimation.setPosition(ptRenderer.getPlayerTank().getX() - 3,
-                    ptRenderer.getPlayerTank().getY() - 4);  // Update position to follow the tank
+                    ptRenderer.getPlayerTank().getY() - 4);
             shieldAnimation.draw(g2d);
         }
         for (Tank enemyTank : enemyTanks) {
@@ -274,7 +265,6 @@ public class GameScreen extends JPanel {
                 animations.remove(animation);
             }
         }
-        // Vẽ PowerUps chỉ khi chúng đang hiển thị
         for (PowerUp powerUp : BoardUtility.getPowerUps()) {
             if (powerUp.isVisible()) {
                 g2d.drawImage(powerUp.getImage(), powerUp.getX(), powerUp.getY(), this);
@@ -282,7 +272,6 @@ public class GameScreen extends JPanel {
                 g2d.draw(powerUp.getHitbox());
             }
         }
-        // draw the lives
         int lives = PlayerTank.getLives();
         Image liveIcon = imageInstance.getLives();
         int initX = 29;
@@ -297,33 +286,26 @@ public class GameScreen extends JPanel {
         g.drawString(String.valueOf(stage), (initX + 1) * 16, 25 * 16);
         g.setFont(originalFont);
 
-        // draw the enemyIcon
         int totalEnemyTanks = TankSpawner.getTotalEnemyTanks();
         ImageUtility imageInstance = ImageUtility.getInstance();
         Image enemyIcon = imageInstance.getEnemyIcon();
 
-        // Vẽ enemyIcon
         g.drawImage(enemyIcon, initX * 16, 5 * 16, this);
         g.setFont(largeBoldFont);
         g.drawString(String.valueOf(totalEnemyTanks < 0 ? 0 : totalEnemyTanks), (initX + 1) * 16, 6 * 16);
         g.setFont(originalFont);
 
 
-        // Draw the starIcon
         Image starIcon = imageInstance.getStarIcon();
         int starIconX = initX * 16;
         int starIconY = 11 * 16;
         g.drawImage(starIcon, starIconX, starIconY, this);
 
-        // Retrieve the current star level from BoardUtility
         int currentStarLevel = BoardUtility.getStarLevel();
 
-        // Draw the star level next to the icon
-        // Shadow effect
         g.setColor(Color.BLACK);
         g.drawString("TIER: " + currentStarLevel, starIconX - 4, starIconY + 3 * 16 + 4); // Shadow position
 
-        // Main text
         g.setColor(Color.WHITE);
         g.drawString("TIER: " + currentStarLevel, starIconX - 6, starIconY + 3 * 16); // Original position
 
@@ -340,60 +322,51 @@ public class GameScreen extends JPanel {
         }
 
         if (isPaused) {
-            // Semi-transparent overlay
-            g2d.setColor(new Color(0, 0, 0, 180)); // Black with increased transparency
+            g2d.setColor(new Color(0, 0, 0, 180));
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            // Retro-styled font with smaller size
-            Font font = loadFont().deriveFont(Font.BOLD, 36); // Reduced font size for "Game Paused" text
+            Font font = loadFont().deriveFont(Font.BOLD, 36);
             g2d.setFont(font);
             g2d.setColor(Color.YELLOW);
             String pauseText = "GAME PAUSED";
             FontMetrics fm = g2d.getFontMetrics(font);
             int x = (getWidth() - fm.stringWidth(pauseText)) / 2;
-            int y = getHeight() / 2 - 30; // Moved up by 30 pixels
+            int y = getHeight() / 2 - 30;
 
-            // Draw text with a retro border effect
             g2d.setColor(Color.RED);
-            g2d.drawString(pauseText, x - 2, y - 2); // Offset for shadow effect
+            g2d.drawString(pauseText, x - 2, y - 2);
             g2d.drawString(pauseText, x + 2, y + 2);
             g2d.setColor(Color.YELLOW);
             g2d.drawString(pauseText, x, y);
 
-            // Additional instructions for resuming the game with a smaller font size
-            Font instructionFont = loadFont().deriveFont(Font.PLAIN, 16); // Smaller font for instructions
+            Font instructionFont = loadFont().deriveFont(Font.PLAIN, 16);
             g2d.setFont(instructionFont);
             g2d.setColor(Color.CYAN);
             String resumeText = "Press ESC to Resume";
             int resumeX = (getWidth() - g2d.getFontMetrics(instructionFont).stringWidth(resumeText)) / 2;
-            g2d.drawString(resumeText, resumeX, y + 40); // Adjusted position for smaller text
+            g2d.drawString(resumeText, resumeX, y + 40);
         }
 
 
-        // Sync the graphics
         Toolkit.getDefaultToolkit().sync();
         g2d.dispose();
     }
 
     public void checkHealth(PlayerTank playerTank) {
-        // Kiểm tra nếu sức khỏe của tank <= 0
         if (playerTank.getHealth() <= 0) {
-            PlayerTank.lives -= 10;  // Giảm mạng của người chơi
+            PlayerTank.lives -= 1;
             BoardUtility.resetPowerLevel();
             if (PlayerTank.lives > 0) {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 SoundUtility.explosion2();
-                playerTank.activateShield(3000); // Kích hoạt shield nếu còn mạng
-                playerTank.resetPosition(); // Đặt lại vị trí của tank
-                playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH); // Đặt lại sức khỏe
+                playerTank.activateShield(3000);
+                playerTank.resetPosition();
+                playerTank.setHealth(GameConstants.PLAYER_MAX_HEALTH);
             } else {
                 GameScreen.animations.add(new TankExplosion(playerTank.getX(), playerTank.getY(), 50, 1, false));
                 playerTank.setX(-300);
                 playerTank.setY(0);
                 gameOver();
-                System.out.println("Game Over");
-                // Dừng vòng lặp game nếu game over
-                // gameLoopTimer.stop(); // Cần tham chiếu đến gameLoopTimer hoặc dừng game theo cách khác
             }
         }
     }
@@ -416,26 +389,24 @@ public class GameScreen extends JPanel {
 
     public void gameOver() {
         if (gameOver) {
-            return; // Prevent restarting the game over process if already active
+            return;
         }
 
-        gameOver = true; // Set game over state
+        gameOver = true;
         SoundUtility.gameOver();
-        // Start the "Game Over" animation timer
         gameOverTimer = new Timer(10, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 yPos += direction;
                 if (yPos == stopYPos) {
-                    direction = 0; // Stop the vertical movement when reaching stopYPos
-                    gameOverTimer.stop(); // Stop the gameOver animation timer
+                    direction = 0;
+                    gameOverTimer.stop();
 
-                    // Start the transition timer after animation completes
                     transitionTimer = new Timer(3000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             if (onGameOver != null) {
-                                onGameOver.run(); // Trigger the game over transition
+                                onGameOver.run();
                             }
                         }
                     });
@@ -447,7 +418,7 @@ public class GameScreen extends JPanel {
                     yPos = 0;
                     direction *= -1;
                 }
-                repaint(); // Repaint to update the "GAME OVER" text position
+                repaint();
             }
         });
         gameOverTimer.setRepeats(true);

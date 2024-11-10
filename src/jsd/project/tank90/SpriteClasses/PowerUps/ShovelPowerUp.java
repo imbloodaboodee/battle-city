@@ -11,24 +11,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ShovelPowerUp extends PowerUp {
 
-    private static final int SHOVEL_DURATION = 5000; // 10 seconds for ShovelPowerUp
+    private static final int SHOVEL_DURATION = 5000;
 
     public ShovelPowerUp(int x, int y) {
         super(x, y);
         loadImage("src/jsd/project/tank90/assets/image/powerup_shovel.png");
         getImageDimensions();
-        setType(11); // Set power-up type ID
+        setType(11);
         imagePath = "src/jsd/project/tank90/assets/image/powerup_shovel.png";
     }
 
     public void activate(CopyOnWriteArrayList<Block> blocks) {
-        // Remove all brick blocks around the base
         removeBlocks(blocks);
 
-        // Replace with steel blocks
         addSteelBlocks(blocks);
 
-        // Set a timer to replace steel blocks with brick blocks after SHOVEL_DURATION
         Timer shovelTimer = new Timer();
         shovelTimer.schedule(new TimerTask() {
             @Override
@@ -39,7 +36,6 @@ public class ShovelPowerUp extends PowerUp {
         }, SHOVEL_DURATION);
     }
 
-    // Helper method to remove blocks around specific coordinates
     private void removeBlocks(CopyOnWriteArrayList<Block> blocks) {
         blocks.removeIf(block ->
                 (block.getX() >= 192 && block.getX() <= 256 && block.getY() == 384) ||
@@ -48,7 +44,6 @@ public class ShovelPowerUp extends PowerUp {
         );
     }
 
-    // Helper method to add steel blocks at specific coordinates
     private void addSteelBlocks(CopyOnWriteArrayList<Block> blocks) {
         for (int x = 208; x <= 256; x += 16) {
             blocks.add(new Steel(x, 384));
@@ -59,7 +54,6 @@ public class ShovelPowerUp extends PowerUp {
         }
     }
 
-    // Helper method to add brick blocks at specific coordinates
     private void addBrickBlocks(CopyOnWriteArrayList<Block> blocks) {
         for (int x = 208; x <= 256; x += 16) {
             blocks.add(new Brick(x, 384));
@@ -69,8 +63,4 @@ public class ShovelPowerUp extends PowerUp {
             blocks.add(new Brick(256, y));
         }
     }
-
-
-
-
 }

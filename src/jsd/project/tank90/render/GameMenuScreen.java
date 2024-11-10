@@ -16,11 +16,7 @@ public class GameMenuScreen extends JPanel {
     private Image background, tank, tree;
     private final ImageUtility imageInstance = ImageUtility.getInstance();
 
-    /**
-     * Constructor for the menu
-     *
-     * @param onEnterPress Runnable to trigger when Enter is pressed
-     */
+
     public GameMenuScreen(Runnable onEnterPress) {
         this.onEnterPress = onEnterPress;
         setBackground(Color.BLACK);
@@ -50,13 +46,10 @@ public class GameMenuScreen extends JPanel {
         g.setFont(font);
         g.setColor(Color.WHITE);
 
-        // Draw the background image
         g.drawImage(background, getWidth() / 2 - background.getWidth(null) / 2, yPos, this);
 
-        // Draw the "1 PLAYER" text
         g.drawString("1 PLAYER", getWidth() / 2 - 56, yPos + background.getHeight(null) + 50);
 
-        // Draw additional components if animation has completed
         drawMenuComponents(g);
     }
 

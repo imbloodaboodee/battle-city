@@ -117,15 +117,12 @@ public class Tank {
 
     public void freeze(int duration) {
         isFrozen = true;
-        System.out.println("SmartTank is now frozen for " + duration + " milliseconds.");
-
         if (freezeTimer != null && freezeTimer.isRunning()) {
             freezeTimer.stop();
         }
 
         freezeTimer = new Timer(duration, e -> {
             isFrozen = false;
-            System.out.println("SmartTank is no longer frozen.");
         });
         freezeTimer.setRepeats(false);
         freezeTimer.start();
@@ -144,8 +141,7 @@ public class Tank {
 
     public void bumpMove() {
         if (isFrozen()) {
-            System.out.println("SmartTank is frozen, skipping movement.");
-            return; // Stop movement if frozen
+            return;
         }
 
         int originalX = getX();
@@ -232,7 +228,6 @@ public class Tank {
 
     public void shoot(ImageIcon baseImage) {
         if (isFrozen()) {
-            System.out.println("SmartTank is frozen, skipping movement.");
             return;
         }
 

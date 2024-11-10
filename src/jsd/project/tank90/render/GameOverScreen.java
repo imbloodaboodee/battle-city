@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.*;
 import java.awt.event.KeyAdapter;

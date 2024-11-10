@@ -20,15 +20,11 @@ public class GameStateManager {
 
     private static void nextLevel() {
         GameScreen.setStage(GameScreen.getStage() + 1);
-        System.out.println("Advancing to level: " + GameScreen.getStage());
-
         GameScreen.getInstance().getTankSpawner().startSpawning();
         GameScreen.blocks.clear();
         BoardUtility.clearPowerUps();
         GameScreen.getInstance().initBlocks();
-
         GameScreen.getInstance().getPlayerTankRender().getPlayerTank().resetPosition();
-
         new Timer(500, e -> levelTransitioning = false).start();
     }
 }

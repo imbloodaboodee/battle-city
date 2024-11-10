@@ -25,7 +25,6 @@ public class AssignStatsScreen extends JPanel {
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(512, 500));
 
-        // Title label
         JLabel titleLabel = new JLabel("Create Your Tank!");
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
@@ -33,21 +32,18 @@ public class AssignStatsScreen extends JPanel {
         titleLabel.setBounds(0, 10, 512, 30);
         add(titleLabel);
 
-        // Tank image positioned next to stat rows
-        ImageIcon originalIcon = new ImageIcon("./src/jsd/project/tank90/assets/image/playerTank_up.png"); // Placeholder image path
-        Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH); // Scale image up to 150x150
+        ImageIcon originalIcon = new ImageIcon("./src/jsd/project/tank90/assets/image/playerTank_up.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
         JLabel tankImage = new JLabel(new ImageIcon(scaledImage));
-        tankImage.setBounds(0, 50, 150, 150); // Adjusted position and size to make it larger
+        tankImage.setBounds(0, 50, 150, 150);
         add(tankImage);
 
-        // Remaining points label positioned below the tank image
         JLabel remainingPointsLabel = new JLabel("Points Left: " + remainingPoints);
         remainingPointsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        remainingPointsLabel.setForeground(Color.WHITE); // Set text color to white
-        remainingPointsLabel.setBounds(0, 210, 150, 30); // Adjusted position below the larger tank image
+        remainingPointsLabel.setForeground(Color.WHITE);
+        remainingPointsLabel.setBounds(0, 210, 150, 30);
         add(remainingPointsLabel);
 
-        // Stat assignment section with adjusted positions
         speedLabel = createStatRow("Speed", 90, e -> increaseStat("speed", remainingPointsLabel), e -> decreaseStat("speed", remainingPointsLabel));
         healthLabel = createStatRow("Health", 130, e -> increaseStat("health", remainingPointsLabel), e -> decreaseStat("health", remainingPointsLabel));
         rotationLabel = createStatRow("Rotation", 170, e -> increaseStat("rotationSpeed", remainingPointsLabel), e -> decreaseStat("rotationSpeed", remainingPointsLabel));
@@ -55,22 +51,18 @@ public class AssignStatsScreen extends JPanel {
         add(healthLabel);
         add(rotationLabel);
 
-        // Bullet selection cards
         JPanel bulletPanel = new JPanel(null);
         bulletPanel.setBackground(Color.BLACK);
-        bulletPanel.setBounds(20, 250, 472, 240); // Adjusted to fit below stats
+        bulletPanel.setBounds(20, 250, 472, 240);
         add(bulletPanel);
 
-        // Define card width, height, and spacing
         int cardWidth = 100;
         int cardHeight = 130;
         int cardSpacing = 20;
 
-        // Calculate the total width needed for three cards and the spacing between them
         int totalWidth = (3 * cardWidth) + (2 * cardSpacing);
-        int startX = (bulletPanel.getWidth() - totalWidth) / 2; // Calculate starting x position for centering
+        int startX = (bulletPanel.getWidth() - totalWidth) / 2;
 
-        // Add bullet cards with adjusted spacing and centered position
         for (int i = 0; i < 3; i++) {
             BulletType bulletType;
             String imagePath = "./src/jsd/project/tank90/assets/image/bullet.png";
@@ -92,19 +84,18 @@ public class AssignStatsScreen extends JPanel {
                 default -> throw new IllegalStateException("Unexpected value: " + i);
             }
 
-            int xPosition = startX + i * (cardWidth + cardSpacing); // Set x position for each card
+            int xPosition = startX + i * (cardWidth + cardSpacing);
             JButton bulletCard = createBulletCardButton(bulletType, imagePath, description, xPosition, cardWidth, cardHeight);
             bulletPanel.add(bulletCard);
         }
 
-        // Confirm button to pass selected values (initially hidden)
         confirmButton = new JButton("Confirm");
-        confirmButton.setForeground(Color.BLACK); // White text
-        confirmButton.setBackground(Color.WHITE); // Black background
-        confirmButton.setBorder(BorderFactory.createLineBorder(Color.WHITE)); // White border
+        confirmButton.setForeground(Color.WHITE);
+        confirmButton.setBackground(Color.BLACK);
+        confirmButton.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         confirmButton.setBounds(200, 390, 120, 30);
         confirmButton.addActionListener(e -> onConfirm.run());
-        confirmButton.setVisible(false); // Hide the button initially
+        confirmButton.setVisible(false); //
         add(confirmButton);
     }
 
@@ -112,14 +103,13 @@ public class AssignStatsScreen extends JPanel {
     private JLabel createStatRow(String statName, int yPosition, ActionListener addListener, ActionListener removeListener) {
         JLabel statLabel = new JLabel(statName + ": 0");
         statLabel.setForeground(Color.WHITE);
-        statLabel.setBounds(140, yPosition, 80, 30); // Position shifted right to align with tank image
-
+        statLabel.setBounds(140, yPosition, 80, 30);
         JButton addButton = new JButton("Assign");
-        addButton.setBackground(Color.BLACK); // Black background
-        addButton.setForeground(Color.WHITE); // White text
-        addButton.setBorder(BorderFactory.createLineBorder(Color.GREEN)); // White border
-        addButton.setBounds(300, yPosition, 80, 30); // Increased `x` position to space out the button from the label
-        addButton.setFont(new Font("Arial", Font.PLAIN, 10)); // Smaller font for buttons
+        addButton.setBackground(Color.BLACK);
+        addButton.setForeground(Color.WHITE);
+        addButton.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        addButton.setBounds(300, yPosition, 80, 30);
+        addButton.setFont(new Font("Arial", Font.PLAIN, 10));
         addButton.addActionListener(addListener);
         add(addButton);
 
@@ -127,7 +117,7 @@ public class AssignStatsScreen extends JPanel {
         removeButton.setBackground(Color.BLACK);
         removeButton.setForeground(Color.WHITE);
         removeButton.setBorder(BorderFactory.createLineBorder(Color.RED));
-        removeButton.setBounds(390, yPosition, 80, 30); // Position to the right of the assign button
+        removeButton.setBounds(390, yPosition, 80, 30);
         removeButton.setFont(new Font("Arial", Font.PLAIN, 10));
         removeButton.addActionListener(removeListener);
         add(removeButton);
@@ -138,11 +128,10 @@ public class AssignStatsScreen extends JPanel {
     private JButton createBulletCardButton(BulletType bulletType, String defaultImagePath, String description, int xPosition, int cardWidth, int cardHeight) {
         String imagePath;
 
-        // Choose the image based on the bullet type
         switch (bulletType) {
             case EXPLOSIVE -> imagePath = "./src/jsd/project/tank90/assets/image/bullet_explosive.png";
             case RAPID -> imagePath = "./src/jsd/project/tank90/assets/image/bullet_rapid.png";
-            default -> imagePath = defaultImagePath; // Use default for STANDARD
+            default -> imagePath = defaultImagePath;
         }
 
         JButton bulletCard = new JButton();
@@ -151,22 +140,19 @@ public class AssignStatsScreen extends JPanel {
         bulletCard.setBounds(xPosition, 0, cardWidth, cardHeight);
         bulletCard.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
-        // Add bullet image with larger dimensions
         JLabel bulletImage = new JLabel(resizeImageIcon(new ImageIcon(imagePath),4));
-        bulletImage.setBounds((cardWidth - 60) / 2, 20, 60, 60); // Set image to 60x60 pixels
+        bulletImage.setBounds((cardWidth - 60) / 2, 20, 60, 60);
         bulletCard.add(bulletImage);
 
-        // Add bullet description with smaller font
         JLabel bulletDescription = new JLabel(
                 "<html><center><b style='color:red;'>" + bulletType + "</b><br><span style='font-size:6px;'>" + description + "</span></center></html>",
                 SwingConstants.CENTER
         );
         bulletDescription.setForeground(Color.WHITE);
-        bulletDescription.setFont(new Font("Arial", Font.PLAIN, 10)); // Base font size, description will appear smaller
-        bulletDescription.setBounds(0, 75, cardWidth-3, 70); // Adjust position to fit below larger image
+        bulletDescription.setFont(new Font("Arial", Font.PLAIN, 10));
+        bulletDescription.setBounds(0, 75, cardWidth-3, 70);
         bulletCard.add(bulletDescription);
 
-        // Set the action for selecting the bullet type and highlighting the card
         bulletCard.addActionListener(e -> selectBulletType(bulletType, bulletCard));
 
         return bulletCard;
@@ -177,20 +163,20 @@ public class AssignStatsScreen extends JPanel {
             switch (statType) {
                 case "speed" -> {
                     speed++;
-                    speedLabel.setText("Speed: " + speed); // Update speed label
+                    speedLabel.setText("Speed: " + speed);
                 }
                 case "health" -> {
                     health++;
-                    healthLabel.setText("Health: " + health); // Update health label
+                    healthLabel.setText("Health: " + health);
                 }
                 case "rotationSpeed" -> {
                     rotationSpeed++;
-                    rotationLabel.setText("Rotation: " + rotationSpeed); // Update rotation speed label
+                    rotationLabel.setText("Rotation: " + rotationSpeed);
                 }
             }
             remainingPoints--;
             updateRemainingPointsLabel(remainingPointsLabel);
-            checkConditionsForConfirmButton(); // Check conditions after each stat assignment
+            checkConditionsForConfirmButton();
         }
     }
 
@@ -199,27 +185,27 @@ public class AssignStatsScreen extends JPanel {
             case "speed" -> {
                 if (speed > 0) {
                     speed--;
-                    speedLabel.setText("Speed: " + speed); // Update speed label
+                    speedLabel.setText("Speed: " + speed);
                     remainingPoints++;
                 }
             }
             case "health" -> {
                 if (health > 0) {
                     health--;
-                    healthLabel.setText("Health: " + health); // Update health label
+                    healthLabel.setText("Health: " + health);
                     remainingPoints++;
                 }
             }
             case "rotationSpeed" -> {
                 if (rotationSpeed > 0) {
                     rotationSpeed--;
-                    rotationLabel.setText("Rotation: " + rotationSpeed); // Update rotation speed label
+                    rotationLabel.setText("Rotation: " + rotationSpeed);
                     remainingPoints++;
                 }
             }
         }
         updateRemainingPointsLabel(remainingPointsLabel);
-        checkConditionsForConfirmButton(); // Check conditions after each stat adjustment
+        checkConditionsForConfirmButton();
     }
 
     private void updateRemainingPointsLabel(JLabel remainingPointsLabel) {
@@ -231,11 +217,11 @@ public class AssignStatsScreen extends JPanel {
             selectedCard.setBorder(BorderFactory.createLineBorder(Color.WHITE));
         }
 
-        selectedBulletType = bulletType; // Set selectedBulletType to BulletType instead of String
-        bulletCard.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2)); // Cyan border for selected card
-        selectedCard = bulletCard; // Update selected card reference
+        selectedBulletType = bulletType;
+        bulletCard.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
+        selectedCard = bulletCard;
 
-        checkConditionsForConfirmButton(); // Check conditions after bullet selection
+        checkConditionsForConfirmButton();
     }
 
     private void checkConditionsForConfirmButton() {
@@ -244,7 +230,7 @@ public class AssignStatsScreen extends JPanel {
         } else {
             confirmButton.setVisible(false);
         }
-        setComponentZOrder(confirmButton, 0); // Bring the confirm button to the front
+        setComponentZOrder(confirmButton, 0);
         revalidate();
         repaint();
     }

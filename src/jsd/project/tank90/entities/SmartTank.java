@@ -35,7 +35,6 @@ public class SmartTank extends Tank {
     @Override
     public void shoot(ImageIcon baseImage) {
         if (isFrozen()) {
-            System.out.println("SmartTank is frozen, skipping bullet creation.");
             return;
         }
         if (isCanFire()) {

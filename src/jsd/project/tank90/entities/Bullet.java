@@ -6,7 +6,7 @@ import java.awt.geom.Rectangle2D;
 
 public class Bullet {
     private double x, y;
-    private double angle; // Direction in radians
+    private double angle;
     BulletType bulletType;
     private int damage;
     private int speed;

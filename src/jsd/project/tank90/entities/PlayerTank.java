@@ -16,21 +16,6 @@ public class PlayerTank extends Tank implements KeyListener {
     public static int lives = GameConstants.INITIAL_LIVES;
     private double targetCannonAngle = 0;
 
-
-    public PlayerTank(BulletType bulletType) {
-        super();
-        setDefaultBullet(new Bullet(bulletType));
-        setBaseImage(new ImageIcon(GameConstants.BASE_IMAGE));
-        setCannonImage(new ImageIcon(GameConstants.CANNON_IMAGE));
-        aimImage = new ImageIcon(GameConstants.AIM_IMAGE);
-
-
-        setHitbox(new Rectangle(getX(), getY(), getBaseImage().getIconWidth(), getBaseImage().getIconHeight()));
-
-        bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
-        bulletCreationTimer.setRepeats(true);
-    }
-
     public PlayerTank(int assignedHealth, int assignedSpeed, int assignedRotationSpeed, BulletType assignedBulletType) {
         super();
         setHealth(getHealth() + assignedHealth);
@@ -46,17 +31,13 @@ public class PlayerTank extends Tank implements KeyListener {
 
         bulletCreationTimer = new Timer(GameConstants.DELAY, e -> shoot());
         bulletCreationTimer.setRepeats(true);
-
-
     }
 
     public void mousePressed(MouseEvent e) {
-        System.out.println("start");
         bulletCreationTimer.start();
     }
 
     public void mouseReleased(MouseEvent e) {
-        System.out.println("stop");
         bulletCreationTimer.stop();
     }
 
@@ -91,10 +72,8 @@ public class PlayerTank extends Tank implements KeyListener {
     }
 
 
-    // Create (fire) a bullet
     public void shoot() {
         if (isFrozen()) {
-            System.out.println("SmartTank is frozen, skipping bullet creation.");
             return;
         }
         if (isCanFire()) {

@@ -10,34 +10,28 @@ import java.io.IOException;
 public class GameGuideScreen extends JPanel {
 
     public GameGuideScreen(Runnable onEnterPress) {
-        setLayout(new GridLayout(2, 1, 0, 0)); // 2 rows, 1 column with spacing
-        setBackground(Color.BLACK); // Set background color to black
+        setLayout(new GridLayout(2, 1, 0, 0));
+        setBackground(Color.BLACK);
 
-        // Set padding around the edges of the main panel
         setBorder(BorderFactory.createEmptyBorder(20, 50, 80, 20));
 
-        // Load custom font
         Font customFont = loadFont();
 
-        // Create the first row
         JPanel row1 = new JPanel(new BorderLayout());
-        row1.setBackground(Color.BLACK); // Set row background to black
+        row1.setBackground(Color.BLACK);
         JLabel imageLabel1 = new JLabel(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/move.png"), 0.3));
 
-        // Wrap text in HTML for line-breaking and add padding for spacing
         JLabel textLabel1 = new JLabel("<html><body style='width:230px'>Press W, A, S, D to move</body></html>", SwingConstants.LEFT);
-        textLabel1.setForeground(Color.WHITE); // Set text color to white
-        textLabel1.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0)); // Add padding to the left of the text
-        if (customFont != null) textLabel1.setFont(customFont); // Set custom font if loaded
+        textLabel1.setForeground(Color.WHITE);
+        textLabel1.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+        if (customFont != null) textLabel1.setFont(customFont);
         row1.add(imageLabel1, BorderLayout.WEST);
         row1.add(textLabel1, BorderLayout.CENTER);
 
-        // Create the second row
         JPanel row2 = new JPanel(new BorderLayout());
-        row2.setBackground(Color.BLACK); // Set row background to black
+        row2.setBackground(Color.BLACK);
         JLabel imageLabel2 = new JLabel(resizeImageIcon(new ImageIcon("./src/jsd/project/tank90/assets/image/fire.png"), 0.3));
 
-        // Wrap text in HTML for line-breaking and add padding for spacing
         JLabel textLabel2 = new JLabel("<html><body style='width:230px'>Click to fire, hold for continuous firing</body></html>", SwingConstants.LEFT);
         textLabel2.setForeground(Color.WHITE); // Set text color to white
         textLabel2.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0)); // Add padding to the left of the text
@@ -45,21 +39,19 @@ public class GameGuideScreen extends JPanel {
         row2.add(imageLabel2, BorderLayout.WEST);
         row2.add(textLabel2, BorderLayout.CENTER);
 
-        // Add rows to the main panel
         add(row1);
         add(row2);
 
-        // Add key listener for Enter key to switch to game screen
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    onEnterPress.run(); // Trigger the transition to the game screen
+                    onEnterPress.run();
                 }
             }
         });
 
-        setFocusable(true); // To ensure the panel can receive key events
+        setFocusable(true);
         requestFocusInWindow();
     }
 

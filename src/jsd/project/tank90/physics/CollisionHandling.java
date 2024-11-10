@@ -17,10 +17,6 @@ public class CollisionHandling {
 
     private static int[] enemyTankNum = {0, 0, 0, 0};
 
-    public static void resetScore() {
-        enemyTankNum = new int[]{0, 0, 0, 0};
-    }
-
     public static void checkCollisionBulletsTank(CopyOnWriteArrayList<Bullet> bullets, Tank playerTank) {
         Rectangle playerHitbox = playerTank.getHitbox();
 
@@ -29,8 +25,6 @@ public class CollisionHandling {
             if (bullet.getHitbox().intersects(playerHitbox)) {
                 bullets.remove(i);
                 playerTank.downHealth(1);
-                System.out.println("Bullet hit the player tank! Player health: " + playerTank.getHealth());
-
                 GameScreen.getInstance().checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
                 break;
             }
@@ -47,7 +41,6 @@ public class CollisionHandling {
                 if (bullet.getHitbox().intersects(enemyHitbox)) {
                     bullets.remove(j);
                     enemy.downHealth(1);
-                    System.out.println("Bullet hit an enemy tank! Enemy health: " + enemy.getHealth());
                     SoundUtility.BulletHitTank();
                     if (enemy.getHealth() <= 0) {
                         incrementNum(enemy);
@@ -99,8 +92,6 @@ public class CollisionHandling {
                 BlockType blockType = BlockType.getTypeFromInt(block.getType());
 
                 if (bulletHitbox.intersects(blockHitbox)) {
-                    System.out.println("Collision detected with block of type: " + blockType);
-
                     if (b.getBulletType() == BulletType.STANDARD_TIER_4||
                             b.getBulletType() == BulletType.EXPLOSIVE||
                             b.getBulletType() == BulletType.EXPLOSIVE_TIER_2||
@@ -123,17 +114,12 @@ public class CollisionHandling {
                                 bulletShouldBeRemoved = true;
                                 SoundUtility.BulletHitBrick();
                                 break;
-                            case STEEL:
-                                bulletShouldBeRemoved = true;
-                                break;
-                            case EDGE:
+                            case STEEL, EDGE:
                                 bulletShouldBeRemoved = true;
                                 break;
                             case RIVER:
                             case TREE:
-                                break;
                             default:
-                                System.out.println("Unknown block type.");
                                 break;
                         }
                     }
@@ -205,14 +191,8 @@ public class CollisionHandling {
             Rectangle enemyHitbox = enemy.getHitbox();
 
             if (playerHitbox.intersects(enemyHitbox)) {
-                System.out.println("Collision detected between PlayerTank and an enemy tank!");
-
                 playerTank.downHealth(1);
                 enemy.downHealth(1);
-
-                System.out.println("Player health: " + playerTank.getHealth());
-                System.out.println("Enemy health: " + enemy.getHealth());
-
                 GameScreen.getInstance().checkHealth(GameScreen.getInstance().ptRenderer.getPlayerTank());
 
                 if (enemy.getHealth() <= 0) {
