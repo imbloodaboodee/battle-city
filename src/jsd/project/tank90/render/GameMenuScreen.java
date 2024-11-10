@@ -62,7 +62,7 @@ public class GameMenuScreen extends JPanel {
 
     private void drawMenuComponents(Graphics g) {
         g.drawImage(tank, getWidth() / 2 - 90, yPos + background.getHeight(null) + 25, this);
-        g.drawString("PRESS ENTER", getWidth() / 2 - 80, getHeight() * 4 / 5 + 25);
+        g.drawString("PRESS ENTER", getWidth() / 2 - 80, getHeight() * 4 / 5 );
     }
 
     public static Font loadFont() {
